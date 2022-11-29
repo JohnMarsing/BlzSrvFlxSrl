@@ -1,18 +1,16 @@
 ﻿namespace BlzSrvFlxSrl.Shared.Header;
 
 // 1. Action
-public record BibleSearchSetBibleBookAction(Enums.BibleBook BibleBook);
-public record BibleSearchSetWebsiteAction(Enums.BibleWebsite BibleWebsite);
-public record BibleSearchSetShowBookChapterAnchorListAction(bool IsVisible);
-public record BibleSearchSetShowWebsiteSelectAction(bool IsVisible);
+public record BibleSearch_SetBibleBook_Action(Enums.BibleBook BibleBook);
+public record BibleSearch_SetWebsite_Action(Enums.BibleWebsite BibleWebsite);
+public record BibleSearch_ShowDetails_Action(bool IsVisible);
 
 // 2. State
 public record BibleSearchState
 {
 	public Enums.BibleBook? BibleBook { get; init; }
 	public Enums.BibleWebsite? BibleWebsite { get; init; }
-	public bool ShowBookChapterAnchorList { get; init; }
-	public bool ShowWebsiteSelect { get; init; }
+	public bool ShowDetails { get; init; }
 }
 
 // 3. Feature
@@ -24,11 +22,9 @@ public class HeaderStateFeature : Feature<BibleSearchState>
 	{
 		return new BibleSearchState
 		{
-			// Don't set BibleBook because we don't want <BibleSearch> to be collapsed from it's details
-			// BibleBook = Enums.BibleBook.Genesis,
+			// Don't set default BibleBook (e.g. Genesis) because we don't want <BibleSearch> to be collapsed from it's details
 			BibleWebsite = Enums.BibleWebsite.MyHebrewBible,
-			ShowBookChapterAnchorList = false,
-			ShowWebsiteSelect = false
+			ShowDetails = false
 		};
 	}
 }
@@ -39,7 +35,7 @@ public static class BibleSearchReducers
 	[ReducerMethod]
 	public static BibleSearchState OnSetBibleBook(
 		BibleSearchState state,
-		BibleSearchSetBibleBookAction action)
+		BibleSearch_SetBibleBook_Action action)
 	{
 		return state with { BibleBook = action.BibleBook };
 	}
@@ -47,24 +43,18 @@ public static class BibleSearchReducers
 	[ReducerMethod]
 	public static BibleSearchState OnSetBibleWebsite(
 		BibleSearchState state,
-		BibleSearchSetWebsiteAction action)
+		BibleSearch_SetWebsite_Action action)
 	{
 		return state with { BibleWebsite = action.BibleWebsite };
 	}
 
 	[ReducerMethod]
-	public static BibleSearchState OnBibleSearchSetShowBookChapterAnchorList(
-		BibleSearchState state, BibleSearchSetShowBookChapterAnchorListAction action)
+	public static BibleSearchState OnBibleSearchShowDetailsAction(
+		BibleSearchState state, BibleSearch_ShowDetails_Action action)
 	{
-		return state with { ShowBookChapterAnchorList = action.IsVisible };
+		return state with { ShowDetails = action.IsVisible };
 	}
-	
-	[ReducerMethod]
-	public static BibleSearchState OnBibleSearchSetShowWebsiteSelect(
-		BibleSearchState state, BibleSearchSetShowWebsiteSelectAction action)
-	{
-		return state with { ShowWebsiteSelect = action.IsVisible };
-	}
+
 
 }
 

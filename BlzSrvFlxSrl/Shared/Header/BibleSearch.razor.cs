@@ -17,17 +17,15 @@ public partial class BibleSearch
 
 	private void SelectedResultChanged(BibleBook bibleBook)
 	{
-		Dispatcher!.Dispatch(new BibleSearchSetBibleBookAction(bibleBook!)); 
+		Dispatcher!.Dispatch(new BibleSearch_SetBibleBook_Action(bibleBook!)); 
 
 		if (bibleBook is null)  
 		{
-			Dispatcher!.Dispatch(new BibleSearchSetShowBookChapterAnchorListAction(false));
-			Dispatcher!.Dispatch(new BibleSearchSetShowWebsiteSelectAction(false));
+			Dispatcher!.Dispatch(new BibleSearch_ShowDetails_Action(false));
 		}
 		else
 		{
-			Dispatcher!.Dispatch(new BibleSearchSetShowBookChapterAnchorListAction(true));
-			Dispatcher!.Dispatch(new BibleSearchSetShowWebsiteSelectAction(true));
+			Dispatcher!.Dispatch(new BibleSearch_ShowDetails_Action(true));
 		}
 	}
 

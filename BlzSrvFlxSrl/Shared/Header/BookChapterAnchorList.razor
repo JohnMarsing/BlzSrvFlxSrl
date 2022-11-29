@@ -1,10 +1,10 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@if (BibleSearchState!.Value.ShowBookChapterAnchorList)
+@if (BibleSearchState!.Value.ShowDetails)
 {
 	<ul class="list-inline">
 
-		@for (int i = 1; i <= BibleSearchState.Value.BibleBook.LastChapter; i++)
+		@for (int i = 1; i <= BibleSearchState!.Value.BibleBook!.LastChapter; i++)
 		{
 			<li class="list-inline-item">
 				<a href='@AnchorBookChapterUrl(i)' title="@BookChapterTitle(i)" target="_blank">@i</a>
@@ -12,8 +12,6 @@
 		}
 	</ul>
 
-	if (BibleSearchState!.Value.ShowWebsiteSelect)
-	{
-		<WebsiteSelect />
-	}
+	<WebsiteSelect />
+
 }

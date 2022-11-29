@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using BlzSrvFlxSrl.Shared.Header.Enums;
 
-
 namespace BlzSrvFlxSrl.Shared.Header;
 
 public partial class WebsiteSelect
@@ -14,6 +13,7 @@ public partial class WebsiteSelect
 	protected override void OnInitialized()
 	{
 		selectedWebsite = BibleSearchState!.Value.BibleWebsite!.Name;
+		base.OnInitialized();
 	}
 
 	private bool IsSelectedWebsite(string bibleWebsite)
@@ -26,7 +26,7 @@ public partial class WebsiteSelect
 		selectedWebsite = e.Value?.ToString() ?? "";
 		if (!String.IsNullOrEmpty(selectedWebsite))
 		{
-			Dispatcher!.Dispatch(new BibleSearchSetWebsiteAction(BibleWebsite.FromName(selectedWebsite)));
+			Dispatcher!.Dispatch(new BibleSearch_SetWebsite_Action(BibleWebsite.FromName(selectedWebsite)));
 		}
 		// else, I don't know why this would ever happen?
 	}
