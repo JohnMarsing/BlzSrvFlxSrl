@@ -1,0 +1,52 @@
+﻿@page "/account/profile"
+
+@using Page = BlzSrvFlxSrl.Links.Account
+<PageTitle>@Page.TitleProfile</PageTitle>
+
+<h3><i class="@Page.IconClaims"></i> User Claims</h3>
+
+<button class="btn btn-lg btn-outline-primary my-3" @onclick="GetClaimsPrincipalData">
+	Get ClaimsPrincipal Data
+</button>
+
+@if (ClaimList != null)
+{
+	@if (ClaimList.Any())
+	{
+		<div class="card my-5" style="max-width: 540px;">
+			<div class="row no-gutters">
+				<div class="col-md-4">
+					<img src="@ProfileImage" alt="" class="img-fluid rounded" />
+				</div>
+				<div class="col-md-8">
+					<div class="card-body">
+						<p class="card-title">@_authMessage</p>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+}
+
+
+@if (ClaimList != null)
+{
+	@if (ClaimList.Any())
+	{
+		<h3 class="text-warning mt-5 mb-0">Claims List</h3>
+		<TableTemplate Items="@ClaimList">
+			<TableHeader>
+
+				<th>Claim</th>
+				<th>Value</th>
+
+			</TableHeader>
+			<RowTemplate>
+				<td>@context.Type</td>
+				<td>@context.Value</td>
+			</RowTemplate>
+		</TableTemplate>
+
+	}
+}

@@ -1,0 +1,16 @@
+﻿<Fluxor.Blazor.Web.StoreInitializer />
+<CascadingAuthenticationState>
+	<Router AppAssembly="@typeof(App).Assembly">
+		<Found Context="routeData">
+			<AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainBootstrapLayout)" />
+			@*<RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />*@
+			<FocusOnNavigate RouteData="@routeData" Selector="h1" />
+		</Found>
+		<NotFound>
+			<LayoutView Layout="@typeof(MainBootstrapLayout)">
+				<p role="alert">Sorry, there's nothing at this address.</p>
+			</LayoutView>
+		</NotFound>
+
+	</Router>
+</CascadingAuthenticationState>

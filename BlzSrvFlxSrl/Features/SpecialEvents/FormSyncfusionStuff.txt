@@ -1,0 +1,197 @@
+﻿
+@using Syncfusion.Blazor.RichTextEditor
+
+
+			<div class="row mt-n2">
+
+				<div class="col-sm-6">
+					<div class="mb-3">
+						<label for="showBeginDate" class="control-label">Show Start Date</label>
+
+						<SfDatePicker TValue="DateTime?" id="showBeginDate"
+													@bind-Value="@VM.ShowBeginDate"
+													Placeholder="Choose a Show Date">
+						</SfDatePicker>
+
+						<ValidationMessage For="@(() => VM.ShowBeginDate)" />
+					</div>
+				</div>
+
+				<div class="col-sm-6">
+					<div class="mb-3">
+						<label for="showEndDate" class="control-label">Show End Date</label>
+
+						<SfDatePicker TValue="DateTime?" id="showEndDate"
+													@bind-Value="@VM.ShowEndDate"
+													Placeholder="Choose a Show Date">
+						</SfDatePicker>
+
+
+						<ValidationMessage For="@(() => VM.ShowEndDate)" />
+					</div>
+				</div>
+
+			</div>
+
+
+
+		<fieldset class="mt-3">
+			<legend class="text-primary">Description</legend>
+			<div class="row mt-n2">
+				<div class="col-sm-12">
+					<div class="mb-3">
+
+						@if (!IsPreview)
+						{
+							<SfRichTextEditor Height="250px" EditorMode="EditorMode.Markdown" SaveInterval="1"
+															@bind-Value="@VM.Description">
+								<RichTextEditorToolbarSettings Items="@Tools">
+									<RichTextEditorCustomToolbarItems>
+										<RichTextEditorCustomToolbarItem Name="Preview">
+											<Template>
+												<button id="preview-code" class="e-tbar-btn e-control e-btn e-icon-btn" @onclick="PreviewClick">
+													<span class="e-btn-icon e-md-preview e-icons"></span>
+												</button>
+											</Template>
+										</RichTextEditorCustomToolbarItem>
+									</RichTextEditorCustomToolbarItems>
+								</RichTextEditorToolbarSettings>
+								<RichTextEditorMarkdownOptions ListSyntax="@ListSyntax" />
+								<RichTextEditorEvents ValueChange="@OnValueChange" />
+							</SfRichTextEditor>
+						}
+						else
+						{
+							<SfRichTextEditor Readonly="true" @bind-Value="@HtmlValue">
+								<RichTextEditorToolbarSettings Items="@Items">
+									<RichTextEditorCustomToolbarItems>
+										<RichTextEditorCustomToolbarItem Name="code">
+											<Template>
+												<button id="MD_Preview" class="e-tbar-btn e-control e-btn e-icon-btn"
+															@onclick="CodeClick">
+													<span class="e-btn-icon e-preview e-icons"></span>
+												</button>
+											</Template>
+										</RichTextEditorCustomToolbarItem>
+									</RichTextEditorCustomToolbarItems>
+								</RichTextEditorToolbarSettings>
+							</SfRichTextEditor>
+						}
+
+					</div>
+				</div>
+			</div>
+
+		</fieldset>
+
+
+
+<style>
+	.e-icon-btn .e-preview::before {
+			content: '\e790';
+	}
+
+	.bootstrap5 .e-icon-btn .e-md-preview::before {
+			content: '\e787';
+	}
+
+	.e-icon-btn.e-active .e-md-preview::before {
+			content: '\e350';
+	}
+
+	.e-icon-btn .e-md-preview::before {
+			content: '\e345';
+	}
+
+	.bootstrap5 .e-icon-btn.e-active .e-view-side::before {
+			content: '\e350';
+	}
+
+	.bootstrap5 .e-icon-btn .e-view-side::before {
+			content: '\e350';
+	}
+
+	.tailwind .e-icon-btn .e-md-preview::before {
+			content: '\e7d0';
+	}
+
+	.tailwind .e-icon-btn .e-preview::before {
+			content: '\e748';
+	}
+
+	.e-icon-btn .e-active .e-view-side::before {
+			content: '\e350';
+	}
+
+	.e-icon-btn .e-view-side::before {
+			content: '\e350';
+	}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+using Syncfusion.Blazor.RichTextEditor;
+using Markdig;
+
+
+
+	private void OnValueChange(Syncfusion.Blazor.RichTextEditor.ChangeEventArgs args)
+	{
+		if (args.Value == null)
+		{
+			this.HtmlValue = null;
+		}
+		else
+		{
+			this.HtmlValue = Markdig.Markdown.ToHtml(args.Value, Pipeline);
+		}
+	}
+
+	private bool IsPreview { get; set; }
+	private string HtmlValue { get; set; }
+	private MarkdownPipeline Pipeline { get; set; }
+
+	private void PreviewClick()
+	{
+		this.IsPreview = true;
+	}
+
+	private void CodeClick()
+	{
+		this.IsPreview = false;
+	}
+
+	private List<ToolbarItemModel> Items = new List<ToolbarItemModel>() {
+				new ToolbarItemModel() { Name = "code", TooltipText = "Code View" },
+		};
+
+	private List<ToolbarItemModel> Tools = new List<ToolbarItemModel>()
+		{
+			new ToolbarItemModel() { Command = ToolbarCommand.Bold },
+			new ToolbarItemModel() { Command = ToolbarCommand.Italic },
+			new ToolbarItemModel() { Command = ToolbarCommand.Underline },
+			new ToolbarItemModel() { Command = ToolbarCommand.Separator },
+			new ToolbarItemModel() { Command = ToolbarCommand.Formats },
+			new ToolbarItemModel() { Command = ToolbarCommand.Alignments },
+			new ToolbarItemModel() { Command = ToolbarCommand.Separator },
+			new ToolbarItemModel() { Command = ToolbarCommand.CreateLink },
+			new ToolbarItemModel() { Command = ToolbarCommand.Image },
+			new ToolbarItemModel() { Command = ToolbarCommand.CreateTable },
+			new ToolbarItemModel() { Command = ToolbarCommand.Separator },
+			new ToolbarItemModel() { Command = ToolbarCommand.SourceCode },
+			new ToolbarItemModel() { Command = ToolbarCommand.Separator },
+			new ToolbarItemModel() { Command = ToolbarCommand.Undo },
+			new ToolbarItemModel() { Command = ToolbarCommand.Redo }
+		};
+
+	private Dictionary<string, string> ListSyntax { get; set; } = new Dictionary<string, string>(){
+				{ "OL", "1., 2., 3." }
+		};

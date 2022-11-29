@@ -1,0 +1,12 @@
+﻿@using BlzSrvFlxSrl.Links
+@*
+<div class="d-print-none">
+	<img src=@Blobs.UrlRoot("footer.jpg") class="img-fluid" />
+</div>
+<div class="d-none d-print-block">
+	<img src=@Blobs.UrlRoot("bannerline.png") class="img-fluid" />
+</div>
+*@
+<p class="text-center">
+	@DateTime.Now.Year @Settings.Constants.Site.BaseUrl | &copy; @Home.Title . All rights reserved.
+</p>

@@ -1,0 +1,11 @@
+﻿@page
+@using Microsoft.AspNetCore.Authentication;
+@using Microsoft.AspNetCore.Mvc;
+@using static BlzSrvFlxSrl.Services.Auth0
+
+@functions {
+	public ChallengeResult OnGet(string returnUrl = "/")
+	{
+		return Challenge(new AuthenticationProperties() { RedirectUri = returnUrl }, SchemeName);
+	}
+}

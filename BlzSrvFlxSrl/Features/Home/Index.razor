@@ -1,0 +1,17 @@
+﻿@page "/"
+
+@using Page = BlzSrvFlxSrl.Links.Home
+
+<PageTitle>@Page.Title</PageTitle>
+<div class="pb-2 mt-4 mb-2 border-bottom">
+	<h1><i class="@Page.Icon"></i> @Page.Title</h1>
+</div>
+
+<p>
+	This sample exists to show how to use <code>Fluxor</code> in a <code>Blazor Server</code> context and also do logging in the Fluxor <i>Stores</i> using <code>Serilog</code>.
+</p>
+
+<p>
+	I use my <a href="https://github.com/livingmessiah/LivingMessiahBlazor"> GitHub.com/LivingMessiah/LivingMessiahBlazor</a> as a starting point
+	and borrowed heavily from Eric King's <a href="https://dev.to/mr_eking/advanced-blazor-state-management-using-fluxor-part-1-696">blogs</a>
+</p>

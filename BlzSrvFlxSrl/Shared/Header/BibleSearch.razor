@@ -1,0 +1,36 @@
+﻿@using BlzSrvFlxSrl.Shared.Header.Enums
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<BlazoredTypeahead SearchMethod="SearchBibleBooks"
+                   TValue="BibleBook"
+                   TItem="BibleBook"
+									 Value="BibleSearchState!.Value.BibleBook"
+                   ValueChanged="SelectedResultChanged"
+									 ValueExpression="@(() => BibleSearchState!.Value.BibleBook)"
+									 EnableDropDown="true"
+									 MaximumSuggestions="66"
+									 MinimumLength="2"
+									 placeholder="Search bible...">
+	<SelectedTemplate Context="context">
+		@context.Title &nbsp;&nbsp;&nbsp; <span class="hebrew.sm">@context.NameInHebrew</span>
+	</SelectedTemplate>
+	<HelpTemplate>
+		Please enter at least 2 characters to perform a search.
+	</HelpTemplate>
+	<ResultTemplate Context="context">
+		@context.Title <i class="text-black-50">@context.TransliterationInHebrew</i>
+	</ResultTemplate>
+</BlazoredTypeahead>
+
+@*<p>@GetSelectedBook()</p>*@
+
+@*
+	Value="SelectedBook"
+	ValueExpression="@(() => SelectedBook)"
+
+<Button @onclick="ToggleButtonClick"
+				class="@ShowListButtonColor btn-sm">
+	@ShowListButtonTitle <i class='@ShowListButtonIcon'></i>
+</Button>
+
+*@

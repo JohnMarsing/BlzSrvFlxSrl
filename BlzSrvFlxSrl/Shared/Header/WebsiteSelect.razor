@@ -1,0 +1,17 @@
+﻿@using BlzSrvFlxSrl.Shared.Header.Enums
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<div class="row g-3 align-items-center">
+	<div class="col-auto">
+		<label for="bibleWebsitEnum" class="col-form-label">Website:</label>
+	</div>
+	<div class="col-auto">
+		<select class="form-select" @onchange="ChangingBibleWebsite" id="bibleWebsitEnum">
+			@foreach (var item in BibleWebsite.List.OrderBy(o => o.Value))
+			{
+				<option selected="@IsSelectedBibleWebsite(item.Name)" value="@item">@item.Title</option>
+			}
+		</select>
+	</div>
+</div>
