@@ -10,7 +10,7 @@
 		<select class="form-select" @onchange="ChangingBibleWebsite" id="bibleWebsitEnum">
 			@foreach (var item in BibleWebsite.List.OrderBy(o => o.Value))
 			{
-				<option selected="@IsSelectedBibleWebsite(item.Name)" value="@item">@item.Title</option>
+				<option selected="@IsSelectedWebsite(item.Name)" value="@item">@item.Title</option>
 			}
 		</select>
 	</div>

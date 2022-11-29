@@ -9,17 +9,26 @@ public partial class WebsiteSelect
 	[Inject] private IState<BibleSearchState>? BibleSearchState { get; set; }
 	[Inject] public IDispatcher? Dispatcher { get; set; }
 
-	private string? selectedBibleWebsite = BibleWebsite.MyHebrewBible.Name;
+	private string? selectedWebsite;
 
-	private bool IsSelectedBibleWebsite(string bibleWebsite)
+	protected override void OnInitialized()
 	{
-		return bibleWebsite == selectedBibleWebsite;
+		selectedWebsite = BibleSearchState!.Value.BibleWebsite!.Name;
+	}
+
+	private bool IsSelectedWebsite(string bibleWebsite)
+	{
+		return bibleWebsite == selectedWebsite;
 	}
 
 	private void ChangingBibleWebsite(ChangeEventArgs e)
 	{
-		selectedBibleWebsite = e.Value?.ToString() ?? ""; // selectedBibleWebsite = e.Value.ToString();
-		Dispatcher!.Dispatch(new BibleSearchSetBibleWebsiteAction(BibleWebsite.FromName(selectedBibleWebsite)));
+		selectedWebsite = e.Value?.ToString() ?? "";
+		if (!String.IsNullOrEmpty(selectedWebsite))
+		{
+			Dispatcher!.Dispatch(new BibleSearchSetWebsiteAction(BibleWebsite.FromName(selectedWebsite)));
+		}
+		// else, I don't know why this would ever happen?
 	}
 
 }

@@ -12,7 +12,7 @@
 									 MinimumLength="2"
 									 placeholder="Search bible...">
 	<SelectedTemplate Context="context">
-		@context.Title &nbsp;&nbsp;&nbsp; <span class="hebrew.sm">@context.NameInHebrew</span>
+		@context.Title &nbsp;&nbsp;&nbsp; <span class="hebrew">@context.NameInHebrew</span>
 	</SelectedTemplate>
 	<HelpTemplate>
 		Please enter at least 2 characters to perform a search.
@@ -22,15 +22,3 @@
 	</ResultTemplate>
 </BlazoredTypeahead>
 
-@*<p>@GetSelectedBook()</p>*@
-
-@*
-	Value="SelectedBook"
-	ValueExpression="@(() => SelectedBook)"
-
-<Button @onclick="ToggleButtonClick"
-				class="@ShowListButtonColor btn-sm">
-	@ShowListButtonTitle <i class='@ShowListButtonIcon'></i>
-</Button>
-
-*@

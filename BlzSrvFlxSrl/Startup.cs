@@ -6,6 +6,8 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using Blazored.Toast;
 using BlzSrvFlxSrl.Settings;
+using System.Reflection;
+using Microsoft.Extensions.Options;
 
 namespace BlzSrvFlxSrl;
 
@@ -36,9 +38,15 @@ public class Startup
 		services.AddCustomAuthentication(Configuration);
 		services.Configure<AppSettings>(options => Configuration.GetSection("AppSettings").Bind(options));
 
-		services.AddFluxor(x => x
-				.ScanAssemblies(typeof(Startup).Assembly)
-		);
+		services.AddFluxor(o =>
+		{
+			o.ScanAssemblies(typeof(Startup).Assembly);
+#if DEBUG
+			o.UseReduxDevTools();
+#endif
+		});
+
+
 	}
 
 

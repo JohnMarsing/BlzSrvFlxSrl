@@ -1,13 +1,10 @@
-﻿
-using System;
-
-namespace BlzSrvFlxSrl.Shared.Header;
+﻿namespace BlzSrvFlxSrl.Shared.Header;
 
 // 1. Action
 public record BibleSearchSetBibleBookAction(Enums.BibleBook BibleBook);
-public record BibleSearchSetBibleWebsiteAction(Enums.BibleWebsite BibleWebsite);
+public record BibleSearchSetWebsiteAction(Enums.BibleWebsite BibleWebsite);
 public record BibleSearchSetShowBookChapterAnchorListAction(bool IsVisible);
-public record BibleSearchSetShowWebsiteSelectAction();
+public record BibleSearchSetShowWebsiteSelectAction(bool IsVisible);
 
 // 2. State
 public record BibleSearchState
@@ -27,7 +24,8 @@ public class HeaderStateFeature : Feature<BibleSearchState>
 	{
 		return new BibleSearchState
 		{
-			//BibleBook = Enums.BibleBook.Genesis,
+			// Don't set BibleBook because we don't want <BibleSearch> to be collapsed from it's details
+			// BibleBook = Enums.BibleBook.Genesis,
 			BibleWebsite = Enums.BibleWebsite.MyHebrewBible,
 			ShowBookChapterAnchorList = false,
 			ShowWebsiteSelect = false
@@ -38,9 +36,6 @@ public class HeaderStateFeature : Feature<BibleSearchState>
 // 4. Reducers
 public static class BibleSearchReducers
 {
-
-
-	// Enums.BibleBook bibleBook
 	[ReducerMethod]
 	public static BibleSearchState OnSetBibleBook(
 		BibleSearchState state,
@@ -50,9 +45,11 @@ public static class BibleSearchReducers
 	}
 
 	[ReducerMethod]
-	public static BibleSearchState OSetBibleWebsite(BibleSearchState state, Enums.BibleWebsite bibleWebsite)
+	public static BibleSearchState OnSetBibleWebsite(
+		BibleSearchState state,
+		BibleSearchSetWebsiteAction action)
 	{
-		return state with { BibleWebsite = bibleWebsite };
+		return state with { BibleWebsite = action.BibleWebsite };
 	}
 
 	[ReducerMethod]
@@ -61,26 +58,14 @@ public static class BibleSearchReducers
 	{
 		return state with { ShowBookChapterAnchorList = action.IsVisible };
 	}
-
-	[ReducerMethod(typeof(BibleSearchSetShowWebsiteSelectAction))]
-	public static BibleSearchState OnBibleSearchSetShowWebsiteSelect(BibleSearchState state)
+	
+	[ReducerMethod]
+	public static BibleSearchState OnBibleSearchSetShowWebsiteSelect(
+		BibleSearchState state, BibleSearchSetShowWebsiteSelectAction action)
 	{
-		return state with { ShowWebsiteSelect = false };
+		return state with { ShowWebsiteSelect = action.IsVisible };
 	}
 
-	/*
-		[ReducerMethod(typeof(BibleSearchSetBibleBookAction))]
-		public static BibleSearchState OnSetBibleBook(BibleSearchState state, Enums.BibleBook bibleBook)
-		{
-			return state with { BibleBook = bibleBook };
-		}
-
-		[ReducerMethod(typeof(BibleSearchSetBibleWebsiteAction))]
-		public static BibleSearchState OSetBibleWebsite(BibleSearchState state, Enums.BibleWebsite bibleWebsite)
-		{
-			return state with { BibleWebsite = bibleWebsite };
-		}
-	*/
 }
 
 // 5. Effects

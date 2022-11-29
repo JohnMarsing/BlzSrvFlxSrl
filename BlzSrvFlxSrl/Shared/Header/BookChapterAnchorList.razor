@@ -1,11 +1,7 @@
 ﻿@inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@*if (BibleSearchState!.Value.BibleBook is not null)*@
-
 @if (BibleSearchState!.Value.ShowBookChapterAnchorList)
 {
-	@*<p>Print the List!</p>*@
-
 	<ul class="list-inline">
 
 		@for (int i = 1; i <= BibleSearchState.Value.BibleBook.LastChapter; i++)
@@ -15,23 +11,9 @@
 			</li>
 		}
 	</ul>
-	
-	@* if (BibleSearchState!.Value.ShowWebsiteSelect) *@
 
 	if (BibleSearchState!.Value.ShowWebsiteSelect)
 	{
 		<WebsiteSelect />
 	}
-
-	@*<p>ShowBookChapterAnchorList:  @BibleSearchState!.Value.ShowBookChapterAnchorList</p>*@
-
 }
-
-@*
-else
-{
-	<p>
-		BibleSearchState!.Value.ShowBookChapterAnchorList is FALSE!
-	</p>
-}
-*@
