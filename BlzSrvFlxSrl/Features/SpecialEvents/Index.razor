@@ -9,29 +9,17 @@
 <PageTitle>@Page.Title</PageTitle>
 
 
-@*<div class="container-fluid bg-warning">
+@**@
+<div class="container-fluid bg-warning">
 	<div class="row pt-2 pb-1">
-
-		<div class="col-4">
-			@if (MainState.Value.DateRange is not null)
-			{
-				<p>@MainState.Value.DateRange.ToString()</p>
-			}
-		</div>
-		<div class="col-4">
-			@if (MainState.Value.CommandState is not null)
-			{
-				<p>@MainState.Value.CommandState.Name</p>
-			}
-		</div>
-		<div class="col-4">
-			@if (MainState.Value.DateRange is not null)
-			{
-				<DateRangePicker />
-			}
+		<div class="col-12">
+			<DateRangePicker 
+				OnRangeSelect="OnRangeSelect" 
+				@bind-StartDate="@DateBegin"
+				@bind-EndDate="@DateEnd" />
 		</div>
 	</div>
-</div>*@
+</div>
 
 
 
@@ -43,14 +31,14 @@
 
 <AuthorizeView Roles="@Roles.AdminOrAnnouncements">
 	<Authorized>
-@*		@if (MainState.Value.DateRange is not null)
+		@*		@if (MainState.Value.DateRange is not null)
 		{
-			<Table />
+		<Table />
 		}
 
 		@if (MainState.Value.CommandState is not null && MainState.Value.CommandState != Enums.CommandState.Hidden)
 		{
-			<Form />
+		<Form />
 		}*@
 
 	</Authorized>

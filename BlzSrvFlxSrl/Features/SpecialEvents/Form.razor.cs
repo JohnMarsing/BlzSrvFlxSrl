@@ -9,8 +9,7 @@ using BlzSrvFlxSrl.Features.SpecialEvents.Data;
 
 using static BlzSrvFlxSrl.Features.SqlServer;
 using Blazored.Toast.Services;
-using BlzSrvFlxSrl.Features.SpecialEvents.Stores;
-using Fluxor;
+
 
 namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
@@ -30,7 +29,7 @@ public partial class Form
 		Logger.LogDebug(string.Format("Inside {0}, VM.ToString: {1}"
 			, nameof(Form) + "!" + nameof(HandleValidSubmit), VM.ToString()));
 
-		Dispatcher.Dispatch(new SpecialEventsSubmitAction(SpecialEventsState!.Value.Model!));
+		Dispatcher.Dispatch(new SpecialEvents_Submit_Action(SpecialEventsState!.Value.Model!));
 
 	}
 

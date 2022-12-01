@@ -1,5 +1,6 @@
 @inherits LayoutComponentBase
 @using BlzSrvFlxSrl.Shared.Header
+@using BlzSrvFlxSrl.Shared
 
 <div class="page">
 
@@ -12,7 +13,7 @@
 			@* <div class="top-row px-1"> *@
 			<div class="top-row px-0">
 				<LoginDisplay />
-				<BlazoredToasts />
+
 			</div>
 
 			@* <div class="content px-4"> *@
@@ -25,6 +26,8 @@
 			<NavBarFooter />
 		</footer>
 
+		<BlazoredToasts />
+		<Toaster />
 
 	</div>
 </div>

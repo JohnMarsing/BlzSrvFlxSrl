@@ -1,39 +1,36 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using BlazorDateRangePicker;
+using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Logging;
 using LoginLink = BlzSrvFlxSrl.Links.Account;
-//using BlzSrvFlxSrl.Pages.SpecialEvents.Stores;
-using System.Threading.Tasks;
-using System;
 
 namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
 public partial class Index
 {
 	[Inject] NavigationManager? NavigationManager { get; set; }
-	//[Inject] private IState<MainState> MainState { get; set; }
-	//[Inject] public IDispatcher Dispatcher { get; set; }
+	[Inject] private IState<SpecialEventsState>? SpecialEventsState { get; set; }
+	[Inject] public IDispatcher? Dispatcher { get; set; }
 
-	/*
-	protected override async Task OnInitializedAsync()
+	private DateTimeOffset? DateBegin { get; set; }
+	private DateTimeOffset? DateEnd { get; set; }
+
+
+	protected override void OnInitialized()
 	{
-		await Task.Delay(0);
-		DateTime dt = DateTime.Now;
-		DateRange dateRange = new DateRange();
-		dateRange.DateBegin = dt.AddMonths(-1);
-		dateRange.DateEnd = dt.AddMonths(6);
-
-		var action = new SetDateRangeAction(dateRange);
-		Dispatcher.Dispatch(action);
-
-		var action2 = new SetCommandStateAction(Enums.CommandState.Hidden);
-		Dispatcher.Dispatch(action2);
-
-		var action3 = new SetCurrentIdAction(0);
-		Dispatcher.Dispatch(action3);
+		DateBegin = SpecialEventsState!.Value.DateBegin;
+		DateEnd = SpecialEventsState!.Value.DateEnd;
+		base.OnInitialized();
 	}
-	*/
+
+	protected DateRangePicker Picker;
+
+	public void OnRangeSelect(DateRange range)
+	{
+		Dispatcher!.Dispatch(new SpecialEvents_SetDateRange_Action(range.Start, range.End));
+	}
 
 	void RedirectToLoginClick(string returnUrl)
 	{
-		NavigationManager.NavigateTo($"{LoginLink.Login}?returnUrl={returnUrl}", true);
+		NavigationManager!.NavigateTo($"{LoginLink.Login}?returnUrl={returnUrl}", true);
 	}
 }

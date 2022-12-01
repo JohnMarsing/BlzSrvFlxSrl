@@ -1,25 +1,19 @@
-﻿using Microsoft.AspNetCore.Components;
-
-using static BlzSrvFlxSrl.Features.SqlServer;
+﻿using static BlzSrvFlxSrl.Features.SqlServer;
 using BlzSrvFlxSrl.Features.SpecialEvents.Data;
-using Blazored.Toast.Services;
 
-//using System;
-//using System.Threading.Tasks;
-//using Microsoft.Extensions.Logging;
-
-
-namespace BlzSrvFlxSrl.Features.SpecialEvents.Stores;
+namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
 // 1. Action
-public record SpecialEventsSubmitAction(FormVM FormVM);
-public record SpecialEventsSubmitSuccessAction();
-public record SpecialEventsSubmitFailureAction(string ErrorMessage);
+public record SpecialEvents_Submit_Action(FormVM FormVM);
+public record SpecialEvents_SubmitSuccess_Action();
+public record SpecialEvents_SubmitFailure_Action(string ErrorMessage);
+public record SpecialEvents_SetDateRange_Action(DateTimeOffset DateBegin, DateTimeOffset DateEnd);
 
 // 2. State
 public record SpecialEventsState
 {
-	public DateRange? DateRange { get; init; }
+	public DateTimeOffset? DateBegin { get; init; }
+	public DateTimeOffset? DateEnd { get; init; }
 	public int CurrentId { get; init; }
 	public bool Submitting { get; init; }
 	public bool Submitted { get; init; }
@@ -36,11 +30,9 @@ public class SpecialEventsStateFeature : Feature<SpecialEventsState>
 	{
 		return new SpecialEventsState
 		{
-			DateRange = new DateRange
-			{
-				DateBegin = DateTime.Parse("9/22/2021"),
-				DateEnd = DateTime.Parse("1/21/2023")
-			},
+			//  ToDo: can't used these random default dates
+			DateBegin = DateTime.Parse("9/22/2021"),
+			DateEnd = DateTime.Parse("1/21/2023"),
 			CurrentId = 0,
 			Submitting = false,
 			Submitted = false,
@@ -53,13 +45,13 @@ public class SpecialEventsStateFeature : Feature<SpecialEventsState>
 // 4. Reducers
 public static class SpecialEventsReducers
 {
-	[ReducerMethod(typeof(SpecialEventsSubmitAction))]
+	[ReducerMethod(typeof(SpecialEvents_Submit_Action))]
 	public static SpecialEventsState OnSubmit(SpecialEventsState state)
 	{
 		return state with { Submitting = true };
 	}
 
-	[ReducerMethod(typeof(SpecialEventsSubmitSuccessAction))]
+	[ReducerMethod(typeof(SpecialEvents_SubmitSuccess_Action))]
 	public static SpecialEventsState OnSubmitSuccess(SpecialEventsState state)
 	{
 		return state with { Submitting = false, Submitted = true };
@@ -67,9 +59,16 @@ public static class SpecialEventsReducers
 
 	[ReducerMethod]
 	public static SpecialEventsState OnSubmitFailure(
-		SpecialEventsState state, SpecialEventsSubmitFailureAction action)
+			SpecialEventsState state, SpecialEvents_SubmitFailure_Action action)
 	{
 		return state with { Submitting = false, ErrorMessage = action.ErrorMessage };
+	}
+
+	[ReducerMethod]
+	public static SpecialEventsState OnSetDateRange(
+		SpecialEventsState state, SpecialEvents_SetDateRange_Action action)
+	{
+		return state with { DateBegin = action.DateBegin, DateEnd = action.DateEnd };
 	}
 }
 
@@ -82,7 +81,7 @@ public class SpecialEventsEffects
 	private readonly ILogger Logger;
 	private readonly ISpecialEventsRepository db;
 
-	public SpecialEventsEffects(ILogger<SpecialEventsEffects> logger,	ISpecialEventsRepository specialEventsRepository)
+	public SpecialEventsEffects(ILogger<SpecialEventsEffects> logger, ISpecialEventsRepository specialEventsRepository)
 	{
 		Logger = logger;
 		db = specialEventsRepository;
@@ -90,7 +89,7 @@ public class SpecialEventsEffects
 	#endregion
 
 	[EffectMethod]
-	public async Task SubmitSpecialEvents(SpecialEventsSubmitAction action, IDispatcher dispatcher)
+	public async Task SubmitSpecialEvents(SpecialEvents_Submit_Action action, IDispatcher dispatcher)
 	{
 		Logger.LogDebug(string.Format("Inside {0}, Action: {1}", nameof(SpecialEventsEffects) + "!" + nameof(SubmitSpecialEvents), action));
 		await Task.Delay(100); // just so we can see the "submitting" message
@@ -99,24 +98,24 @@ public class SpecialEventsEffects
 			var sprocTuple = await db.CreateSpecialEvent(action.FormVM);
 			if (sprocTuple.NewId != 0)
 			{
-				dispatcher.Dispatch(new SpecialEventsSubmitSuccessAction());  // sprocTuple.ReturnMsg
+				dispatcher.Dispatch(new SpecialEvents_SubmitSuccess_Action());  // sprocTuple.ReturnMsg
 			}
 			else
 			{
 				if (sprocTuple.SprocReturnValue == ReturnValueViolationInUniqueIndex)
 				{
-					dispatcher.Dispatch(new SpecialEventsSubmitFailureAction(sprocTuple.ReturnMsg + ", [ViolationIn Unique Index]"));
+					dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action(sprocTuple.ReturnMsg + ", [ViolationIn Unique Index]"));
 				}
 				else
 				{
-					dispatcher.Dispatch(new SpecialEventsSubmitFailureAction(sprocTuple.ReturnMsg));
+					dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action(sprocTuple.ReturnMsg));
 				}
 			}
 		}
 		catch (Exception ex)
 		{
 			Logger.LogError(ex, string.Format("...Inside catch of {0}", nameof(SpecialEventsEffects) + "!" + nameof(SubmitSpecialEvents)));
-			dispatcher.Dispatch(new SpecialEventsSubmitFailureAction("An invalid operation occurred, contact your administrator. [Inside catch]"));
+			dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action("An invalid operation occurred, contact your administrator. [Inside catch]"));
 		}
 	}
 }

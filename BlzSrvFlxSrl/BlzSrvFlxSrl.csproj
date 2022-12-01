@@ -7,14 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Features\SpecialEvents\DateRangePicker.razor.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="Features\SpecialEvents\DateRangePicker.razor" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Data\" />
   </ItemGroup>
 
@@ -28,6 +20,7 @@
 
 	<ItemGroup>
     <PackageReference Include="Ardalis.SmartEnum" Version="2.1.0" />
+    <PackageReference Include="BlazorDateRangePicker" Version="4.3.0" />
     <PackageReference Include="Blazored.FluentValidation" Version="2.0.3" />
     <PackageReference Include="Blazored.Toast" Version="3.2.2" />
     <PackageReference Include="Blazored.Typeahead" Version="4.7.0" />
