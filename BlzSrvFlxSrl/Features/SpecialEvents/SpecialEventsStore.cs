@@ -9,11 +9,17 @@ public record SpecialEvents_SubmitSuccess_Action();
 public record SpecialEvents_SubmitFailure_Action(string ErrorMessage);
 public record SpecialEvents_SetDateRange_Action(DateTimeOffset DateBegin, DateTimeOffset DateEnd);
 
+public record SpecialEvents_Add_Action();
+public record SpecialEvents_Edit_Action(int Id);
+public record SpecialEvents_Display_Action(int Id);
+public record SpecialEvents_Delete_Action(int Id);
+
 // 2. State
 public record SpecialEventsState
 {
 	public DateTimeOffset? DateBegin { get; init; }
 	public DateTimeOffset? DateEnd { get; init; }
+	public Enums.CommandState? CommandSate { get; init; }
 	public int CurrentId { get; init; }
 	public bool Submitting { get; init; }
 	public bool Submitted { get; init; }
@@ -33,6 +39,7 @@ public class SpecialEventsStateFeature : Feature<SpecialEventsState>
 			//  ToDo: can't used these random default dates
 			DateBegin = DateTime.Parse("9/22/2021"),
 			DateEnd = DateTime.Parse("1/21/2023"),
+			CommandSate = Enums.CommandState.Add,
 			CurrentId = 0,
 			Submitting = false,
 			Submitted = false,
@@ -70,9 +77,37 @@ public static class SpecialEventsReducers
 	{
 		return state with { DateBegin = action.DateBegin, DateEnd = action.DateEnd };
 	}
+
+
+	[ReducerMethod]
+	public static SpecialEventsState OnAdd(
+		SpecialEventsState state, SpecialEvents_Add_Action action)
+	{
+		return state with { CurrentId = 0, CommandSate = Enums.CommandState.Add };
+	}
+
+	[ReducerMethod]
+	public static SpecialEventsState OnEdit(
+		SpecialEventsState state, SpecialEvents_Edit_Action action)
+	{
+		return state with { CurrentId = action.Id, CommandSate = Enums.CommandState.Edit };
+	}
+
+	[ReducerMethod]
+	public static SpecialEventsState OnDisplay(
+		SpecialEventsState state, SpecialEvents_Display_Action action)
+	{
+		return state with { CurrentId = action.Id, CommandSate = Enums.CommandState.Display };
+	}
+
+	[ReducerMethod]
+	public static SpecialEventsState OnDelete(
+		SpecialEventsState state, SpecialEvents_Delete_Action action)
+	{
+		return state with { CurrentId = action.Id, CommandSate = Enums.CommandState.Delete };
+	}
+
 }
-
-
 
 // 5. Effects 
 public class SpecialEventsEffects

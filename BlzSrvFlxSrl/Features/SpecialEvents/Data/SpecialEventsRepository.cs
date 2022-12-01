@@ -18,7 +18,7 @@ public interface ISpecialEventsRepository
 {
 	string BaseSqlDump { get; }
 
-	Task<List<SpecialEvent>> GetEventsByDateRange(DateTime dateBegin, DateTime dateEnd);
+	Task<List<SpecialEvent>> GetEventsByDateRange(DateTimeOffset? dateBegin, DateTimeOffset? dateEnd);
 	//Task<EditMarkdownVM> GetDescription(int id);
 
 	// Commands
@@ -177,7 +177,8 @@ WHERE Id = @Id
 		});
 	}
 
-	public async Task<List<SpecialEvent>> GetEventsByDateRange(DateTime dateBegin, DateTime dateEnd)
+	//https://stackoverflow.com/questions/4331189/datetime-vs-datetimeoffset
+	public async Task<List<SpecialEvent>> GetEventsByDateRange(DateTimeOffset? dateBegin, DateTimeOffset? dateEnd)
 	{
 		base.Parms = new DynamicParameters(new
 		{
