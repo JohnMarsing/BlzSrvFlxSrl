@@ -1,10 +1,11 @@
 ﻿using static BlzSrvFlxSrl.Features.SqlServer;
 using BlzSrvFlxSrl.Features.SpecialEvents.Data;
+using Microsoft.AspNetCore.Http;
 
 namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
 // 1. Action
-public record SpecialEvents_Submit_Action(FormVM FormVM);
+public record SpecialEvents_Submit_Action(FormVM FormVM, Enums.CommandState? CommandState);
 public record SpecialEvents_SubmitSuccess_Action();
 public record SpecialEvents_SubmitFailure_Action(string ErrorMessage);
 public record SpecialEvents_SetDateRange_Action(DateTimeOffset DateBegin, DateTimeOffset DateEnd);
@@ -19,8 +20,9 @@ public record SpecialEventsState
 {
 	public DateTimeOffset? DateBegin { get; init; }
 	public DateTimeOffset? DateEnd { get; init; }
-	public Enums.CommandState? CommandSate { get; init; }
+	public Enums.CommandState? CommandState { get; init; }
 	public int CurrentId { get; init; }
+	public string? FormTitle { get; init; }
 	public bool Submitting { get; init; }
 	public bool Submitted { get; init; }
 	public string? ErrorMessage { get; init; }
@@ -39,8 +41,9 @@ public class SpecialEventsStateFeature : Feature<SpecialEventsState>
 			//  ToDo: can't used these random default dates
 			DateBegin = DateTime.Parse("9/22/2021"),
 			DateEnd = DateTime.Parse("1/21/2023"),
-			CommandSate = Enums.CommandState.Add,
+			CommandState = Enums.CommandState.Add,
 			CurrentId = 0,
+			FormTitle = "Add",
 			Submitting = false,
 			Submitted = false,
 			ErrorMessage = string.Empty,
@@ -52,10 +55,11 @@ public class SpecialEventsStateFeature : Feature<SpecialEventsState>
 // 4. Reducers
 public static class SpecialEventsReducers
 {
-	[ReducerMethod(typeof(SpecialEvents_Submit_Action))]
-	public static SpecialEventsState OnSubmit(SpecialEventsState state)
+	//(typeof(SpecialEvents_Submit_Action))]
+	[ReducerMethod]
+	public static SpecialEventsState OnSubmit(SpecialEventsState state, SpecialEvents_Submit_Action action)
 	{
-		return state with { Submitting = true };
+		return state with { Submitting = true, CommandState = action.CommandState };
 	}
 
 	[ReducerMethod(typeof(SpecialEvents_SubmitSuccess_Action))]
@@ -83,28 +87,28 @@ public static class SpecialEventsReducers
 	public static SpecialEventsState OnAdd(
 		SpecialEventsState state, SpecialEvents_Add_Action action)
 	{
-		return state with { CurrentId = 0, CommandSate = Enums.CommandState.Add };
+		return state with { CurrentId = 0, CommandState = Enums.CommandState.Add, FormTitle = "Add" };
 	}
 
 	[ReducerMethod]
 	public static SpecialEventsState OnEdit(
 		SpecialEventsState state, SpecialEvents_Edit_Action action)
 	{
-		return state with { CurrentId = action.Id, CommandSate = Enums.CommandState.Edit };
+		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Edit, FormTitle = "Edit" };
 	}
 
 	[ReducerMethod]
 	public static SpecialEventsState OnDisplay(
 		SpecialEventsState state, SpecialEvents_Display_Action action)
 	{
-		return state with { CurrentId = action.Id, CommandSate = Enums.CommandState.Display };
+		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Display, FormTitle = "Display" };
 	}
 
 	[ReducerMethod]
 	public static SpecialEventsState OnDelete(
 		SpecialEventsState state, SpecialEvents_Delete_Action action)
 	{
-		return state with { CurrentId = action.Id, CommandSate = Enums.CommandState.Delete };
+		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Delete, FormTitle = "Delete" };
 	}
 
 }
@@ -126,31 +130,50 @@ public class SpecialEventsEffects
 	[EffectMethod]
 	public async Task SubmitSpecialEvents(SpecialEvents_Submit_Action action, IDispatcher dispatcher)
 	{
-		Logger.LogDebug(string.Format("Inside {0}, Action: {1}", nameof(SpecialEventsEffects) + "!" + nameof(SubmitSpecialEvents), action));
-		await Task.Delay(100); // just so we can see the "submitting" message
-		try
+		if (action.CommandState == Enums.CommandState.Add)
 		{
-			var sprocTuple = await db.CreateSpecialEvent(action.FormVM);
-			if (sprocTuple.NewId != 0)
+			Logger.LogDebug(string.Format("Inside {0}; Add"
+				, nameof(SpecialEventsEffects) + "!" + nameof(SubmitSpecialEvents), action));
+			try
 			{
-				dispatcher.Dispatch(new SpecialEvents_SubmitSuccess_Action());  // sprocTuple.ReturnMsg
-			}
-			else
-			{
-				if (sprocTuple.SprocReturnValue == ReturnValueViolationInUniqueIndex)
+				var sprocTuple = await db.CreateSpecialEvent(action.FormVM);
+				if (sprocTuple.NewId != 0)
 				{
-					dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action(sprocTuple.ReturnMsg + ", [ViolationIn Unique Index]"));
+					dispatcher.Dispatch(new SpecialEvents_SubmitSuccess_Action());  // sprocTuple.ReturnMsg
 				}
 				else
 				{
-					dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action(sprocTuple.ReturnMsg));
+					if (sprocTuple.SprocReturnValue == ReturnValueViolationInUniqueIndex)
+					{
+						dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action(sprocTuple.ReturnMsg + ", [ViolationIn Unique Index]"));
+					}
+					else
+					{
+						dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action(sprocTuple.ReturnMsg));
+					}
 				}
 			}
+			catch (Exception ex)
+			{
+				Logger.LogError(ex, string.Format("...Inside catch of {0}", nameof(SpecialEventsEffects) + "!" + nameof(SubmitSpecialEvents)));
+				dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action("An invalid operation occurred, contact your administrator. [Inside catch]"));
+			}
 		}
-		catch (Exception ex)
+		else
 		{
-			Logger.LogError(ex, string.Format("...Inside catch of {0}", nameof(SpecialEventsEffects) + "!" + nameof(SubmitSpecialEvents)));
-			dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action("An invalid operation occurred, contact your administrator. [Inside catch]"));
+			Logger.LogDebug(string.Format("Inside {0}; Edit Id: {1}"
+				, nameof(SpecialEventsEffects) + "!" + nameof(SubmitSpecialEvents), action.FormVM.Id));
+			try
+			{
+				var sprocTuple = await db.UpdateSpecialEvent(action.FormVM);
+			}
+			catch (Exception ex)
+			{
+				Logger.LogError(ex, string.Format("...Inside catch of {0}", nameof(SpecialEventsEffects) + "!" + nameof(SubmitSpecialEvents)));
+				dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action("An invalid operation occurred, contact your administrator. [Inside catch]"));
+			}
+
 		}
+
 	}
 }

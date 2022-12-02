@@ -40,7 +40,7 @@ public partial class Table
 			//Toast.ShowInfo($"MainState.Value.DateRange is null");
 			Logger!.LogDebug(string.Format("...MainState.Value.DateRange is null, nothing to do"));
 		}
-		base.OnInitializedAsync();  // _ = base.OnInitializedAsync();
+		await base.OnInitializedAsync();  // _ = base.OnInitializedAsync();
 	}
 
 	protected async Task PopulateTable() //DateTimeOffset? dateBegin, DateTimeOffset? dateEnd

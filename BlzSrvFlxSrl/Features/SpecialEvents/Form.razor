@@ -4,7 +4,7 @@
 @*@inject IState<SpecialEventsState> SpecialEventsState*@
 @inject IDispatcher Dispatcher
 
-@if (SpecialEventsState.Value.Submitting)
+@if (SpecialEventsState!.Value.Submitting)
 {
 	<div>Submitting... Please wait.</div>
 }
@@ -25,7 +25,7 @@ else
 		<ValidationSummary />
 
 		<fieldset class="py-1 my-0">
-			<legend class="text-success text-center"> @Title</legend>
+			<legend class="text-success text-center"> @SpecialEventsState.Value.FormTitle</legend>
 		</fieldset>
 
 		<fieldset class="mt-3">
