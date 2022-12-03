@@ -27,7 +27,11 @@
 </div>
 
 <Table />
-<Form />
+@if (IsFormVisible)
+{
+		<Form />
+}
+
 
 <AuthorizeView Roles="@Roles.AdminOrAnnouncements">
 	<Authorized>
@@ -49,12 +53,13 @@
 			<div class="card-header">Not Authorized</div>
 
 			<div class="card-body">
+@*
 				<h5 class="">To view <b>@Page.Title</b> you need to be logged in.</h5>
 				<button @onclick="@(() => RedirectToLoginClick(Page.Index))"
 								type="button" class="btn-primary btn-sm">
 					Login <i class='fas fa-sign-in-alt'></i>
 				</button>
-
+*@
 			</div>
 		</div>
 

@@ -60,6 +60,7 @@ public partial class Table
 	void EditActionHandler(int id)
 	{
 		Dispatcher?.Dispatch(new SpecialEvents_Edit_Action(SpecialEventsState!.Value.CurrentId));
+		Dispatcher?.Dispatch(new SpecialEvents_Get_Action(id, Enums.CommandState.Edit));
 	}
 
 	void DisplayActionHandler(int id)

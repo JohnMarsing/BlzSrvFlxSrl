@@ -12,9 +12,8 @@ public interface ISpecialEventsRepository
 	string BaseSqlDump { get; }
 
 	Task<List<SpecialEvent>> GetEventsByDateRange(DateTimeOffset? dateBegin, DateTimeOffset? dateEnd);
+	Task<SpecialEvent> GetEventById(int id);
 	//Task<EditMarkdownVM> GetDescription(int id);
-
-	// Commands
 	Task<int> UpdateDescription(int id, string description);
 	Task<(int NewId, int SprocReturnValue, string ReturnMsg)> CreateSpecialEvent(FormVM formVM);
 	Task<(int SprocReturnValue, string ReturnMsg)> UpdateSpecialEvent(SpecialEvents.FormVM formVM);
@@ -167,6 +166,31 @@ WHERE Id = @Id
 			return count;
 		});
 	}
+
+
+	public async Task<SpecialEvent> GetEventById(int id)
+	{
+		base.Parms = new DynamicParameters(new { Id = id });
+
+		base.Sql = $@"
+--DECLARE @Id int =1
+SELECT
+  Id, [DateTime]
+, ShowBeginDate, ShowEndDate
+, SpecialEventTypeId
+, Title, SubTitle
+, ISNULL(Description, '') AS Description 
+, ImageUrl, WebsiteUrl, WebsiteDescr, YouTubeId
+FROM SpecialEvent.Event
+WHERE Id=@Id
+";
+		return await WithConnectionAsync(async connection =>
+		{
+			var row = await connection.QueryAsync<SpecialEvent>(base.Sql, base.Parms);
+			return row.SingleOrDefault();
+		});
+	}
+
 
 	//https://stackoverflow.com/questions/4331189/datetime-vs-datetimeoffset
 	public async Task<List<SpecialEvent>> GetEventsByDateRange(DateTimeOffset? dateBegin, DateTimeOffset? dateEnd)

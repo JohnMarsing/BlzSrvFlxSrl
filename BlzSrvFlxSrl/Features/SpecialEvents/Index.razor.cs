@@ -1,6 +1,5 @@
 ﻿using BlazorDateRangePicker;
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
 using LoginLink = BlzSrvFlxSrl.Links.Account;
 
 namespace BlzSrvFlxSrl.Features.SpecialEvents;
@@ -13,7 +12,7 @@ public partial class Index
 
 	private DateTimeOffset? DateBegin { get; set; }
 	private DateTimeOffset? DateEnd { get; set; }
-
+	private bool IsFormVisible => SpecialEventsState!.Value.IsFormVisible;
 
 	protected override void OnInitialized()
 	{
@@ -21,8 +20,6 @@ public partial class Index
 		DateEnd = SpecialEventsState!.Value.DateEnd;
 		base.OnInitialized();
 	}
-
-	protected DateRangePicker Picker;
 
 	public void OnRangeSelect(DateRange range)
 	{
