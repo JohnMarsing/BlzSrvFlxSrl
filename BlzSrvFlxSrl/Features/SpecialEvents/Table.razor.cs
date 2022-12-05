@@ -43,15 +43,14 @@ public partial class Table
 		await base.OnInitializedAsync();  // _ = base.OnInitializedAsync();
 	}
 
+	// Port to state so that Add/Edit can refresh the table
 	protected async Task PopulateTable() //DateTimeOffset? dateBegin, DateTimeOffset? dateEnd
 	{
-		// Date Range: {action.DateBegin.ToString("yyyy-MM-dd")} to {action.DateEnd.ToString("yyyy-MM-dd")}");
 		Logger!.LogDebug(string.Format("Inside {0}, DateBegin:{1}, DateEnd:{2}"
 			, nameof(Table) + "!" + nameof(PopulateTable), DateBegin, DateEnd ));
-		SpecialEvents = await db.GetEventsByDateRange(DateBegin, DateEnd);
+		SpecialEvents = await db.GetEventsByDateRange(DateBegin, DateEnd);  
 	}
 
-	/*	*/
 	void AddActionHandler()
 	{
 		Dispatcher?.Dispatch(new SpecialEvents_Add_Action());
@@ -66,6 +65,7 @@ public partial class Table
 	void DisplayActionHandler(int id)
 	{
 		Dispatcher?.Dispatch(new SpecialEvents_Display_Action(SpecialEventsState!.Value.CurrentId));
+		Dispatcher?.Dispatch(new SpecialEvents_Get_Action(id, Enums.CommandState.Display));
 	}
 
 	void DeleteActionHandler(int id)

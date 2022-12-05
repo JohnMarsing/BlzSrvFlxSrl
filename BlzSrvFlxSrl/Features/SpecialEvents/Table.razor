@@ -14,17 +14,22 @@
 		<TableHeader>
 			<th class="text-info">Event Date</th>
 			<th class="text-info">Type</th>
-			<th class="text-info">Days Ahead</th>
+			<th class="text-info">Days <i class='fas fa-angle-left'></i> or <i class='fas fa-angle-right'></i></th>
 			<th class="text-info">Title</th>
+			<th class="text-info">YouTube Id</th>
 			<th class="text-danger text-center">Actions</th>
 		</TableHeader>
 
 		<RowTemplate>
 			<td>@context.EventDate.ToShortDateString()</td>
 			<td>@context.SpecialEventTypeId - @context.SpecialEventTypeName </td>
-			<td>@context.DaysAhead</td>
-			<td>@context.Title</td>
 
+			<td>
+				@((MarkupString)context.DaysAheadMU)
+			</td>
+			
+			<td>@context.Title</td>
+			<td>@context.YouTubeId</td>
 			<td class="text-center">
 				<div class="btn-group">
 					<button @onclick="@(() => EditActionHandler(context.Id))" title="Id: @context.Id"

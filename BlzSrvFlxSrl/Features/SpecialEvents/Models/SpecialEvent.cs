@@ -1,4 +1,6 @@
 ﻿using BlzSrvFlxSrl.Features.SpecialEvents.Enums;
+using Markdig;
+using Microsoft.AspNetCore.Components;
 using System;
 
 namespace BlzSrvFlxSrl.Features.SpecialEvents.Models;
@@ -27,28 +29,31 @@ public class SpecialEvent
 	public string WebsiteDescr { get; set; }
 	public string Description { get; set; }  // ToDo: md?, probably going to be Component Body
 
-	public string DaysAhead
+	//public string DescriptionMD => Markdown.ToHtml(Description);
+
+	public MarkupString DaysAheadMU
 	{
 		get
 		{
 			if (DaysDiffDescr != null)
 			{
-				if (DaysDiff >= 0)
+				if (DaysDiffDescr == "Days Ahead")
 				{
-					return DaysDiff + ' ' + DaysDiffDescr;
+					return (MarkupString)$"<span class='text-success'>{DaysDiff}</span> <i class='fas fa-angle-right'></i>";
 				}
 				else
 				{
-					return DaysDiff + ' ' + DaysDiffDescr;
+					return (MarkupString)$"<span class='text-danger'>{DaysDiff}</span> <i class='fas fa-angle-left'></i>"; // 
 				}
 			}
 			else
 			{
-				return "?";
+				return (MarkupString)"?";
 			}
 
 		}
 	}
+
 
 	public override string ToString()
 	{
@@ -70,4 +75,5 @@ public class SpecialEvent
 		return EventDate.ToString("MMMM");
 	}
 
+	
 }

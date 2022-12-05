@@ -1,0 +1,34 @@
+﻿@using LivingMessiah.Web.LinkSmartEnums
+
+<nav id="subNavBar" class="navbar navbar-expand-sm navbar-toggleable-md border-bottom box-shadow p-0 mb-3 @NavBarColor">
+	<div class="container">
+
+		<a class="nav-link  @GetActive(@ParashaLink.Current)" title="" href="@ParashaLink.Current.Page">
+			<i class="fas fa-home"></i>
+			@ParashaLink.Current.Title
+		</a>
+
+		<button class="navbar-toggler" @onclick="ToggleSubNavBar" type="button"
+						data-bs-toggle="collapse" data-target=".navbar-collapse"
+						aria-controls="navbarSupportedContent"
+						aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="@SubNavBarCssClass navbar-collapse d-sm-inline-flex flex-sm-row-reverse"
+				 @onclick="ToggleSubNavBar">
+
+			<ul class="navbar-nav flex-grow-1">
+				@foreach (var item in ParashaLink.List.OrderBy(o => o.Value).Where(w => w.Value != 1 & w.Display==true))
+				{
+					<li class="nav-item">
+						<a class="nav-link @GetActive(item)" href="@item.Page">
+							<i class="@item.NavBarIcon"></i>
+							@item.NavBarText
+						</a>
+					</li>
+				}
+			</ul>
+
+		</div>
+	</div>
+</nav>

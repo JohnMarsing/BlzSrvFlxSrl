@@ -38,6 +38,7 @@ public class FormVM
 	public string WebsiteDescr { get; set; }
 	public string Description { get; set; }  // ToDo: md?, probably going to be Component Body
 
+	// ToDo: Warning	CS8618	Non-nullable property 'Description' et. al. must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 	public FormVM()
 	{
 		SpecialEventTypeId = SpecialEventType.Other.Value;

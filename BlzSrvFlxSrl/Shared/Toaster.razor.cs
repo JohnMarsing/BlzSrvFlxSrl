@@ -9,24 +9,48 @@ namespace BlzSrvFlxSrl.Shared;
 
 public partial class Toaster
 {
-	[Inject] public IToastService Toast { get; set; }
+	[Inject] public IToastService? Toast { get; set; }
 
 	protected override void OnInitialized()
 	{
 		SubscribeToAction<BibleSearch_ShowDetails_Action>(BibleDetails_ShowIsVisible_Toast);
 		SubscribeToAction<SpecialEvents_SetDateRange_Action>(SpecialEvents_SetDateRange_Toast);
+		SubscribeToAction<SpecialEvents_GetFailure_Action>(SpecialEvents_GetFailure_Toast);
+		SubscribeToAction<SpecialEvents_GetSuccess_Action>(SpecialEvents_GetSuccess_Toast);
+
+		SubscribeToAction<SpecialEvents_SubmitSuccess_Action>(SpecialEvents_SubmitSuccess_Toast);
+		SubscribeToAction<SpecialEvents_SubmitFailure_Action>(SpecialEvents_SubmitFailure_Toast);
+
 		base.OnInitialized();
 	}    
 
 	private void BibleDetails_ShowIsVisible_Toast(BibleSearch_ShowDetails_Action action)
 	{
-		Toast.ShowInfo($"BibleDetails!ShowDetails action; IsVisible: {action.IsVisible}");
+		Toast!.ShowInfo($"BibleDetails!ShowDetails action; IsVisible: {action.IsVisible}");
 	}
 
 	private void SpecialEvents_SetDateRange_Toast(SpecialEvents_SetDateRange_Action action)
 	{
-		Toast.ShowInfo($"SpecialEvents!SetDateRange action; Date Range: {action.DateBegin.ToString("yyyy-MM-dd")} to {action.DateEnd.ToString("yyyy-MM-dd")}");
+		Toast!.ShowInfo($"SpecialEvents!SetDateRange action; Date Range: {action.DateBegin.ToString("yyyy-MM-dd")} to {action.DateEnd.ToString("yyyy-MM-dd")}");
 	}
 
+	private void SpecialEvents_GetSuccess_Toast(SpecialEvents_GetSuccess_Action action)
+	{
+		Toast!.ShowInfo($"Got {action.Model!.Title!}");
+	}
+
+	private void SpecialEvents_GetFailure_Toast(SpecialEvents_GetFailure_Action action)
+	{
+		Toast!.ShowError($"SpecialEvents!GetFailure action; ErrorMessage: {action.ErrorMessage}");
+	}
+
+	private void SpecialEvents_SubmitSuccess_Toast(SpecialEvents_SubmitSuccess_Action action)
+	{
+		Toast!.ShowSuccess($"{action.SuccessMessage}");
+	}
+	private void SpecialEvents_SubmitFailure_Toast(SpecialEvents_SubmitFailure_Action action)
+	{
+		Toast!.ShowError($"SpecialEvents!SubmitFailure action; ErrorMessage: {action.ErrorMessage}");
+	}
 }
 

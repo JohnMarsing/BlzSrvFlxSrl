@@ -13,6 +13,7 @@ public partial class Index
 	private DateTimeOffset? DateBegin { get; set; }
 	private DateTimeOffset? DateEnd { get; set; }
 	private bool IsFormVisible => SpecialEventsState!.Value.IsFormVisible;
+	private bool IsDisplayVisible => SpecialEventsState!.Value.IsDisplayVisible;
 
 	protected override void OnInitialized()
 	{

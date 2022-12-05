@@ -6,11 +6,11 @@ namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
 // 1. Action
 public record SpecialEvents_Get_Action(int Id, Enums.CommandState? CommandState);
-public record SpecialEvents_GetSuccess_Action();
+public record SpecialEvents_GetSuccess_Action(FormVM? Model, Enums.CommandState? CommandState);
 public record SpecialEvents_GetFailure_Action(string ErrorMessage);
 
 public record SpecialEvents_Submit_Action(FormVM FormVM, Enums.CommandState? CommandState);
-public record SpecialEvents_SubmitSuccess_Action();
+public record SpecialEvents_SubmitSuccess_Action(string SuccessMessage);
 public record SpecialEvents_SubmitFailure_Action(string ErrorMessage);
 
 public record SpecialEvents_SetDateRange_Action(DateTimeOffset DateBegin, DateTimeOffset DateEnd);
@@ -18,7 +18,9 @@ public record SpecialEvents_ShowForm_Action(bool IsVisible);
 
 public record SpecialEvents_Add_Action();
 public record SpecialEvents_Edit_Action(int Id);
+
 public record SpecialEvents_Display_Action(int Id);
+
 public record SpecialEvents_Delete_Action(int Id);
 
 // 2. State
@@ -31,8 +33,10 @@ public record SpecialEventsState
 	public string? FormTitle { get; init; }
 	public string? FormSubmitButton { get; init; }
 	public bool IsFormVisible { get; init; }
+	public bool IsDisplayVisible { get; init; }
 	public bool Submitting { get; init; }
 	public bool Submitted { get; init; }
+	public string? SuccessMessage { get; init; }
 	public string? ErrorMessage { get; init; }
 	public FormVM? Model { get; init; }
 }
@@ -47,15 +51,17 @@ public class SpecialEventsStateFeature : Feature<SpecialEventsState>
 		return new SpecialEventsState
 		{
 			//  ToDo: can't used these random default dates
-			DateBegin = DateTime.Parse("9/22/2021"),
+			DateBegin = DateTime.Parse("3/1/2021"),
 			DateEnd = DateTime.Parse("1/21/2023"),
 			IsFormVisible = false,
-			CommandState = Enums.CommandState.Add,
+			IsDisplayVisible = false,
+			CommandState = Enums.CommandState.Add,  // ???
 			CurrentId = 0,
 			FormTitle = "Add",
 			FormSubmitButton = "Add",
-			Submitting = false,
-			Submitted = false,
+			Submitting = false, // can this be toasted?
+			Submitted = false, // can this be toasted?
+			SuccessMessage = string.Empty,
 			ErrorMessage = string.Empty,
 			Model = new FormVM()
 		};
@@ -71,11 +77,18 @@ public static class SpecialEventsReducers
 	{
 		return state with { CommandState = action.CommandState };
 	}
-
-	[ReducerMethod(typeof(SpecialEvents_GetSuccess_Action))]
-	public static SpecialEventsState OnGetSuccess(SpecialEventsState state)
+		
+	[ReducerMethod]
+	public static SpecialEventsState OnGetSuccess(
+		SpecialEventsState state, SpecialEvents_GetSuccess_Action action)
 	{
-		return state with { Submitting = false, Submitted = true, IsFormVisible = false };
+		return state with { 
+			Submitting = false, 
+			Submitted = true, 
+			IsFormVisible = action.CommandState == Enums.CommandState.Add || action.CommandState == Enums.CommandState.Edit,
+			IsDisplayVisible = action.CommandState == Enums.CommandState.Display,
+			Model = action.Model 
+		};
 	}
 
 	[ReducerMethod]
@@ -86,18 +99,17 @@ public static class SpecialEventsReducers
 	}
 
 
-
-	//(typeof(SpecialEvents_Submit_Action))]
 	[ReducerMethod]
 	public static SpecialEventsState OnSubmit(SpecialEventsState state, SpecialEvents_Submit_Action action)
 	{
 		return state with { Submitting = true, CommandState = action.CommandState };
 	}
 
-	[ReducerMethod(typeof(SpecialEvents_SubmitSuccess_Action))]
-	public static SpecialEventsState OnSubmitSuccess(SpecialEventsState state)
+	[ReducerMethod]
+	public static SpecialEventsState OnSubmitSuccess(
+			SpecialEventsState state, SpecialEvents_SubmitSuccess_Action action)
 	{
-		return state with { Submitting = false, Submitted = true, IsFormVisible = false };
+		return state with { Submitting = false, Submitted = true, IsFormVisible = false, SuccessMessage="" };
 	}
 
 	[ReducerMethod]
@@ -119,28 +131,28 @@ public static class SpecialEventsReducers
 	public static SpecialEventsState OnAdd(
 		SpecialEventsState state, SpecialEvents_Add_Action action)
 	{
-		return state with { CurrentId = 0, CommandState = Enums.CommandState.Add, FormTitle = "Add", FormSubmitButton = "Add Event", IsFormVisible = true };
+		return state with { CurrentId = 0, CommandState = Enums.CommandState.Add, FormTitle = "Add", FormSubmitButton = "Add Event", IsFormVisible = true, IsDisplayVisible = false };
 	}
 
 	[ReducerMethod]
 	public static SpecialEventsState OnEdit(
 		SpecialEventsState state, SpecialEvents_Edit_Action action)
 	{
-		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Edit, FormTitle = "Edit", FormSubmitButton = "Update Event", IsFormVisible = true };
+		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Edit, FormTitle = "Edit", FormSubmitButton = "Update Event", IsFormVisible = true, IsDisplayVisible = false };
 	}
 
 	[ReducerMethod]
 	public static SpecialEventsState OnDisplay(
 		SpecialEventsState state, SpecialEvents_Display_Action action)
 	{
-		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Display, FormTitle = "Display", FormSubmitButton = "", IsFormVisible = true };
+		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Display, FormTitle = "Display", FormSubmitButton = "", IsFormVisible = false, IsDisplayVisible=true };
 	}
 
 	[ReducerMethod]
 	public static SpecialEventsState OnDelete(
 		SpecialEventsState state, SpecialEvents_Delete_Action action)
 	{
-		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Delete, FormTitle = "Delete", FormSubmitButton = "", IsFormVisible = true };
+		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Delete, FormTitle = "Delete", FormSubmitButton = "", IsFormVisible = true, IsDisplayVisible = false };
 	}
 
 }
@@ -162,16 +174,18 @@ public class SpecialEventsEffects
 	[EffectMethod]
 	public async Task SubmitSpecialEvents(SpecialEvents_Submit_Action action, IDispatcher dispatcher)
 	{
+		string msgAddOrEdit = string.Empty;
 		if (action.CommandState == Enums.CommandState.Add)
 		{
-			Logger.LogDebug(string.Format("Inside {0}; Add"
-				, nameof(SpecialEventsEffects) + "!" + nameof(SubmitSpecialEvents), action));
+			msgAddOrEdit = "Add";
+			Logger.LogDebug(string.Format("Inside {0}; Action: {1}"
+				, nameof(SpecialEventsEffects) + "!" + nameof(SubmitSpecialEvents), msgAddOrEdit));
 			try
 			{
 				var sprocTuple = await db.CreateSpecialEvent(action.FormVM);
 				if (sprocTuple.NewId != 0)
 				{
-					dispatcher.Dispatch(new SpecialEvents_SubmitSuccess_Action());  // sprocTuple.ReturnMsg
+					dispatcher.Dispatch(new SpecialEvents_SubmitSuccess_Action($"Special Event Added id: [{sprocTuple.NewId}]"));
 				}
 				else
 				{
@@ -188,21 +202,23 @@ public class SpecialEventsEffects
 			catch (Exception ex)
 			{
 				Logger.LogError(ex, string.Format("...Inside catch of {0}", nameof(SpecialEventsEffects) + "!" + nameof(SubmitSpecialEvents)));
-				dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action("An invalid operation occurred, contact your administrator. [Inside catch]"));
+				dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action($"An invalid operation occurred, contact your administrator. Action:{msgAddOrEdit}; [Inside catch]"));
 			}
 		}
 		else
 		{
-			Logger.LogDebug(string.Format("Inside {0}; Edit Id: {1}"
-				, nameof(SpecialEventsEffects) + "!" + nameof(SubmitSpecialEvents), action.FormVM.Id));
+			msgAddOrEdit = "Edit";
+			Logger.LogDebug(string.Format("Inside {0}; Action: {1}; Id: {2}"
+				, nameof(SpecialEventsEffects) + "!" + nameof(SubmitSpecialEvents), msgAddOrEdit, action.FormVM.Id));
 			try
 			{
 				var sprocTuple = await db.UpdateSpecialEvent(action.FormVM);
+				dispatcher.Dispatch(new SpecialEvents_SubmitSuccess_Action($"Special Event Updated id: [{action.FormVM.Id}]"));
 			}
 			catch (Exception ex)
 			{
 				Logger.LogError(ex, string.Format("...Inside catch of {0}", nameof(SpecialEventsEffects) + "!" + nameof(SubmitSpecialEvents)));
-				dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action("An invalid operation occurred, contact your administrator. [Inside catch]"));
+				dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action($"An invalid operation occurred, contact your administrator. Action:{msgAddOrEdit}; [Inside catch]"));
 			}
 
 		}
@@ -220,7 +236,24 @@ public class SpecialEventsEffects
 		{
 			Models.SpecialEvent specialEvent = new Models.SpecialEvent();
 			specialEvent = await db.GetEventById(action.Id);
-			dispatcher.Dispatch(new SpecialEvents_GetFailure_Action("An invalid operation occurred, contact your administrator. [Inside catch]"));
+			Logger.LogDebug(string.Format("...Title: {0}", specialEvent.Title));
+			FormVM formVM = new FormVM
+			{
+				Id = specialEvent.Id,
+				ShowBeginDate = specialEvent.ShowBeginDate,
+				ShowEndDate = specialEvent.ShowEndDate,
+				EventDate = specialEvent.EventDate,
+				SpecialEventTypeId = specialEvent.SpecialEventTypeId,
+				Title = specialEvent.Title,
+				SubTitle = specialEvent.SubTitle,
+				ImageUrl = specialEvent.ImageUrl,
+				YouTubeId = specialEvent.YouTubeId,
+				WebsiteUrl = specialEvent.WebsiteUrl,
+				WebsiteDescr = specialEvent.WebsiteDescr,
+				Description = specialEvent.Description
+			};
+
+			dispatcher.Dispatch(new SpecialEvents_GetSuccess_Action(formVM, action.CommandState));
 		}
 		catch (Exception ex)
 		{
@@ -228,6 +261,6 @@ public class SpecialEventsEffects
 			dispatcher.Dispatch(new SpecialEvents_GetFailure_Action("An invalid operation occurred, contact your administrator. [Inside catch]"));
 		}
 	}
-	
+
 
 }

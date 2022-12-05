@@ -12,7 +12,7 @@ public interface ISpecialEventsRepository
 	string BaseSqlDump { get; }
 
 	Task<List<SpecialEvent>> GetEventsByDateRange(DateTimeOffset? dateBegin, DateTimeOffset? dateEnd);
-	Task<SpecialEvent> GetEventById(int id);
+	Task<SpecialEvent?> GetEventById(int id);
 	//Task<EditMarkdownVM> GetDescription(int id);
 	Task<int> UpdateDescription(int id, string description);
 	Task<(int NewId, int SprocReturnValue, string ReturnMsg)> CreateSpecialEvent(FormVM formVM);
@@ -168,14 +168,14 @@ WHERE Id = @Id
 	}
 
 
-	public async Task<SpecialEvent> GetEventById(int id)
+	public async Task<SpecialEvent?> GetEventById(int id)
 	{
 		base.Parms = new DynamicParameters(new { Id = id });
 
 		base.Sql = $@"
 --DECLARE @Id int =1
 SELECT
-  Id, [DateTime]
+  Id, [DateTime] AS EventDate
 , ShowBeginDate, ShowEndDate
 , SpecialEventTypeId
 , Title, SubTitle
@@ -203,7 +203,7 @@ WHERE Id=@Id
 
 		base.Sql = $@"
 --Description is modified because MarkDig doesn't like nulls
---DECLARE @DaysAhead int =100, @DaysPast int =-3
+--DECLARE @DateBegin smalldatetime =  '2021-03-01', @DateEnd smalldatetime = '2023-01-31' 
 SELECT
   Id, EventDate
 , SpecialEventTypeId
