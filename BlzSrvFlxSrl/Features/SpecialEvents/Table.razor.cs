@@ -64,13 +64,13 @@ public partial class Table
 
 	void DisplayActionHandler(int id)
 	{
-		Dispatcher?.Dispatch(new SpecialEvents_Display_Action(SpecialEventsState!.Value.CurrentId));
 		Dispatcher?.Dispatch(new SpecialEvents_Get_Action(id, Enums.CommandState.Display));
 	}
 
 	void DeleteActionHandler(int id)
 	{
-		Dispatcher?.Dispatch(new SpecialEvents_Delete_Action(SpecialEventsState!.Value.CurrentId));
+		Logger!.LogDebug(string.Format("...{0}; id:{1}", nameof(Table) + "!" + nameof(DeleteActionHandler), id));
+		Dispatcher?.Dispatch(new SpecialEvents_Delete_Action(id));
 	}
 
 }

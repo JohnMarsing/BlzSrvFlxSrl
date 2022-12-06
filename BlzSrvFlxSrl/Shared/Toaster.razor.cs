@@ -21,8 +21,12 @@ public partial class Toaster
 		SubscribeToAction<SpecialEvents_SubmitSuccess_Action>(SpecialEvents_SubmitSuccess_Toast);
 		SubscribeToAction<SpecialEvents_SubmitFailure_Action>(SpecialEvents_SubmitFailure_Toast);
 
+		SubscribeToAction<SpecialEvents_DeleteSuccess_Action>(SpecialEvents_DeleteSuccess_Toast);
+		SubscribeToAction<SpecialEvents_DeleteFailure_Action>(SpecialEvents_DeleteFailure_Toast);
+
 		base.OnInitialized();
 	}    
+
 
 	private void BibleDetails_ShowIsVisible_Toast(BibleSearch_ShowDetails_Action action)
 	{
@@ -41,7 +45,7 @@ public partial class Toaster
 
 	private void SpecialEvents_GetFailure_Toast(SpecialEvents_GetFailure_Action action)
 	{
-		Toast!.ShowError($"SpecialEvents!GetFailure action; ErrorMessage: {action.ErrorMessage}");
+		Toast!.ShowError($"{action.ErrorMessage}");
 	}
 
 	private void SpecialEvents_SubmitSuccess_Toast(SpecialEvents_SubmitSuccess_Action action)
@@ -52,5 +56,17 @@ public partial class Toaster
 	{
 		Toast!.ShowError($"SpecialEvents!SubmitFailure action; ErrorMessage: {action.ErrorMessage}");
 	}
+
+
+	private void SpecialEvents_DeleteSuccess_Toast(SpecialEvents_DeleteSuccess_Action action)
+	{
+		Toast!.ShowSuccess($"Special Event Deleted");
+	}
+	private void SpecialEvents_DeleteFailure_Toast(SpecialEvents_DeleteFailure_Action action)
+	{
+		Toast!.ShowError($"SpecialEvents!DeleteFailure action; ErrorMessage: {action.ErrorMessage}");
+	}
+
+
 }
 

@@ -22,6 +22,8 @@ public record SpecialEvents_Edit_Action(int Id);
 public record SpecialEvents_Display_Action(int Id);
 
 public record SpecialEvents_Delete_Action(int Id);
+public record SpecialEvents_DeleteSuccess_Action();  
+public record SpecialEvents_DeleteFailure_Action(string ErrorMessage);
 
 // 2. State
 public record SpecialEventsState
@@ -77,17 +79,18 @@ public static class SpecialEventsReducers
 	{
 		return state with { CommandState = action.CommandState };
 	}
-		
+
 	[ReducerMethod]
 	public static SpecialEventsState OnGetSuccess(
 		SpecialEventsState state, SpecialEvents_GetSuccess_Action action)
 	{
-		return state with { 
-			Submitting = false, 
-			Submitted = true, 
+		return state with
+		{
+			Submitting = false,
+			Submitted = true,
 			IsFormVisible = action.CommandState == Enums.CommandState.Add || action.CommandState == Enums.CommandState.Edit,
 			IsDisplayVisible = action.CommandState == Enums.CommandState.Display,
-			Model = action.Model 
+			Model = action.Model
 		};
 	}
 
@@ -109,7 +112,7 @@ public static class SpecialEventsReducers
 	public static SpecialEventsState OnSubmitSuccess(
 			SpecialEventsState state, SpecialEvents_SubmitSuccess_Action action)
 	{
-		return state with { Submitting = false, Submitted = true, IsFormVisible = false, SuccessMessage="" };
+		return state with { Submitting = false, Submitted = true, IsFormVisible = false, SuccessMessage = "" };
 	}
 
 	[ReducerMethod]
@@ -145,14 +148,14 @@ public static class SpecialEventsReducers
 	public static SpecialEventsState OnDisplay(
 		SpecialEventsState state, SpecialEvents_Display_Action action)
 	{
-		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Display, FormTitle = "Display", FormSubmitButton = "", IsFormVisible = false, IsDisplayVisible=true };
+		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Display, FormTitle = "Display", FormSubmitButton = "", IsFormVisible = false, IsDisplayVisible = true };
 	}
 
 	[ReducerMethod]
 	public static SpecialEventsState OnDelete(
 		SpecialEventsState state, SpecialEvents_Delete_Action action)
 	{
-		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Delete, FormTitle = "Delete", FormSubmitButton = "", IsFormVisible = true, IsDisplayVisible = false };
+		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Delete, FormTitle = "Delete", FormSubmitButton = "", IsFormVisible = false, IsDisplayVisible = false };
 	}
 
 }
@@ -220,7 +223,6 @@ public class SpecialEventsEffects
 				Logger.LogError(ex, string.Format("...Inside catch of {0}", nameof(SpecialEventsEffects) + "!" + nameof(SubmitSpecialEvents)));
 				dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action($"An invalid operation occurred, contact your administrator. Action:{msgAddOrEdit}; [Inside catch]"));
 			}
-
 		}
 
 	}
@@ -230,30 +232,42 @@ public class SpecialEventsEffects
 	[EffectMethod]
 	public async Task GetSpecialEvents(SpecialEvents_Get_Action action, IDispatcher dispatcher)
 	{
-		Logger.LogDebug(string.Format("Inside {0}; id:{1}"
-			, nameof(SpecialEventsEffects) + "!" + nameof(GetSpecialEvents), action.Id));
+		string inside = nameof(SpecialEventsEffects) + "!" + nameof(GetSpecialEvents);
+
+		Logger.LogDebug(string.Format("Inside {0}; id:{1}", inside, action.Id));
 		try
 		{
-			Models.SpecialEvent specialEvent = new Models.SpecialEvent();
-			specialEvent = await db.GetEventById(action.Id);
-			Logger.LogDebug(string.Format("...Title: {0}", specialEvent.Title));
-			FormVM formVM = new FormVM
-			{
-				Id = specialEvent.Id,
-				ShowBeginDate = specialEvent.ShowBeginDate,
-				ShowEndDate = specialEvent.ShowEndDate,
-				EventDate = specialEvent.EventDate,
-				SpecialEventTypeId = specialEvent.SpecialEventTypeId,
-				Title = specialEvent.Title,
-				SubTitle = specialEvent.SubTitle,
-				ImageUrl = specialEvent.ImageUrl,
-				YouTubeId = specialEvent.YouTubeId,
-				WebsiteUrl = specialEvent.WebsiteUrl,
-				WebsiteDescr = specialEvent.WebsiteDescr,
-				Description = specialEvent.Description
-			};
+			Models.SpecialEvent? specialEvent = new(); //= new Models.SpecialEvent();
+			specialEvent = await db!.GetEventById(action.Id); // test with 0
 
-			dispatcher.Dispatch(new SpecialEvents_GetSuccess_Action(formVM, action.CommandState));
+			if (specialEvent is null)
+			{
+				Logger.LogWarning(string.Format("...{0}; {1} is null", inside, nameof(specialEvent)));
+				dispatcher.Dispatch(new SpecialEvents_GetFailure_Action("Special Event Not Found"));
+			}
+			else
+			{
+				Logger.LogDebug(string.Format("...Title: {0}", specialEvent!.Title));
+				FormVM formVM = new FormVM
+				{
+					Id = specialEvent.Id,
+					ShowBeginDate = specialEvent.ShowBeginDate,
+					ShowEndDate = specialEvent.ShowEndDate,
+					EventDate = specialEvent.EventDate,
+					SpecialEventTypeId = specialEvent.SpecialEventTypeId,
+					Title = specialEvent.Title,
+					SubTitle = specialEvent.SubTitle,
+					ImageUrl = specialEvent.ImageUrl,
+					YouTubeId = specialEvent.YouTubeId,
+					WebsiteUrl = specialEvent.WebsiteUrl,
+					WebsiteDescr = specialEvent.WebsiteDescr,
+					Description = specialEvent.Description
+				};
+
+				dispatcher.Dispatch(new SpecialEvents_GetSuccess_Action(formVM, action.CommandState));
+				dispatcher.Dispatch(new SpecialEvents_Display_Action(action.Id));  // ==> , CurrentId = action.Id, IsFormVisible = false, IsDisplayVisible = true
+			}
+
 		}
 		catch (Exception ex)
 		{
@@ -262,5 +276,21 @@ public class SpecialEventsEffects
 		}
 	}
 
+	[EffectMethod]
+	public async Task DeleteSpecialEvents(SpecialEvents_Delete_Action action, IDispatcher dispatcher)
+	{
+		Logger.LogDebug(string.Format("Inside {0}; Id: {1}"
+			, nameof(SpecialEventsEffects) + "!" + nameof(DeleteSpecialEvents), action.Id));
+		try
+		{
+			var affectedrows = await db.RemoveSpecialEvent(action.Id);
+			dispatcher.Dispatch(new SpecialEvents_DeleteSuccess_Action()); 
+		}
+		catch (Exception ex)
+		{
+			Logger.LogError(ex, string.Format("...Inside catch of {0}", nameof(SpecialEventsEffects) + "!" + nameof(DeleteSpecialEvents)));
+			dispatcher.Dispatch(new SpecialEvents_DeleteFailure_Action($"An invalid operation occurred, contact your administrator; [Inside catch]"));
+		}
+	}
 
 }

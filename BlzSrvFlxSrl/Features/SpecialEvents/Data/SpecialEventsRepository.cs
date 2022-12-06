@@ -130,7 +130,8 @@ public class SpecialEventsRepository : BaseRepositoryAsync, ISpecialEventsReposi
 		base.Sql = $"DELETE FROM SpecialEvent.Event WHERE Id=@Id";
 		return await WithConnectionAsync(async connection =>
 		{
-			base.log.LogDebug(string.Format("...Deleting id: {0}", id));
+			base.log.LogDebug(string.Format("Inside {0}; deleting id: {1}"
+				, nameof(SpecialEventsRepository) + "!" + nameof(UpdateSpecialEvent), id));
 			var affectedrows = await connection.ExecuteAsync(sql: base.Sql, param: base.Parms);
 			return affectedrows;
 		});
