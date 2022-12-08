@@ -32,12 +32,13 @@
 			<td>@context.YouTubeId</td>
 			<td class="text-center">
 				<div class="btn-group">
+
 					<button @onclick="@(() => EditActionHandler(context.Id))" title="Id: @context.Id"
 									type="button" class="@ActionButtons.EditButtonColor btn-sm gx-3">
 						<i class="@ActionButtons.EditIcon"></i> @ActionButtons.EditText
 					</button>
 
-					<button @onclick="@(() => DeleteActionHandler(context.Id))" title="Id: @context.Id"
+					<button @onclick="@(() => DeleteConfirmationHandler(context.Id, context.Title))" title="Id: @context.Id"
 									type="button" class="@ActionButtons.DeleteButtonColor btn-sm gx-3">
 						<i class="@ActionButtons.DeleteIcon"></i> @ActionButtons.DeleteText
 					</button>
@@ -46,6 +47,7 @@
 									type="button" class="@ActionButtons.DisplayButtonColor btn-sm gx-3">
 						<i class="@ActionButtons.DisplayIcon"></i> @ActionButtons.DisplayText
 					</button>
+
 				</div>
 			</td>
 

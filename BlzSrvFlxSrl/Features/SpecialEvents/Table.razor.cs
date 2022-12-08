@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.Logging;
-
-using Blazored.Toast.Services;
+﻿using Microsoft.AspNetCore.Components;
 using BlzSrvFlxSrl.Features.SpecialEvents.Models;
 using BlzSrvFlxSrl.Features.SpecialEvents.Data;
+using Blazored.Modal.Services;
+using BlzSrvFlxSrl.Shared.Modals;
 
 namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
@@ -14,10 +10,10 @@ public partial class Table
 {
 	[Inject] public ISpecialEventsRepository db { get; set; }
 	[Inject] public ILogger<Table>? Logger { get; set; }
-	[Inject] public IToastService? Toast { get; set; }
-
 	[Inject] private IState<SpecialEventsState>? SpecialEventsState { get; set; }
 	[Inject] public IDispatcher? Dispatcher { get; set; }
+
+	[CascadingParameter] IModalService Modal { get; set; } = default!;
 
 	private DateTimeOffset? DateBegin { get; set; }
 	private DateTimeOffset? DateEnd { get; set; }
@@ -67,10 +63,17 @@ public partial class Table
 		Dispatcher?.Dispatch(new SpecialEvents_Get_Action(id, Enums.CommandState.Display));
 	}
 
-	void DeleteActionHandler(int id)
+	private async Task DeleteConfirmationHandler(int id, string title)
 	{
-		Logger!.LogDebug(string.Format("...{0}; id:{1}", nameof(Table) + "!" + nameof(DeleteActionHandler), id));
-		Dispatcher?.Dispatch(new SpecialEvents_Delete_Action(id));
+		Logger!.LogDebug(string.Format("...{0}; id:{1}, title: {2}", nameof(Table) + "!" + nameof(DeleteConfirmationHandler), id, title));
+		var parameters = new ModalParameters { { nameof(ConfirmDelete.Message)
+				, $"Special Event {title}" } };
+		var modal = Modal.Show<ConfirmDelete>("Confirmation Required", parameters);
+		var result = await modal.Result;
+		if (result.Confirmed)
+		{
+			Dispatcher?.Dispatch(new SpecialEvents_Delete_Action(id));
+		}
 	}
 
 }

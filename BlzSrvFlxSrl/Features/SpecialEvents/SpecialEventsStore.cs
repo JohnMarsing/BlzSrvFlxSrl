@@ -271,7 +271,7 @@ public class SpecialEventsEffects
 		}
 		catch (Exception ex)
 		{
-			Logger.LogError(ex, string.Format("...Inside catch of {0}", nameof(SpecialEventsEffects) + "!" + nameof(SubmitSpecialEvents)));
+			Logger.LogError(ex, string.Format("...Inside catch of {0}", inside));
 			dispatcher.Dispatch(new SpecialEvents_GetFailure_Action("An invalid operation occurred, contact your administrator. [Inside catch]"));
 		}
 	}
@@ -279,8 +279,8 @@ public class SpecialEventsEffects
 	[EffectMethod]
 	public async Task DeleteSpecialEvents(SpecialEvents_Delete_Action action, IDispatcher dispatcher)
 	{
-		Logger.LogDebug(string.Format("Inside {0}; Id: {1}"
-			, nameof(SpecialEventsEffects) + "!" + nameof(DeleteSpecialEvents), action.Id));
+		string inside = nameof(SpecialEventsEffects) + "!" + nameof(DeleteSpecialEvents);
+		Logger.LogDebug(string.Format("Inside {0}; Id: {1}", inside, action.Id));
 		try
 		{
 			var affectedrows = await db.RemoveSpecialEvent(action.Id);
@@ -288,7 +288,7 @@ public class SpecialEventsEffects
 		}
 		catch (Exception ex)
 		{
-			Logger.LogError(ex, string.Format("...Inside catch of {0}", nameof(SpecialEventsEffects) + "!" + nameof(DeleteSpecialEvents)));
+			Logger.LogError(ex, string.Format("...Inside catch of {0}", inside));
 			dispatcher.Dispatch(new SpecialEvents_DeleteFailure_Action($"An invalid operation occurred, contact your administrator; [Inside catch]"));
 		}
 	}

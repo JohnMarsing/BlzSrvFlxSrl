@@ -35,6 +35,7 @@ public class Startup
 		services.AddDataStores();
 		services.AddSession();
 		services.AddBlazoredToast();
+		services.AddBlazoredModal();
 		services.AddCustomAuthentication(Configuration);
 		services.Configure<AppSettings>(options => Configuration.GetSection("AppSettings").Bind(options));
 

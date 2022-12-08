@@ -64,7 +64,7 @@ public partial class Toaster
 	}
 	private void SpecialEvents_DeleteFailure_Toast(SpecialEvents_DeleteFailure_Action action)
 	{
-		Toast!.ShowError($"SpecialEvents!DeleteFailure action; ErrorMessage: {action.ErrorMessage}");
+		Toast!.ShowError($"Failed to delete Special Events; {action.ErrorMessage}");
 	}
 
 

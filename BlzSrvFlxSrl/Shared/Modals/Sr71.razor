@@ -1,0 +1,12 @@
+﻿<h3>Sr71</h3>
+
+<img src="/images/sr71afterburners.jpg" class="img-fluid" />
+
+<button @onclick="Close" class="btn btn-primary">Close</button>
+<button @onclick="Cancel" class="btn btn-secondary">Cancel</button>
+
+@code {
+	[CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+	async Task Close() => await BlazoredModal.CloseAsync(ModalResult.Ok(true));
+	async Task Cancel() => await BlazoredModal.CancelAsync();
+}
