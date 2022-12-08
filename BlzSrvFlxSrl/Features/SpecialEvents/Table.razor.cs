@@ -2,7 +2,7 @@
 using BlzSrvFlxSrl.Features.SpecialEvents.Models;
 using BlzSrvFlxSrl.Features.SpecialEvents.Data;
 using Blazored.Modal.Services;
-using BlzSrvFlxSrl.Shared.Modals;
+using BlzSrvFlxSrl.Shared;
 
 namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
@@ -66,9 +66,9 @@ public partial class Table
 	private async Task DeleteConfirmationHandler(int id, string title)
 	{
 		Logger!.LogDebug(string.Format("...{0}; id:{1}, title: {2}", nameof(Table) + "!" + nameof(DeleteConfirmationHandler), id, title));
-		var parameters = new ModalParameters { { nameof(ConfirmDelete.Message)
+		var parameters = new ModalParameters { { nameof(ConfirmDeleteModal.Message)
 				, $"Special Event {title}" } };
-		var modal = Modal.Show<ConfirmDelete>("Confirmation Required", parameters);
+		var modal = Modal.Show<ConfirmDeleteModal>("Confirmation Required", parameters);
 		var result = await modal.Result;
 		if (result.Confirmed)
 		{
