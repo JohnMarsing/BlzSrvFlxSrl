@@ -36,7 +36,6 @@ public record SpecialEvents_DeleteFailure_Action(string ErrorMessage);
 // 2. State
 public record SpecialEventsState
 {
-	//public ListDateRange? ListDateRange { get; init; }
 	public DateTimeOffset? DateBegin { get; init; }
 	public DateTimeOffset? DateEnd { get; init; }
 	public Enums.CommandState? CommandState { get; init; }
@@ -46,8 +45,6 @@ public record SpecialEventsState
 	public bool IsTableVisible { get; init; }
 	public bool IsFormVisible { get; init; }
 	public bool IsDisplayVisible { get; init; }
-	public bool Submitting { get; init; }
-	public bool Submitted { get; init; }
 	public string? SuccessMessage { get; init; }
 	public string? WarningMessage { get; init; }
 	public string? ErrorMessage { get; init; }
@@ -70,12 +67,10 @@ public class SpecialEventsStateFeature : Feature<SpecialEventsState>
 			IsTableVisible = false,
 			IsFormVisible = false,
 			IsDisplayVisible = false,
-			CommandState = Enums.CommandState.Add,  // ???
+			CommandState = Enums.CommandState.Add,  // Should there be a None CommandState?
 			CurrentId = 0,
 			FormTitle = "Add",
 			FormSubmitButton = "Add",
-			Submitting = false, // can this be toasted?
-			Submitted = false, // can this be toasted?
 			SuccessMessage = string.Empty,
 			WarningMessage = string.Empty,
 			ErrorMessage = string.Empty,
@@ -94,8 +89,6 @@ public static class SpecialEventsReducers
 	{
 		return state with
 		{
-			Submitting = false,
-			Submitted = true,
 			IsTableVisible = true,
 			WarningMessage = string.Empty,
 			ErrorMessage = string.Empty,
@@ -130,8 +123,6 @@ public static class SpecialEventsReducers
 	{
 		return state with
 		{
-			Submitting = false,
-			Submitted = true,
 			IsFormVisible = action.CommandState == Enums.CommandState.Add || action.CommandState == Enums.CommandState.Edit,
 			IsDisplayVisible = action.CommandState == Enums.CommandState.Display,
 			Model = action.Model
@@ -142,28 +133,28 @@ public static class SpecialEventsReducers
 	public static SpecialEventsState OnGetFailure(
 			SpecialEventsState state, SpecialEvents_GetFailure_Action action)
 	{
-		return state with { Submitting = false, ErrorMessage = action.ErrorMessage, IsFormVisible = false };
+		return state with { ErrorMessage = action.ErrorMessage, IsFormVisible = false };
 	}
 
 
 	[ReducerMethod]
 	public static SpecialEventsState OnSubmit(SpecialEventsState state, SpecialEvents_Submit_Action action)
 	{
-		return state with { Submitting = true, CommandState = action.CommandState };
+		return state with { CommandState = action.CommandState };
 	}
 
 	[ReducerMethod]
 	public static SpecialEventsState OnSubmitSuccess(
 			SpecialEventsState state, SpecialEvents_SubmitSuccess_Action action)
 	{
-		return state with { Submitting = false, Submitted = true, IsFormVisible = false, SuccessMessage = "" };
+		return state with { IsFormVisible = false, SuccessMessage = "" };
 	}
 
 	[ReducerMethod]
 	public static SpecialEventsState OnSubmitFailure(
 			SpecialEventsState state, SpecialEvents_SubmitFailure_Action action)
 	{
-		return state with { Submitting = false, ErrorMessage = action.ErrorMessage, IsFormVisible = false };
+		return state with { ErrorMessage = action.ErrorMessage, IsFormVisible = false };
 	}
 
 	[ReducerMethod]
