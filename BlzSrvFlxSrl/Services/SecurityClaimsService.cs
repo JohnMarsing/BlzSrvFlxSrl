@@ -1,15 +1,12 @@
-﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.Authorization;
+﻿using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 using static BlzSrvFlxSrl.Services.Auth0;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace BlzSrvFlxSrl.Services;
 
 public interface ISecurityClaimsService
 {
-	Task<string> GetEmail();
+	Task<string?> GetEmail();
 	Task<string> GetRoles();
 	Task<bool> IsUserAuthoirized(string registrationEmail);
 	Task<bool> RoleHasAdminOrSukkot();
@@ -34,7 +31,7 @@ public class SecurityClaimsService : ISecurityClaimsService
 	}
 	#endregion
 
-	ClaimsPrincipal _user;
+	ClaimsPrincipal? _user;
 
 	private async Task<ClaimsPrincipal> GetUser()
 	{
@@ -42,7 +39,7 @@ public class SecurityClaimsService : ISecurityClaimsService
 		return authState.User;
 	}
 
-	public async Task<string> GetEmail()
+	public async Task<string?> GetEmail()
 	{
 		/*
 		var authState = await ASP.GetAuthenticationStateAsync();
@@ -82,10 +79,10 @@ public class SecurityClaimsService : ISecurityClaimsService
 	public async Task<bool> IsUserAuthoirized(string registrationEmail)
 	{
 		_user = await GetUser();
-		string sEmail = _user.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+		string? sEmail = _user.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
 		if (sEmail == registrationEmail) { return true; }
-		return SearchRoles(_user.Claims, Roles.Admin, Roles.Sukkot);
+		return SearchRoles(_user.Claims!, Roles.Admin, Roles.Sukkot);
 	}
 
 	public async Task<bool> RoleHasAdminOrSukkot()

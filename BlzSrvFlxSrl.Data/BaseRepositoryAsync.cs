@@ -87,6 +87,9 @@ public abstract class BaseRepositoryAsync
 			s = Sql ?? "SQL IS NULL";
 			if (Parms != null)
 			{
+				/*
+				See Notes in LivingMessiah.Data!BaseRepositoryAsync
+
 				string v = "";
 				var sb = new StringBuilder();
 				foreach (var name in Parms.ParameterNames) // Why is this empty? 
@@ -97,7 +100,7 @@ public abstract class BaseRepositoryAsync
 				}
 
 				s += ", parameter: " + sb.ToString();
-
+				*/
 			}
 			return s;
 		}

@@ -7,7 +7,7 @@ public partial class NavBootstrapMenu
 {
 
 		bool collapseNavMenu = true;
-		string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+		string NavMenuCssClass => collapseNavMenu ? "collapse" : string.Empty;
 		void ToggleNavBootstrapMenu()
 		{
 				collapseNavMenu = !collapseNavMenu;
@@ -16,8 +16,8 @@ public partial class NavBootstrapMenu
 		[Parameter]
 		public bool UseDarkMode { get; set; } = false;
 
-		string NavBarColor;
-		string TextColor;
+		string? NavBarColor;
+		string? TextColor;
 
 		protected override async Task OnInitializedAsync()
 		{

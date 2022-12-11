@@ -2,22 +2,10 @@
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@if (SpecialEventsState!.Value.Submitting)
-{
-	<div>Submitting... Please wait.</div>
-}
-else 
-	if (SpecialEventsState.Value.Submitted 
-					&& string.IsNullOrWhiteSpace(SpecialEventsState.Value.ErrorMessage))
-	{
-		<div class="alert alert-success">@SpecialEventsState.Value.SuccessMessage</div>
-	}
-
 @if (SpecialEventsState!.Value.IsFormVisible)
 {
 	<EditForm Model="VM"
 						OnValidSubmit="HandleValidSubmit"
-						OnInvalidSubmit="@OnInvalidSubmit"
 						class="card card-body bg-light mt-5">
 		<DataAnnotationsValidator />
 		<ValidationSummary />
@@ -33,7 +21,7 @@ else
 
 				<div class="col-sm-6">
 					<label for="eventTypeEnum" class="control-label">Event Type</label>
-					<InputSelect id="type" @bind-Value="VM.SpecialEventTypeId" class="form-control">
+					<InputSelect id="type" @bind-Value="VM!.SpecialEventTypeId" class="form-control">
 						@foreach (var item in SpecialEventType.List.ToList())
 						{
 							<option value="@item.Value">@item.Descr</option>
@@ -76,19 +64,6 @@ else
 		</fieldset>
 
 		<fieldset class="mt-3">
-			<legend class="text-primary">Image Url</legend>
-			<div class="row mt-n2">
-				<div class="col-sm-12">
-					<div class="mb-3">
-						<label for="imageUrl" class="control-label">Image Url</label>
-						<InputText id="imageUrl" class="form-control" @bind-Value="VM.ImageUrl" />
-						<ValidationMessage For="@(() => VM.ImageUrl)" />
-					</div>
-				</div>
-			</div>
-		</fieldset>
-
-		<fieldset class="mt-3">
 			<legend class="text-primary">Title/SubTitle</legend>
 
 			<div class="row mt-n2">
@@ -103,7 +78,7 @@ else
 
 				<div class="col-sm-8">
 					<div class="mb-3">
-						<label for="subTitle" class="control-label">Sub-Title</label>
+						<label for="subTitle" class="control-label">[Sub-Title]</label>
 						<InputText id="subTitle" class="form-control" @bind-Value="VM.SubTitle" />
 						<ValidationMessage For="@(() => VM.SubTitle)" />
 					</div>
@@ -112,6 +87,18 @@ else
 			</div>
 		</fieldset>
 
+		<fieldset class="mt-3">
+			<legend class="text-primary">Image Url</legend>
+			<div class="row mt-n2">
+				<div class="col-sm-12">
+					<div class="mb-3">
+						<label for="imageUrl" class="control-label">Image Url</label>
+						<InputText id="imageUrl" class="form-control" @bind-Value="VM.ImageUrl" />
+						<ValidationMessage For="@(() => VM.ImageUrl)" />
+					</div>
+				</div>
+			</div>
+		</fieldset>
 
 		<fieldset class="mt-3">
 			<legend class="text-primary">Website</legend>

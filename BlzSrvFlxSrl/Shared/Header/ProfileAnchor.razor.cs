@@ -12,22 +12,21 @@ public partial class ProfileAnchor
 	[Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
 	protected string CssClass => IsXsOrSm ? "mt-1" : "";
 
-	[Inject]
-	public AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+	[Inject] public AuthenticationStateProvider? AuthenticationStateProvider { get; set; }
 
-	public string Name { get; set; }
-	public string EmailAddress { get; set; }
+	public string? Name { get; set; }
+	public string? EmailAddress { get; set; }
 	public bool Verified { get; set; }
-	public string Role { get; set; }
+	public string? Role { get; set; }
 	private IEnumerable<Claim> _claims = Enumerable.Empty<Claim>();
 
 	protected override async Task OnInitializedAsync()
 	{
 		base.OnInitialized();
-		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		var authState = await AuthenticationStateProvider!.GetAuthenticationStateAsync();
 		var user = authState.User;
 
-		if (user.Identity.IsAuthenticated)
+		if (user.Identity!.IsAuthenticated)
 		{
 			Verified = true;
 			_claims = user.Claims;
@@ -47,7 +46,7 @@ public partial class ProfileAnchor
 	{
 		get
 		{
-			if (Verified && Role.Contains("admin", System.StringComparison.InvariantCultureIgnoreCase))
+			if (Verified && Role!.Contains("admin", System.StringComparison.InvariantCultureIgnoreCase))
 			{
 				return true;
 			}

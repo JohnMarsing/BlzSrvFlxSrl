@@ -1,4 +1,5 @@
-﻿namespace BlzSrvFlxSrl.Features;
+﻿
+namespace BlzSrvFlxSrl.Data;
 
 public static class SqlServer
 {
@@ -7,3 +8,8 @@ public static class SqlServer
 	public const string ReturnValueName = "ReturnValue";
 	public const string ReturnValueParm = "@ReturnValue";
 }
+
+/*
+use master
+select * from sysmessages
+*/

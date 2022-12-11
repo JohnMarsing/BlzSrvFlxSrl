@@ -1,9 +1,10 @@
 ﻿using System.Data;
 using Dapper;
 using BlzSrvFlxSrl.Data;
-using static BlzSrvFlxSrl.Features.SqlServer;
+using static BlzSrvFlxSrl.Data.SqlServer;
 using BlzSrvFlxSrl.Features.SpecialEvents.Enums;
 using BlzSrvFlxSrl.Features.SpecialEvents.Models;
+using System.Diagnostics;
 
 namespace BlzSrvFlxSrl.Features.SpecialEvents.Data;
 
@@ -13,11 +14,13 @@ public interface ISpecialEventsRepository
 
 	Task<List<SpecialEvent>> GetEventsByDateRange(DateTimeOffset? dateBegin, DateTimeOffset? dateEnd);
 	Task<SpecialEvent?> GetEventById(int id);
-	//Task<EditMarkdownVM> GetDescription(int id);
-	Task<int> UpdateDescription(int id, string description);
 	Task<(int NewId, int SprocReturnValue, string ReturnMsg)> CreateSpecialEvent(FormVM formVM);
-	Task<(int SprocReturnValue, string ReturnMsg)> UpdateSpecialEvent(SpecialEvents.FormVM formVM);
+	Task<(int Affectedrows, string ReturnMsg)> UpdateSpecialEvent(SpecialEvents.FormVM formVM);
 	Task<int> RemoveSpecialEvent(int id);
+
+	// ToDo: 
+	Task<EditMarkdownVM?> GetDescription(int id);
+	Task<int> UpdateDescription(int id, string description);
 }
 
 public class SpecialEventsRepository : BaseRepositoryAsync, ISpecialEventsRepository
@@ -33,8 +36,8 @@ public class SpecialEventsRepository : BaseRepositoryAsync, ISpecialEventsReposi
 
 	public async Task<(int NewId, int SprocReturnValue, string ReturnMsg)> CreateSpecialEvent(SpecialEvents.FormVM formVM)
 	{
-		base.Sql = "SpecialEvent.stpSpecialEventInsert";
-		base.Parms = new DynamicParameters(new
+		Sql = "SpecialEvent.stpSpecialEventInsert";
+		Parms = new DynamicParameters(new
 		{
 			DateTime = formVM.EventDate,
 			ShowBeginDate = formVM.ShowBeginDate,
@@ -49,6 +52,10 @@ public class SpecialEventsRepository : BaseRepositoryAsync, ISpecialEventsReposi
 			YouTubeId = formVM.YouTubeId
 		});
 
+		Parms.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+		Parms.Add(ReturnValueParm, dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
+
+
 		base.Parms.Add("@NewId", dbType: DbType.Int32, direction: ParameterDirection.Output);
 		base.Parms.Add(ReturnValueParm, dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
 
@@ -58,10 +65,18 @@ public class SpecialEventsRepository : BaseRepositoryAsync, ISpecialEventsReposi
 
 		return await WithConnectionAsync(async connection =>
 		{
-			base.log.LogDebug($"Inside {nameof(SpecialEventsRepository)}!{nameof(CreateSpecialEvent)}, {nameof(formVM.Title)}; about to execute SPROC: {base.Sql}");
-			var affectedrows = await connection.ExecuteAsync(sql: base.Sql, param: base.Parms, commandType: System.Data.CommandType.StoredProcedure);
-			sprocReturnValue = base.Parms.Get<int>(ReturnValueName);
-			int? x = base.Parms.Get<int?>("NewId");
+			base.log.LogDebug($"Inside {nameof(SpecialEventsRepository)}!{nameof(CreateSpecialEvent)}" +
+				$", {nameof(formVM.Title)}; about to execute SPROC: {base.Sql}");
+			var affectedrows = await connection.ExecuteAsync(
+				sql: Sql, param: base.Parms, commandType: System.Data.CommandType.StoredProcedure);
+
+
+			/*
+			System.Collections.Generic.KeyNotFoundException: The given key 'NewId' was not present in the dictionary.
+			This F***ing thing doesn't work
+			int? x = Parms!.Get<int?>("NewId"); 
+
+
 			if (x == null)
 			{
 				if (sprocReturnValue == ReturnValueViolationInUniqueIndex)
@@ -79,13 +94,19 @@ public class SpecialEventsRepository : BaseRepositoryAsync, ISpecialEventsReposi
 			{
 				newId = int.TryParse(x.ToString(), out newId) ? newId : 0;
 				returnMsg = $"Special Event created for {formVM.Title}; NewId={newId}";
-				base.log.LogDebug($"...Return newId:{newId}");
+				base.log.LogDebug($"...Return newId:{newId}, Affected Rows: {affectedrows}");
 			}
+			*/
+
+			// by passing the crap above.
+			returnMsg = $"Special Event created for {formVM.Title}; NewId=YOUR GUESS IS AS GOOD AS MINE";
+			base.log.LogDebug($"...Return newId:{newId}, Affected Rows: {affectedrows}");
+
 			return (newId, sprocReturnValue, returnMsg);
 		});
 	}
 
-	public async Task<(int SprocReturnValue, string ReturnMsg)> UpdateSpecialEvent(SpecialEvents.FormVM formVM)
+	public async Task<(int Affectedrows, string ReturnMsg)> UpdateSpecialEvent(SpecialEvents.FormVM formVM)
 	{
 		base.Sql = "SpecialEvent.stpSpecialEventUpdate";
 		base.Parms = new DynamicParameters(new
@@ -106,7 +127,6 @@ public class SpecialEventsRepository : BaseRepositoryAsync, ISpecialEventsReposi
 
 		base.Parms.Add(ReturnValueParm, dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
 
-		int sprocReturnValue = 0;
 		string returnMsg = "";
 
 		return await WithConnectionAsync(async connection =>
@@ -115,12 +135,10 @@ public class SpecialEventsRepository : BaseRepositoryAsync, ISpecialEventsReposi
 				, nameof(SpecialEventsRepository) + "!" + nameof(UpdateSpecialEvent)));
 
 			var affectedrows = await connection.ExecuteAsync(sql: base.Sql, param: base.Parms, commandType: System.Data.CommandType.StoredProcedure);
-			sprocReturnValue = base.Parms.Get<int>(ReturnValueName);
-			
 			returnMsg = $"Special Event updated for {formVM.Title}; Id={formVM.Id}";
 			base.log.LogDebug(string.Format("...returnMsg: {0}", returnMsg));
+			return (affectedrows, returnMsg);
 
-		return (sprocReturnValue, returnMsg);
 		});
 	}
 
@@ -138,14 +156,14 @@ public class SpecialEventsRepository : BaseRepositoryAsync, ISpecialEventsReposi
 	}
 
 
-	public async Task<EditMarkdownVM> GetDescription(int id)
+	public async Task<EditMarkdownVM?> GetDescription(int id)
 	{
 		base.Parms = new DynamicParameters(new { Id = id });
 
 		base.Sql = $@"
 --DECLARE @Id int=
 SELECT Id, Title
-, ISNULL(Description, '') AS Description -- MarkDig doesnt like nulls
+, ISNULL(Description, '') AS Description -- MarkDig does not like nulls
 FROM KeyDate.UpcomingEvent
 WHERE Id = @Id
 ";
@@ -167,7 +185,6 @@ WHERE Id = @Id
 			return count;
 		});
 	}
-
 
 	public async Task<SpecialEvent?> GetEventById(int id)
 	{
@@ -191,7 +208,6 @@ WHERE Id=@Id
 			return row.SingleOrDefault();
 		});
 	}
-
 
 	//https://stackoverflow.com/questions/4331189/datetime-vs-datetimeoffset
 	public async Task<List<SpecialEvent>> GetEventsByDateRange(DateTimeOffset? dateBegin, DateTimeOffset? dateEnd)
@@ -236,5 +252,5 @@ ORDER BY EventDate
 
 	}
 
-	
+
 }

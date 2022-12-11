@@ -32,7 +32,10 @@ public static class ActionButtons
 	public const string DisplayButtonColor = "btn btn-info";
 	public const string DisplayText = "Display";
 
-	public const string SaveIcon = "fas fa-save";
+	public const string PopulateIcon = "fas fa-retweet"; 
+	public const string PopulateButtonColor = "btn btn-warning";
+	public const string PopulateText = "Re-Populate";
 
+	public const string SaveIcon = "fas fa-save";
 	public const string CancelIcon = "fas fa-window-close"; //"far fa-window-close";
 }

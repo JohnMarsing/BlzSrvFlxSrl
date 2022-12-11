@@ -23,20 +23,20 @@ public class FormVM
 	public int SpecialEventTypeId { get; set; }
 
 	[Required]
-	public string Title { get; set; }  // NOT NULL
+	public string? Title { get; set; }  // NOT NULL
 
-	public string SubTitle { get; set; }
+	public string? SubTitle { get; set; }
 
 	[DataType(DataType.ImageUrl)]
-	public string ImageUrl { get; set; }
+	public string? ImageUrl { get; set; }
 
-	public string YouTubeId { get; set; }
+	public string? YouTubeId { get; set; }
 
 	[DataType(DataType.Url)]
-	public string WebsiteUrl { get; set; }
+	public string? WebsiteUrl { get; set; }
 
-	public string WebsiteDescr { get; set; }
-	public string Description { get; set; }  // ToDo: md?, probably going to be Component Body
+	public string? WebsiteDescr { get; set; }
+	public string? Description { get; set; }  // ToDo: md?, probably going to be Component Body
 
 	// ToDo: Warning	CS8618	Non-nullable property 'Description' et. al. must contain a non-null value when exiting constructor. Consider declaring the property as nullable.
 	public FormVM()

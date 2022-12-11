@@ -16,11 +16,8 @@ public partial class Form
 	{
 		Logger!.LogDebug(string.Format("Inside {0}", nameof(Form) + "!" + nameof(HandleValidSubmit)));
 		Dispatcher!.Dispatch(new SpecialEvents_Submit_Action(SpecialEventsState!.Value.Model!, _commandState));
-	}
-
-	private void OnInvalidSubmit()
-	{
-		//Toast.ShowWarning("Invalid Submit");
+		Dispatcher?.Dispatch(new SpecialEvents_GetListWithDates_Action(
+			SpecialEventsState!.Value.DateBegin, SpecialEventsState.Value.DateEnd));
 	}
 
 } 

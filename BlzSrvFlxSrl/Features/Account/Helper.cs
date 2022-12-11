@@ -5,7 +5,7 @@ namespace BlzSrvFlxSrl.Features.Account;
 
 public static class Helper
 {
-	public static string GetUserNameSoapVersion(this ClaimsPrincipal user)
+	public static string? GetUserNameSoapVersion(this ClaimsPrincipal user)
 	{
 		return user.Claims?.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name)?.Value;
 	}

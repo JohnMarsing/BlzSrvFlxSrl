@@ -11,14 +11,11 @@
 			<div class="col-6">
 				<h4>
 					<i class="far fa-calendar"></i>
-					<span class='badge bg-primary'>@FormVM.EventDate.ToString(DateFormat.ddd_mm_dd)</span>
+					<span class='badge bg-primary'>@FormVM!.EventDate.ToString(DateFormat.ddd_mm_dd)</span>
 				</h4>
 			</div>
-			<div class="col-6">
-					@*@((MarkupString)@GetDescriptionMD())*@
-
-				@((MarkupString)@GetDescriptionMdPipeline())
-
+			<div class="col-6 text-end">
+				@Enums.SpecialEventType.FromValue(FormVM.SpecialEventTypeId).Descr
 			</div>
 		</div>
 
@@ -101,7 +98,7 @@
 
 	<div class="card-body">
 		<p class="pb-2 border-success">
-			@((MarkupString)FormVM.Description)
+			@((MarkupString)FormVM.Description!)
 		</p>
 		<button @onclick="@(e => Edit_ButtonClick(@FormVM.Id))"
 						class="btn-default btn-sm" title="@LinkEditMarkdown.Title Id: @FormVM.Id">

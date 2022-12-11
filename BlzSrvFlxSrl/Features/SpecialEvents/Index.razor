@@ -8,8 +8,6 @@
 
 <PageTitle>@Page.Title</PageTitle>
 
-
-@**@
 <div class="container-fluid bg-warning">
 	<div class="row pt-2 pb-1">
 		<div class="col-12">
@@ -26,7 +24,15 @@
 	<h1><i class="@Page.Icon"></i> @Page.Title</h1>
 </div>
 
-<Table />
+@* ToDo: 999-LoadingComponent.md *@
+<LoadingComponent IsLoading="IsTableVisible == false">
+	@if (IsTableVisible)
+	{
+		<Table />
+	}
+</LoadingComponent>
+
+
 @if (IsFormVisible)
 {
 	<Form />

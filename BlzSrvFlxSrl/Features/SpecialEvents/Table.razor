@@ -3,57 +3,60 @@
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<LoadingComponent IsLoading="SpecialEvents == null">
+<button @onclick="@(() => AddActionHandler())"
+				type="button" class="@ActionButtons.AddButtonColor btn-sm">
+	<i class="@ActionButtons.AddIcon"></i> @ActionButtons.AddText
+</button>
 
-	<button @onclick="@(() => AddActionHandler())"
-					type="button" class="@ActionButtons.AddButtonColor btn-sm">
-		<i class="@ActionButtons.AddIcon"></i> @ActionButtons.AddText
-	</button>
+<button @onclick="@(() => PopulateActionHandler())"
+				type="button" class="@ActionButtons.PopulateButtonColor btn-sm">
+	<i class="@ActionButtons.PopulateIcon"></i> @ActionButtons.PopulateText
+</button>
 
-	<TableTemplate Items="SpecialEvents">
-		<TableHeader>
-			<th class="text-info">Event Date</th>
-			<th class="text-info">Type</th>
-			<th class="text-info">Days <i class='fas fa-angle-left'></i> or <i class='fas fa-angle-right'></i></th>
-			<th class="text-info">Title</th>
-			<th class="text-info">YouTube Id</th>
-			<th class="text-danger text-center">Actions</th>
-		</TableHeader>
+<TableTemplate Items="SpecialEventsState!.Value.SpecialEventList">
+	<TableHeader>
+		<th class="text-info">Event Date</th>
+		<th class="text-info">Type</th>
+		<th class="text-info">Days <i class='fas fa-angle-left'></i> or <i class='fas fa-angle-right'></i></th>
+		<th class="text-info">Title</th>
+		<th class="text-info">YouTube Id</th>
+		<th class="text-danger text-center">Actions</th>
+	</TableHeader>
 
-		<RowTemplate>
-			<td>@context.EventDate.ToShortDateString()</td>
-			<td>@context.SpecialEventTypeId - @context.SpecialEventTypeName </td>
+	<RowTemplate>
+		<td>@context.EventDate.ToShortDateString()</td>
+		<td>@context.SpecialEventTypeId - @context.SpecialEventTypeName </td>
 
-			<td>
-				@((MarkupString)context.DaysAheadMU)
-			</td>
-			
-			<td>@context.Title</td>
-			<td>@context.YouTubeId</td>
-			<td class="text-center">
-				<div class="btn-group">
+		<td>
+			@((MarkupString)context.DaysAheadMU)
+		</td>
 
-					<button @onclick="@(() => EditActionHandler(context.Id))" title="Id: @context.Id"
-									type="button" class="@ActionButtons.EditButtonColor btn-sm gx-3">
-						<i class="@ActionButtons.EditIcon"></i> @ActionButtons.EditText
-					</button>
+		<td>@context.Title</td>
+		<td>@context.YouTubeId</td>
+		<td class="text-center">
+			<div class="btn-group">
 
-					<button @onclick="@(() => DeleteConfirmationHandler(context.Id, context.Title))" title="Id: @context.Id"
-									type="button" class="@ActionButtons.DeleteButtonColor btn-sm gx-3">
-						<i class="@ActionButtons.DeleteIcon"></i> @ActionButtons.DeleteText
-					</button>
+				<button @onclick="@(() => EditActionHandler(context.Id))" title="Id: @context.Id"
+								type="button" class="@ActionButtons.EditButtonColor btn-sm gx-3">
+					<i class="@ActionButtons.EditIcon"></i> @ActionButtons.EditText
+				</button>
 
-					<button @onclick="@(e => DisplayActionHandler(context.Id))" title="Id: @context.Id"
-									type="button" class="@ActionButtons.DisplayButtonColor btn-sm gx-3">
-						<i class="@ActionButtons.DisplayIcon"></i> @ActionButtons.DisplayText
-					</button>
+				<button @onclick="@(() => DeleteConfirmationHandler(context.Id, context.Title!))" title="Id: @context.Id"
+								type="button" class="@ActionButtons.DeleteButtonColor btn-sm gx-3">
+					<i class="@ActionButtons.DeleteIcon"></i> @ActionButtons.DeleteText
+				</button>
 
-				</div>
-			</td>
+				<button @onclick="@(e => DisplayActionHandler(context.Id))" title="Id: @context.Id"
+								type="button" class="@ActionButtons.DisplayButtonColor btn-sm gx-3">
+					<i class="@ActionButtons.DisplayIcon"></i> @ActionButtons.DisplayText
+				</button>
+
+			</div>
+		</td>
 
 
-		</RowTemplate>
+	</RowTemplate>
 
-	</TableTemplate>
-</LoadingComponent>
+</TableTemplate>
+
 

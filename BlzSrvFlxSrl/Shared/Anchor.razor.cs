@@ -13,32 +13,15 @@ public enum AnchorSuffixIcon
 
 public partial class Anchor
 {
-	[Parameter]
-	public bool IsPrinterFriendly { get; set; } = false;
-
-	[Parameter]
-	public string Descr { get; set; } = "Click Here";
-
-	[Parameter]
-	public string ButtonCss { get; set; } = ""; // e.g. btn btn-outline-primary btn-lg
-
-	[Parameter]
-	public string Href { get; set; } = ""; // e.g. https://MyHebrewBible.com
-
-	[Parameter]
-	public bool TargetIsBlank { get; set; } = true;
-
-	[Parameter]
-	public string Prefix { get; set; }
-
-	[Parameter]
-	public string Suffix { get; set; }
-
-	[Parameter]
-	public bool UsePrefixIcon { get; set; } = true;
-
-	[Parameter]
-	public AnchorSuffixIcon SuffixIcon { get; set; } = AnchorSuffixIcon.External;
+	[Parameter] public bool IsPrinterFriendly { get; set; } = false;
+	[Parameter] public string Descr { get; set; } = "Click Here";
+	[Parameter] public string ButtonCss { get; set; } = ""; // e.g. btn btn-outline-primary btn-lg
+	[Parameter] public string Href { get; set; } = ""; // e.g. https://MyHebrewBible.com
+	[Parameter]	public bool TargetIsBlank { get; set; } = true;
+	[Parameter] public string? Prefix { get; set; }
+	[Parameter] public string? Suffix { get; set; }
+	[Parameter]	public bool UsePrefixIcon { get; set; } = true;
+	[Parameter]	public AnchorSuffixIcon SuffixIcon { get; set; } = AnchorSuffixIcon.External;
 
 	public string BuildAnchor
 	{
