@@ -2,9 +2,14 @@
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
+@if (SpecialEventsState!.Value.VisibleComponet == VisibleComponet.AddEditForm)
+{
+	
+}
+
 @if (SpecialEventsState!.Value.IsFormVisible)
 {
-	<EditForm Model="VM"
+	<EditForm Model="VM" 
 						OnValidSubmit="HandleValidSubmit"
 						class="card card-body bg-light mt-5">
 		<DataAnnotationsValidator />
@@ -144,26 +149,29 @@
 				</div>
 			</div>
 
-
-
 		</fieldset>
 
 		<div class="row">
 			<div class="col-sm-6">
 				<div class="mb-3">
-					<button class="btn btn-success btn-sm">
-						<i class="fas fa-save"></i> @SpecialEventsState.Value.FormSubmitButton
-					</button>
-				</div>
 
+					<button type="submit" class="@ActionButtons.SaveButtonColor">
+						<i class="@ActionButtons.SaveIcon"></i> @SpecialEventsState.Value.FormSubmitButton
+					</button>
+
+					
+					@* 
+					Cancel button has to be a div (ie not a button) thereby not triggering validation which is what I want
+					[Blazor Modal Form Validation: You've to click the cancel button twice to close the modal when you delete a form field](https://stackoverflow.com/a/67737357/41106)
+					*@
+					<div @onclick="@(e => CancelActionHandler())" class="@ActionButtons.CancelButtonColor">
+						<i class="@ActionButtons.CancelIcon"></i> @ActionButtons.CancelText
+					</div>
+
+				</div>
 			</div>
+			<div class="col-sm-6"></div>
 		</div>
 
 	</EditForm>
 }
-
-@if (!string.IsNullOrWhiteSpace(SpecialEventsState.Value.ErrorMessage))
-{
-	<div class="alert alert-danger">Error: @SpecialEventsState.Value.ErrorMessage	</div>
-}
-

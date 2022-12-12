@@ -33,12 +33,16 @@ public record SpecialEvents_Delete_Action(int Id);
 public record SpecialEvents_DeleteSuccess_Action(string SuccessMessage);  
 public record SpecialEvents_DeleteFailure_Action(string ErrorMessage);
 
+public record SpecialEvents_Cancel_Action(); 
+
+
 // 2. State
 public record SpecialEventsState
 {
 	public DateTimeOffset? DateBegin { get; init; }
 	public DateTimeOffset? DateEnd { get; init; }
 	public Enums.CommandState? CommandState { get; init; }
+	public Enums.VisibleComponet? VisibleComponet { get; init; }
 	public int CurrentId { get; init; }
 	public string? FormTitle { get; init; }
 	public string? FormSubmitButton { get; init; }
@@ -68,6 +72,7 @@ public class SpecialEventsStateFeature : Feature<SpecialEventsState>
 			IsFormVisible = false,
 			IsDisplayVisible = false,
 			CommandState = Enums.CommandState.Add,  // Should there be a None CommandState?
+			VisibleComponet = Enums.VisibleComponet.None,
 			CurrentId = 0,
 			FormTitle = "Add",
 			FormSubmitButton = "Add",
@@ -100,7 +105,7 @@ public static class SpecialEventsReducers
 	public static SpecialEventsState OnGetListWarning(
 		SpecialEventsState state, SpecialEvents_GetListWarning_Action action)
 	{
-		return state with { WarningMessage = action.WarningMessage };
+		return state with { WarningMessage = action.WarningMessage, IsTableVisible = false };
 	}
 
 	[ReducerMethod]
@@ -177,21 +182,31 @@ public static class SpecialEventsReducers
 	public static SpecialEventsState OnEdit(
 		SpecialEventsState state, SpecialEvents_Edit_Action action)
 	{
-		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Edit, FormTitle = "Edit", FormSubmitButton = "Update Event", IsFormVisible = true, IsDisplayVisible = false };
+		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Edit, FormTitle = "Edit"
+			, FormSubmitButton = "Update Event", IsFormVisible = true, IsDisplayVisible = false };
 	}
 
 	[ReducerMethod]
 	public static SpecialEventsState OnDisplay(
 		SpecialEventsState state, SpecialEvents_Display_Action action)
 	{
-		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Display, FormTitle = "Display", FormSubmitButton = "", IsFormVisible = false, IsDisplayVisible = true };
+		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Display, FormTitle = "Display"
+			, FormSubmitButton = "", IsFormVisible = false, IsDisplayVisible = true };
+	}
+
+
+	[ReducerMethod(typeof(SpecialEvents_Cancel_Action))]
+	public static SpecialEventsState OnCancel(SpecialEventsState state)
+	{
+		return state with {VisibleComponet=Enums.VisibleComponet.None, IsDisplayVisible=false, IsFormVisible=false };
 	}
 
 	[ReducerMethod]
 	public static SpecialEventsState OnDelete(
 		SpecialEventsState state, SpecialEvents_Delete_Action action)
 	{
-		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Delete, FormTitle = "Delete", FormSubmitButton = "", IsFormVisible = false, IsDisplayVisible = false };
+		return state with { CurrentId = action.Id, CommandState = Enums.CommandState.Delete, FormTitle = "Delete"
+			, FormSubmitButton = "", IsFormVisible = false, IsDisplayVisible = false };
 	}
 
 }

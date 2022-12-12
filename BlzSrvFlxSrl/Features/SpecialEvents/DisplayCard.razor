@@ -1,5 +1,4 @@
-﻿
-@using LinkEditMarkdown = BlzSrvFlxSrl.Links.UpcomingEventsAdmin.EditMarkdown
+﻿@using LinkEditMarkdown = BlzSrvFlxSrl.Links.UpcomingEventsAdmin.EditMarkdown
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
@@ -32,12 +31,12 @@
 		{
 			<p class="">@FormVM.ImageUrl</p>
 			@*
-			<CascadingValue Value="@false">
-				<ImageDisplayOption>
-					<img src='@Blobs.UrlOther(@ImageUrl)' alt="@Title" class="img-fluid rounded mt-4" />
-				</ImageDisplayOption>
-			</CascadingValue>
-			*@
+		<CascadingValue Value="@false">
+		<ImageDisplayOption>
+		<img src='@Blobs.UrlOther(@ImageUrl)' alt="@Title" class="img-fluid rounded mt-4" />
+		</ImageDisplayOption>
+		</CascadingValue>
+		*@
 		}
 	</div>
 
@@ -46,34 +45,34 @@
 		@*
 		@if (!String.IsNullOrEmpty(@YouTubeId))
 		{
-			@if (ShowVideo)
-			{
-				<YouTubeSpecialEvent YouTubeId="@YouTubeId"
-														 Title="@Title">
-				</YouTubeSpecialEvent>
+		@if (ShowVideo)
+		{
+		<YouTubeSpecialEvent YouTubeId="@YouTubeId"
+		Title="@Title">
+		</YouTubeSpecialEvent>
 
-				<div class="row">
-					<div class="col">
-						<button class="my-3 btn btn-xlarge btn-primary"
-										@onclick="@(e => ShowVideo_Button_Click())">
-							@((MarkupString)OppositeIcon) @OppositeToggleMsg
-						</button>
-					</div>
-				</div>
-			}
+		<div class="row">
+		<div class="col">
+		<button class="my-3 btn btn-xlarge btn-primary"
+		@onclick="@(e => ShowVideo_Button_Click())">
+		@((MarkupString)OppositeIcon) @OppositeToggleMsg
+		</button>
+		</div>
+		</div>
+		}
 		}
 		*@
 		@if (!String.IsNullOrEmpty(@FormVM.YouTubeId))
 		{
 			<p>@FormVM.YouTubeId</p>
 
-				<div class="row">
-					<div class="col-12">
+			<div class="row">
+				<div class="col-12">
 					<Button @onclick="ToggleButtonClick"
 								class="@Color btn-sm">
 						@Title <i class='@Icon'></i>
 					</Button>
-					</div>
+				</div>
 			</div>
 		}
 		else
@@ -106,5 +105,10 @@
 		</button>
 	</div>
 
-</div>
+	<div class="card-footer text-muted">
+		<button @onclick="@(e => CancelActionHandler())" class="@ActionButtons.CancelButtonColor">
+			<i class="@ActionButtons.CancelIcon"></i> @ActionButtons.CancelText
+		</button>
+	</div>
 
+</div>

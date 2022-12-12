@@ -37,5 +37,9 @@ public static class ActionButtons
 	public const string PopulateText = "Re-Populate";
 
 	public const string SaveIcon = "fas fa-save";
-	public const string CancelIcon = "fas fa-window-close"; //"far fa-window-close";
+	public const string SaveButtonColor = "btn btn-success btn-sm";
+
+	public const string CancelIcon = "far fa-window-close"; //"far fa-window-close";
+	public const string CancelText = "Cancel";
+	public const string CancelButtonColor = "btn btn-secondary btn-sm";
 }

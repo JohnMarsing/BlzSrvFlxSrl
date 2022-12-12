@@ -32,6 +32,23 @@
 	}
 </LoadingComponent>
 
+@if (SpecialEventsState!.Value.VisibleComponet == Enums.VisibleComponet.AddEditForm)
+{
+	<p>VisibleComponet: AddEditForm</p>
+	@*<Form />*@
+}
+else
+{
+	@if (SpecialEventsState!.Value.VisibleComponet == Enums.VisibleComponet.DisplayCard)
+	{
+		<p>VisibleComponet: DisplayCard</p>
+		@*<DisplayCard />*@
+	}
+	else
+	{
+		<p>VisibleComponet: None</p>
+	}
+}
 
 @if (IsFormVisible)
 {

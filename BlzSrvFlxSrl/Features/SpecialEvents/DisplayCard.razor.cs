@@ -1,8 +1,6 @@
 ﻿using Blazored.Toast.Services;
-using Fluxor;
 using Markdig;
 using Microsoft.AspNetCore.Components;
-using System;
 
 namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
@@ -50,6 +48,11 @@ public partial class DisplayCard
 	{
 		Toast!.ShowInfo($"{nameof(Edit_ButtonClick)} clicked");
 		//NavManager.NavigateTo(Links.UpcomingEventsAdmin.EditMarkdown.Page + "/" + id);
+	}
+
+	void CancelActionHandler()
+	{
+		Dispatcher?.Dispatch(new SpecialEvents_Cancel_Action());
 	}
 }
 

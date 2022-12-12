@@ -14,6 +14,7 @@ public partial class Table
 	
 	void AddActionHandler()
 	{
+		Logger!.LogDebug(string.Format("inside: {0}", nameof(Table) + "!" + nameof(AddActionHandler)));
 		Dispatcher?.Dispatch(new SpecialEvents_Add_Action());
 	}
 
@@ -27,11 +28,13 @@ public partial class Table
 
 	void EditActionHandler(int id)
 	{
+		Logger!.LogDebug(string.Format("inside: {0}; id:{1}", nameof(Table) + "!" + nameof(EditActionHandler), id ));
 		Dispatcher?.Dispatch(new SpecialEvents_Get_Action(id, Enums.CommandState.Edit));
 	}
 
 	void DisplayActionHandler(int id)
 	{
+		Logger!.LogDebug(string.Format("inside: {0}; id:{1}", nameof(Table) + "!" + nameof(DisplayActionHandler), id));
 		Dispatcher?.Dispatch(new SpecialEvents_Get_Action(id, Enums.CommandState.Display));
 	}
 
