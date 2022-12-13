@@ -35,15 +35,6 @@ public partial class DisplayCard
 	}
 
 
-	protected void ToggleButtonClick()
-	{
-		ContentIsShowing = !ContentIsShowing;
-		Toast!.ShowInfo($"{Title} clicked");
-		//ShowVideo = !ShowVideo;
-		//SetShowVideoButton();
-		//StateHasChanged();
-	}
-
 	private void Edit_ButtonClick(int id)
 	{
 		Toast!.ShowInfo($"{nameof(Edit_ButtonClick)} clicked");

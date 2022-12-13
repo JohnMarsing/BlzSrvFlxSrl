@@ -50,7 +50,28 @@ public class SpecialEvent
 			{
 				return (MarkupString)"?";
 			}
+		}
+	}
 
+	public MarkupString DaysAheadXmSmMU
+	{
+		get
+		{
+			if (DaysDiffDescr != null)
+			{
+				if (DaysDiffDescr == "Days Ahead")
+				{
+					return (MarkupString)$"<span class='text-success float-end'><i class='fas fa-angle-right'></i> <b>{DaysDiff}</b></span>";
+				}
+				else
+				{
+					return (MarkupString)$"<span class='text-danger float-end'><b>{DaysDiff}</b> <i class='fas fa-angle-left'></i></span>"; // 
+				}
+			}
+			else
+			{
+				return (MarkupString)"?";
+			}
 		}
 	}
 

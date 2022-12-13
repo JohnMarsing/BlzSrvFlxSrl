@@ -28,7 +28,14 @@
 {
 	@* ToDo: this loading component doesn't work as expected *@
 	<LoadingComponent IsLoading="SpecialEventsState!.Value.SpecialEventList == null">
-		<Table />
+		<div class="@MediaQuery.XsOrSm.DivClass">
+			<MasterListCardXsSm/>
+		</div>
+
+		<div class="@MediaQuery.MdOrLgOrXl.DivClass">
+			<Table />
+		</div>
+		
 	</LoadingComponent>
 }
 else

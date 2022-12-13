@@ -42,44 +42,12 @@
 
 	<div class="card-body">
 
-		@*
-		@if (!String.IsNullOrEmpty(@YouTubeId))
-		{
-		@if (ShowVideo)
-		{
-		<YouTubeSpecialEvent YouTubeId="@YouTubeId"
-		Title="@Title">
-		</YouTubeSpecialEvent>
-
-		<div class="row">
-		<div class="col">
-		<button class="my-3 btn btn-xlarge btn-primary"
-		@onclick="@(e => ShowVideo_Button_Click())">
-		@((MarkupString)OppositeIcon) @OppositeToggleMsg
-		</button>
-		</div>
-		</div>
-		}
-		}
-		*@
 		@if (!String.IsNullOrEmpty(@FormVM.YouTubeId))
 		{
-			<p>@FormVM.YouTubeId</p>
-
-			<div class="row">
-				<div class="col-12">
-					<Button @onclick="ToggleButtonClick"
-								class="@Color btn-sm">
-						@Title <i class='@Icon'></i>
-					</Button>
-				</div>
-			</div>
+			<a href="https://www.youtube.com/watch?v=@FormVM.YouTubeId" target="_blank" title="@FormVM.YouTubeId">
+				<img src='https://img.youtube.com/vi/@FormVM.YouTubeId/mqdefault.jpg' class='mt-4' /> <br>  @FormVM.Title
+			</a>
 		}
-		else
-		{
-			<p>No YouTubeId</p>
-		}
-
 
 
 		@if (!String.IsNullOrEmpty(@FormVM.SubTitle))
