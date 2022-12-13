@@ -13,10 +13,6 @@ public partial class Index
 
 	private DateTimeOffset? DateBegin { get; set; }
 	private DateTimeOffset? DateEnd { get; set; }
-	private bool IsTableVisible => SpecialEventsState!.Value.IsTableVisible;
-	private bool IsFormVisible => SpecialEventsState!.Value.IsFormVisible;
-	private bool IsDisplayVisible => SpecialEventsState!.Value.IsDisplayVisible;
-	//protected bool TurnSpinnerOff = false;  // try {... call db } catch [... deal with errors]	finally { TurnSpinnerOff = true; }
 
 	protected override void OnInitialized()
 	{

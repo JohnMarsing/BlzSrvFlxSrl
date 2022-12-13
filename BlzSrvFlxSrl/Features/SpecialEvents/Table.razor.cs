@@ -29,13 +29,13 @@ public partial class Table
 	void EditActionHandler(int id)
 	{
 		Logger!.LogDebug(string.Format("inside: {0}; id:{1}", nameof(Table) + "!" + nameof(EditActionHandler), id ));
-		Dispatcher?.Dispatch(new SpecialEvents_Get_Action(id, Enums.CommandState.Edit));
+		Dispatcher?.Dispatch(new SpecialEvents_Get_Action(id, Enums.AddEditDisplay.Edit));
 	}
 
 	void DisplayActionHandler(int id)
 	{
 		Logger!.LogDebug(string.Format("inside: {0}; id:{1}", nameof(Table) + "!" + nameof(DisplayActionHandler), id));
-		Dispatcher?.Dispatch(new SpecialEvents_Get_Action(id, Enums.CommandState.Display));
+		Dispatcher?.Dispatch(new SpecialEvents_Get_Action(id, Enums.AddEditDisplay.Display));
 	}
 
 	private async Task DeleteConfirmationHandler(int id, string title)

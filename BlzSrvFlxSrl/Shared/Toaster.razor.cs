@@ -21,6 +21,7 @@ public partial class Toaster
 
 		SubscribeToAction<SpecialEvents_SetDateRange_Action>(SpecialEvents_SetDateRange_Toast);
 		SubscribeToAction<SpecialEvents_GetSuccess_Action>(SpecialEvents_GetSuccess_Toast);
+		SubscribeToAction<SpecialEvents_GetWarning_Action>(SpecialEvents_GetWarning_Toast);
 		SubscribeToAction<SpecialEvents_GetFailure_Action>(SpecialEvents_GetFailure_Toast);
 
 		SubscribeToAction<SpecialEvents_SubmitSuccess_Action>(SpecialEvents_SubmitSuccess_Toast);
@@ -64,6 +65,18 @@ public partial class Toaster
 		Toast!.ShowInfo($"Got {action.Model!.Title!}");
 	}
 
+	private void SpecialEvents_GetWarning_Toast(SpecialEvents_GetWarning_Action action)
+	{
+		if (action.Warning)
+		{
+			Toast!.ShowWarning($"{action.WarningMessage}");
+		}
+		else
+		{
+			Toast!.ShowError($"{action.WarningMessage}");
+		}
+	}
+
 	private void SpecialEvents_GetFailure_Toast(SpecialEvents_GetFailure_Action action)
 	{
 		if (action.Warning)
@@ -74,7 +87,6 @@ public partial class Toaster
 		{
 			Toast!.ShowError($"{action.ErrorMessage}");
 		}
-		
 	}
 
 	private void SpecialEvents_SubmitSuccess_Toast(SpecialEvents_SubmitSuccess_Action action)

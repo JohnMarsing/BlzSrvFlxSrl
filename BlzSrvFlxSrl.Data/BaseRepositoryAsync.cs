@@ -1,8 +1,5 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
-using System.Text;
-using System.Threading.Tasks;
 using Dapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -75,8 +72,8 @@ public abstract class BaseRepositoryAsync
 		}
 	}
 
-	public string Sql { get; set; }
-	public DynamicParameters Parms { get; set; }  // using Dapper; Note, only place dependent on Dapper
+	public string? Sql { get; set; }
+	public DynamicParameters? Parms { get; set; }  // using Dapper; Note, only place dependent on Dapper
 
 
 	public string SqlDump

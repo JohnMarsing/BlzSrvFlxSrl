@@ -19,60 +19,34 @@
 	</div>
 </div>
 
-
 <div class="pb-1 mt-4 mb-2">
 	<h1><i class="@Page.Icon"></i> @Page.Title</h1>
 </div>
 
-@* ToDo: 999-LoadingComponent.md *@
-<LoadingComponent IsLoading="IsTableVisible == false">
-	@if (IsTableVisible)
-	{
-		<Table />
-	}
-</LoadingComponent>
 
-@if (SpecialEventsState!.Value.VisibleComponet == Enums.VisibleComponet.AddEditForm)
+@if (SpecialEventsState!.Value.VisibleComponet == Enums.VisibleComponet.Table)
 {
-	<p>VisibleComponet: AddEditForm</p>
-	@*<Form />*@
+	@* ToDo: this loading component doesn't work as expected *@
+	<LoadingComponent IsLoading="SpecialEventsState!.Value.SpecialEventList == null">
+		<Table />
+	</LoadingComponent>
 }
 else
 {
-	@if (SpecialEventsState!.Value.VisibleComponet == Enums.VisibleComponet.DisplayCard)
+	@if (SpecialEventsState!.Value.VisibleComponet == Enums.VisibleComponet.AddEditForm)
 	{
-		<p>VisibleComponet: DisplayCard</p>
-		@*<DisplayCard />*@
+		<Form />
 	}
 	else
 	{
-		<p>VisibleComponet: None</p>
+		<DisplayCard />
 	}
-}
-
-@if (IsFormVisible)
-{
-	<Form />
-}
-
-@if (IsDisplayVisible)
-{
-	<DisplayCard />
 }
 
 
 <AuthorizeView Roles="@Roles.AdminOrAnnouncements">
 	<Authorized>
-		@*		@if (MainState.Value.DateRange is not null)
-		{
-		<Table />
-		}
-
-		@if (MainState.Value.CommandState is not null && MainState.Value.CommandState != Enums.CommandState.Hidden)
-		{
-		<Form />
-		}*@
-
+		<p>ToDo: Insert Components</p>
 	</Authorized>
 
 	@*
