@@ -26,14 +26,14 @@
 
 @if (SpecialEventsState!.Value.VisibleComponet == Enums.VisibleComponet.Table)
 {
-	@* ToDo: this loading component doesn't work as expected *@
 	<LoadingComponent IsLoading="SpecialEventsState!.Value.SpecialEventList == null">
+
 		<div class="@MediaQuery.XsOrSm.DivClass">
-			<MasterListCardXsSm/>
+			<MasterList IsXsOrSm="true" />
 		</div>
 
 		<div class="@MediaQuery.MdOrLgOrXl.DivClass">
-			<Table />
+			<MasterList IsXsOrSm="false" />
 		</div>
 		
 	</LoadingComponent>
@@ -77,3 +77,4 @@ else
 
 </AuthorizeView>
 
+<ToasterSpecialEvents />	

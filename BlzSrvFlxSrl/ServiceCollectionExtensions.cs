@@ -7,9 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
-using BlzSrvFlxSrl.Features.SpecialEvents.Data;
 using BlzSrvFlxSrl.Services;
 using FluentValidation;
+using BlzSrvFlxSrl.Links;
 
 namespace BlzSrvFlxSrl;
 
@@ -18,7 +18,7 @@ public static class ServiceCollectionExtensions
 	public static IServiceCollection AddDataStores(this IServiceCollection services)
 	{
 		services
-			.AddTransient<ISpecialEventsRepository, SpecialEventsRepository>()
+			.AddTransient<Features.SpecialEvents.Data.IRepository, Features.SpecialEvents.Data.Repository>()
 			.AddTransient<ISecurityClaimsService, SecurityClaimsService>();
 		return services;
 	}

@@ -6,7 +6,7 @@ namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
 public partial class DisplayCard
 {
-	[Inject] private IState<SpecialEventsState>? SpecialEventsState { get; set; }
+	[Inject] private IState<State>? SpecialEventsState { get; set; }
 	[Inject] public IDispatcher? Dispatcher { get; set; }
 	[Inject] public IToastService? Toast { get; set; }
 	FormVM? FormVM => SpecialEventsState!.Value.Model;
@@ -43,7 +43,7 @@ public partial class DisplayCard
 
 	void CancelActionHandler()
 	{
-		Dispatcher?.Dispatch(new SpecialEvents_Cancel_Action());
+		Dispatcher?.Dispatch(new Cancel_Action());
 	}
 }
 

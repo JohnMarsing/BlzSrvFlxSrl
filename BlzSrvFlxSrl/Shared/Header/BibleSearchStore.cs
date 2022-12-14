@@ -3,7 +3,7 @@
 // 1. Action
 public record BibleSearch_SetBibleBook_Action(Enums.BibleBook BibleBook);
 public record BibleSearch_SetWebsite_Action(Enums.BibleWebsite BibleWebsite);
-public record BibleSearch_ShowDetails_Action(bool IsVisible);
+public record ShowDetails_Action(bool IsVisible);
 
 // 2. State
 public record BibleSearchState
@@ -50,7 +50,7 @@ public static class BibleSearchReducers
 
 	[ReducerMethod]
 	public static BibleSearchState OnBibleSearchShowDetailsAction(
-		BibleSearchState state, BibleSearch_ShowDetails_Action action)
+		BibleSearchState state, ShowDetails_Action action)
 	{
 		return state with { ShowDetails = action.IsVisible };
 	}

@@ -21,11 +21,11 @@ public partial class BibleSearch
 
 		if (bibleBook is null)  
 		{
-			Dispatcher!.Dispatch(new BibleSearch_ShowDetails_Action(false));
+			Dispatcher!.Dispatch(new ShowDetails_Action(false));
 		}
 		else
 		{
-			Dispatcher!.Dispatch(new BibleSearch_ShowDetails_Action(true));
+			Dispatcher!.Dispatch(new ShowDetails_Action(true));
 		}
 	}
 

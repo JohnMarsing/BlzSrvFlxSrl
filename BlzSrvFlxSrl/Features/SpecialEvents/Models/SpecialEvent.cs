@@ -11,12 +11,11 @@ public class SpecialEvent
 	public DateTime EventDate { get; set; }
 
 	public int SpecialEventTypeId { get; set; }
-	public string SpecialEventTypeName
+	public string SpecialEventTypeDescr
 	{
-		get { return SpecialEventType.FromValue(SpecialEventTypeId).Name; 	}
+		get { return SpecialEventType.FromValue(SpecialEventTypeId).Descr; 	}
 	}
 
-	public string? EventTypeDescr { get; set; }
 	public int DaysDiff { get; set; }
 	public string? DaysDiffDescr { get; set; }
 	public string? Title { get; set; }

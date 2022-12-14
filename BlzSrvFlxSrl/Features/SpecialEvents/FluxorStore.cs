@@ -6,39 +6,39 @@ using BlzSrvFlxSrl.Features.SpecialEvents.Models;
 namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
 // 1. Action
-public record SpecialEvents_GetListWithDates_Action(DateTimeOffset? DateBegin, DateTimeOffset? DateEnd);
+public record GetListWithDates_Action(DateTimeOffset? DateBegin, DateTimeOffset? DateEnd);
 
-public record SpecialEvents_GetListSuccess_Action(List<SpecialEvent> SpecialEvents); //, string SuccessMessage, int RowCnt
-public record SpecialEvents_GetListFailure_Action(string ErrorMessage);
-public record SpecialEvents_GetListWarning_Action(string WarningMessage); // Empty List
+public record GetListSuccess_Action(List<SpecialEvent> SpecialEvents); //, string SuccessMessage, int RowCnt
+public record GetListFailure_Action(string ErrorMessage);
+public record GetListWarning_Action(string WarningMessage); // Empty List
 
-public record SpecialEvents_Get_Action(int Id, Enums.AddEditDisplay? AddEditDisplay);
-public record SpecialEvents_GetSuccess_Action(FormVM? Model, Enums.AddEditDisplay? AddEditDisplay);
-public record SpecialEvents_GetWarning_Action(string WarningMessage, bool Warning);
-public record SpecialEvents_GetFailure_Action(string ErrorMessage, bool Warning);
+public record Get_Action(int Id, Enums.AddEditDisplay? AddEditDisplay);
+public record GetSuccess_Action(FormVM? Model, Enums.AddEditDisplay? AddEditDisplay);
+public record GetWarning_Action(string WarningMessage, bool Warning);
+public record GetFailure_Action(string ErrorMessage, bool Warning);
 
-public record SpecialEvents_Submit_Action(FormVM FormVM, Enums.AddEditDisplay? AddEditDisplay);
-public record SpecialEvents_SubmitWithDates_Action(FormVM FormVM, Enums.AddEditDisplay? AddEditDisplay, DateTimeOffset? DateBegin, DateTimeOffset? DateEnd);
-public record SpecialEvents_SubmitSuccess_Action(string SuccessMessage);
-public record SpecialEvents_SubmitFailure_Action(string ErrorMessage);
+public record Submit_Action(FormVM FormVM, Enums.AddEditDisplay? AddEditDisplay);
+public record SubmitWithDates_Action(FormVM FormVM, Enums.AddEditDisplay? AddEditDisplay, DateTimeOffset? DateBegin, DateTimeOffset? DateEnd);
+public record SubmitSuccess_Action(string SuccessMessage);
+public record SubmitFailure_Action(string ErrorMessage);
 
-public record SpecialEvents_SetDateRange_Action(DateTimeOffset DateBegin, DateTimeOffset DateEnd);
-public record SpecialEvents_ShowForm_Action(bool IsVisible);
+public record SetDateRange_Action(DateTimeOffset DateBegin, DateTimeOffset DateEnd);
+public record ShowForm_Action(bool IsVisible);
 
-public record SpecialEvents_Add_Action();
-public record SpecialEvents_Edit_Action(int Id);
+public record Add_Action();
+public record Edit_Action(int Id);
 
-public record SpecialEvents_Display_Action(int Id);
+public record Display_Action(int Id);
 
-public record SpecialEvents_Delete_Action(int Id);
-public record SpecialEvents_DeleteSuccess_Action(string SuccessMessage);  
-public record SpecialEvents_DeleteFailure_Action(string ErrorMessage);
+public record Delete_Action(int Id);
+public record DeleteSuccess_Action(string SuccessMessage);  
+public record DeleteFailure_Action(string ErrorMessage);
 
-public record SpecialEvents_Cancel_Action(); 
+public record Cancel_Action(); 
 
 
 // 2. State
-public record SpecialEventsState
+public record State
 {
 	public DateTimeOffset? DateBegin { get; init; }
 	public DateTimeOffset? DateEnd { get; init; }
@@ -52,14 +52,14 @@ public record SpecialEventsState
 	public List<SpecialEvent>? SpecialEventList { get; init; }
 }
 
-// 3. Feature
-public class SpecialEventsStateFeature : Feature<SpecialEventsState>
+// 3. Feature  
+public class FeatureImplementation : Feature<State>
 {
 	public override string GetName() => "SpecialEvents";
 
-	protected override SpecialEventsState GetInitialState()
+	protected override State GetInitialState()
 	{
-		return new SpecialEventsState
+		return new State
 		{
 			//  ToDo: can't used these random default dates
 			DateBegin = DateTime.Parse("3/1/2021"),
@@ -77,11 +77,11 @@ public class SpecialEventsStateFeature : Feature<SpecialEventsState>
 }
 
 // 4. Reducers
-public static class SpecialEventsReducers
+public static class Reducers
 {
 	[ReducerMethod]
-	public static SpecialEventsState OnGetListSuccess(
-		SpecialEventsState state, SpecialEvents_GetListSuccess_Action action)
+	public static State OnGetListSuccess(
+		State state, GetListSuccess_Action action)
 	{
 		return state with
 		{
@@ -93,8 +93,8 @@ public static class SpecialEventsReducers
 	}
 
 	[ReducerMethod]
-	public static SpecialEventsState OnGetListWarning(
-		SpecialEventsState state, SpecialEvents_GetListWarning_Action action)
+	public static State OnGetListWarning(
+		State state, GetListWarning_Action action)
 	{
 		// Here might be a case where VisibleComponet has a .Table and 
 		//  You got this warning (no records found) then set it to .None
@@ -105,22 +105,22 @@ public static class SpecialEventsReducers
 	}
 
 	[ReducerMethod]
-	public static SpecialEventsState OnGetListFailure(
-		SpecialEventsState state, SpecialEvents_GetListFailure_Action action)
+	public static State OnGetListFailure(
+		State state, GetListFailure_Action action)
 	{
 		return state with { ErrorMessage = action.ErrorMessage };
 	}
 
 
 	[ReducerMethod]
-	public static SpecialEventsState OnGet(SpecialEventsState state, SpecialEvents_Get_Action action)
+	public static State OnGet(State state, Get_Action action)
 	{
 		return state with { AddEditDisplay = action.AddEditDisplay };
 	}
 
 	[ReducerMethod]
-	public static SpecialEventsState OnGetSuccess(
-		SpecialEventsState state, SpecialEvents_GetSuccess_Action action)
+	public static State OnGetSuccess(
+		State state, GetSuccess_Action action)
 	{
 		return state with
 		{
@@ -130,8 +130,8 @@ public static class SpecialEventsReducers
 	}
 
 	[ReducerMethod]
-	public static SpecialEventsState OnGetFailure(
-			SpecialEventsState state, SpecialEvents_GetFailure_Action action)
+	public static State OnGetFailure(
+			State state, GetFailure_Action action)
 	{
 		return state with {
 			VisibleComponet = Enums.VisibleComponet.Table,
@@ -141,15 +141,15 @@ public static class SpecialEventsReducers
 
 	// Called by Form.HandleValidSubmit; Step 1
 	[ReducerMethod]
-	public static SpecialEventsState OnSubmit(
-		SpecialEventsState state, SpecialEvents_Submit_Action action)
+	public static State OnSubmit(
+		State state, Submit_Action action)
 	{
 		return state with { AddEditDisplay = action.AddEditDisplay };
 	}
 
 	[ReducerMethod]
-	public static SpecialEventsState OnSubmitSuccess(
-			SpecialEventsState state, SpecialEvents_SubmitSuccess_Action action)
+	public static State OnSubmitSuccess(
+			State state, SubmitSuccess_Action action)
 	{
 		return state with {
 			VisibleComponet = Enums.VisibleComponet.Table,
@@ -158,8 +158,8 @@ public static class SpecialEventsReducers
 	}
 
 	[ReducerMethod]
-	public static SpecialEventsState OnSubmitFailure(
-			SpecialEventsState state, SpecialEvents_SubmitFailure_Action action)
+	public static State OnSubmitFailure(
+			State state, SubmitFailure_Action action)
 	{
 		return state with {
 			ErrorMessage = action.ErrorMessage,
@@ -167,16 +167,16 @@ public static class SpecialEventsReducers
 	}
 
 	[ReducerMethod]
-	public static SpecialEventsState OnSetDateRange(
-		SpecialEventsState state, SpecialEvents_SetDateRange_Action action)
+	public static State OnSetDateRange(
+		State state, SetDateRange_Action action)
 	{
 		return state with { DateBegin = action.DateBegin, DateEnd = action.DateEnd };
 	}
 
 
 	[ReducerMethod]
-	public static SpecialEventsState OnAdd(
-		SpecialEventsState state, SpecialEvents_Add_Action action)
+	public static State OnAdd(
+		State state, Add_Action action)
 	{
 		return state with {
 			CurrentId = 0, 
@@ -186,8 +186,8 @@ public static class SpecialEventsReducers
 	}
 
 	[ReducerMethod]
-	public static SpecialEventsState OnEdit(
-		SpecialEventsState state, SpecialEvents_Edit_Action action)
+	public static State OnEdit(
+		State state, Edit_Action action)
 	{
 		return state with {
 			CurrentId = action.Id, 
@@ -197,16 +197,16 @@ public static class SpecialEventsReducers
 	}
 
 	[ReducerMethod]
-	public static SpecialEventsState OnDisplay(
-		SpecialEventsState state, SpecialEvents_Display_Action action)
+	public static State OnDisplay(
+		State state, Display_Action action)
 	{
 		return state with { CurrentId = action.Id,
 			VisibleComponet = Enums.VisibleComponet.DisplayCard	};
 	}
 
 
-	[ReducerMethod(typeof(SpecialEvents_Cancel_Action))]
-	public static SpecialEventsState OnCancel(SpecialEventsState state)
+	[ReducerMethod(typeof(Cancel_Action))]
+	public static State OnCancel(State state)
 	{
 		return state with {
 			VisibleComponet = Enums.VisibleComponet.Table
@@ -214,8 +214,8 @@ public static class SpecialEventsReducers
 	}
 
 	[ReducerMethod]
-	public static SpecialEventsState OnDelete(
-		SpecialEventsState state, SpecialEvents_Delete_Action action)
+	public static State OnDelete(
+		State state, Delete_Action action)
 	{
 		return state with {
 			CurrentId = action.Id,
@@ -229,9 +229,9 @@ public class SpecialEventsEffects
 {
 	#region Constructor and DI
 	private readonly ILogger Logger;
-	private readonly ISpecialEventsRepository db;
+	private readonly IRepository db;
 
-	public SpecialEventsEffects(ILogger<SpecialEventsEffects> logger, ISpecialEventsRepository specialEventsRepository)
+	public SpecialEventsEffects(ILogger<SpecialEventsEffects> logger, IRepository specialEventsRepository)
 	{
 		Logger = logger;
 		db = specialEventsRepository;
@@ -261,9 +261,9 @@ public class SpecialEventsEffects
 	*/
 
 	[EffectMethod]
-	public async Task GetListSpecialEvents(SpecialEvents_GetListWithDates_Action action, IDispatcher dispatcher)
+	public async Task GetListSpecialEvents(GetListWithDates_Action action, IDispatcher dispatcher)
 	{
-		string inside = nameof(SpecialEventsEffects) + "!" + nameof(GetListSpecialEvents) + "!" + nameof(SpecialEvents_GetListWithDates_Action);
+		string inside = nameof(SpecialEventsEffects) + "!" + nameof(GetListSpecialEvents) + "!" + nameof(GetListWithDates_Action);
 
 		Logger.LogDebug(string.Format("Inside {0}; Date Range:{1} to {2}", inside, action.DateBegin, action.DateEnd));
 		try
@@ -273,25 +273,25 @@ public class SpecialEventsEffects
 
 			if (specialEvents is not null)
 			{
-				dispatcher.Dispatch(new SpecialEvents_GetListSuccess_Action(specialEvents));
+				dispatcher.Dispatch(new GetListSuccess_Action(specialEvents));
 			}
 			else
 			{
 				Logger.LogWarning(string.Format("...{0}; {1} is null", inside, nameof(specialEvents)));
-				dispatcher.Dispatch(new SpecialEvents_GetListWarning_Action("No Special Events Found"));
+				dispatcher.Dispatch(new GetListWarning_Action("No Special Events Found"));
 			}
 
 		}
 		catch (Exception ex)
 		{
 			Logger.LogError(ex, string.Format("...Inside catch of {0}", inside));
-			dispatcher.Dispatch(new SpecialEvents_GetListFailure_Action("An invalid operation occurred, contact your administrator."));
+			dispatcher.Dispatch(new GetListFailure_Action("An invalid operation occurred, contact your administrator."));
 		}
 	}
 
 	// Called by Form.HandleValidSubmit; Step 1
 	[EffectMethod]
-	public async Task SubmitSpecialEvents(SpecialEvents_Submit_Action action, IDispatcher dispatcher)
+	public async Task SubmitSpecialEvents(Submit_Action action, IDispatcher dispatcher)
 	{
 		// What's the best way to deal with this
 		if (action.AddEditDisplay is null) throw new ArgumentException("Parameter cannot be null", nameof(action.AddEditDisplay));
@@ -325,13 +325,13 @@ public class SpecialEventsEffects
 				}
 				*/
 
-				dispatcher.Dispatch(new SpecialEvents_SubmitSuccess_Action("Special Event Added id: WHAT IS IT...HAVEN'T GOT A CLUE"));
+				dispatcher.Dispatch(new SubmitSuccess_Action("Special Event Added id: WHAT IS IT...HAVEN'T GOT A CLUE"));
 
 			}
 			catch (Exception ex)
 			{
 				Logger.LogError(ex, string.Format("...Inside catch of {0}", inside));
-				dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action($"An invalid operation occurred, contact your administrator. Action: {action.AddEditDisplay.Name}"));
+				dispatcher.Dispatch(new SubmitFailure_Action($"An invalid operation occurred, contact your administrator. Action: {action.AddEditDisplay.Name}"));
 			}
 		}
 		else
@@ -340,13 +340,13 @@ public class SpecialEventsEffects
 			try
 			{
 				var sprocTuple = await db.UpdateSpecialEvent(action.FormVM);
-				dispatcher.Dispatch(new SpecialEvents_SubmitSuccess_Action(
+				dispatcher.Dispatch(new SubmitSuccess_Action(
 					$"Special Event Updated for id: [{action.FormVM.Id}], Affected Rows: {sprocTuple.Affectedrows}"));
 			}
 			catch (Exception ex)
 			{
 				Logger.LogError(ex, string.Format("...Inside catch of {0}", inside ));
-				dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action(
+				dispatcher.Dispatch(new SubmitFailure_Action(
 					$"An invalid operation occurred, contact your administrator. Action: {action.AddEditDisplay.Name}"));
 			}
 		}
@@ -373,7 +373,7 @@ public class SpecialEventsEffects
 	- GetFailure_Action if db call fails.
 */
 	[EffectMethod]
-	public async Task GetSpecialEvents(SpecialEvents_Get_Action action, IDispatcher dispatcher)
+	public async Task GetSpecialEvents(Get_Action action, IDispatcher dispatcher)
 	{
 		string inside = $"{nameof(SpecialEventsEffects)}!{nameof(GetSpecialEvents)};  Action: {nameof(action.AddEditDisplay.Name)}; Id: {action.Id}";
 
@@ -386,7 +386,7 @@ public class SpecialEventsEffects
 			if (specialEvent is null)
 			{
 				Logger.LogWarning(string.Format("...{0}; {1} is null", inside, nameof(specialEvent)));
-				dispatcher.Dispatch(new SpecialEvents_GetFailure_Action($"Special Event Not Found; Id: {action.Id}", Warning: true));
+				dispatcher.Dispatch(new GetFailure_Action($"Special Event Not Found; Id: {action.Id}", Warning: true));
 			}
 			else
 			{
@@ -408,39 +408,39 @@ public class SpecialEventsEffects
 				};
 
 				// ToDo: 008 The old version assumed that there was a Command.Display
-				dispatcher.Dispatch(new SpecialEvents_GetSuccess_Action(formVM, action.AddEditDisplay)); 
+				dispatcher.Dispatch(new GetSuccess_Action(formVM, action.AddEditDisplay)); 
 
 				if (action.AddEditDisplay == Enums.AddEditDisplay.Edit)
 				{
-					dispatcher.Dispatch(new SpecialEvents_Edit_Action(action.Id));  
+					dispatcher.Dispatch(new Edit_Action(action.Id));  
 				}
 				else
 				{
-					dispatcher.Dispatch(new SpecialEvents_Display_Action(action.Id));
+					dispatcher.Dispatch(new Display_Action(action.Id));
 				}
 			}
 		}
 		catch (Exception ex)
 		{
 			Logger.LogError(ex, string.Format("...Inside catch of {0}", inside));
-			dispatcher.Dispatch(new SpecialEvents_GetFailure_Action("An invalid operation occurred, contact your administrator", Warning: false));
+			dispatcher.Dispatch(new GetFailure_Action("An invalid operation occurred, contact your administrator", Warning: false));
 		}
 	}
 
 	[EffectMethod]
-	public async Task DeleteSpecialEvents(SpecialEvents_Delete_Action action, IDispatcher dispatcher)
+	public async Task DeleteSpecialEvents(Delete_Action action, IDispatcher dispatcher)
 	{
 		string inside = $"{nameof(SpecialEventsEffects)}!{nameof(DeleteSpecialEvents)}; Id: {action.Id}";
 		Logger.LogDebug(string.Format("Inside {0}; Id: {1}", inside, action.Id));
 		try
 		{
 			var affectedrows = await db.RemoveSpecialEvent(action.Id);
-			dispatcher.Dispatch(new SpecialEvents_DeleteSuccess_Action($"Special Event {action.Id} has been deleted")); 
+			dispatcher.Dispatch(new DeleteSuccess_Action($"Special Event {action.Id} has been deleted")); 
 		}
 		catch (Exception ex)
 		{
 			Logger.LogError(ex, string.Format("...Inside catch of {0}", inside));
-			dispatcher.Dispatch(new SpecialEvents_DeleteFailure_Action($"An invalid operation occurred, contact your administrator"));
+			dispatcher.Dispatch(new DeleteFailure_Action($"An invalid operation occurred, contact your administrator"));
 		}
 	}
 

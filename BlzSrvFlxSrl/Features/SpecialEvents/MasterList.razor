@@ -1,0 +1,147 @@
+﻿@using BlzSrvFlxSrl.Features.SpecialEvents.Models
+@using BlzSrvFlxSrl.Shared
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@if (IsXsOrSm)
+{
+	<div class="mb-3">
+
+	<button @onclick="@(() => AddActionHandler())"
+					type="button" class="@ActionButtons.AddButtonColor btn-sm">
+		<i class="@ActionButtons.AddIcon"></i>
+		<br><small>@ActionButtons.AddText</small>
+	</button>
+
+	<button @onclick="@(() => PopulateActionHandler())"
+					type="button" class="@ActionButtons.PopulateButtonColor btn-sm">
+		<i class="@ActionButtons.PopulateIcon"></i>
+		<br><small>@ActionButtons.PopulateText</small>
+	</button>
+
+</div>
+
+	@foreach (var item in SpecialEventsState!.Value.SpecialEventList!)
+	{
+		<div class="card text-dark bg-light mb-5">
+			<div class="card-header text-center">
+				<h4>@item.Title</h4>
+				<p>Type: @item.SpecialEventTypeDescr</p>
+			</div>
+			<div class="card-body">
+
+				<div class="float-start">
+					Event Date<br><b>@item.EventDate.ToShortDateString()</b>
+				</div>
+				<div class="float-end">
+					Days <i class='fas fa-angle-left'></i> or <i class='fas fa-angle-right'></i>
+					<br>@((MarkupString)item.DaysAheadXmSmMU)
+				</div>
+			</div>
+
+			<h4 class="text-center mb-3">@item.SubTitle</h4>
+
+
+			<div class="card-footer">
+
+				<button @onclick="@(() => EditActionHandler(item.Id))" title="Id: @item.Id"
+						type="button" class="@ActionButtons.EditButtonColor btn-sm">
+					<i class="@ActionButtons.EditIcon"></i>
+					<br><small>&nbsp;@ActionButtons.EditText&nbsp;</small>
+				</button>
+
+				<button @onclick="@(() => DeleteConfirmationHandler(item.Id, item.Title!))" title="Id: @item.Id"
+						type="button" class="@ActionButtons.DeleteButtonColor btn-sm">
+					<i class="@ActionButtons.DeleteIcon"></i>
+
+					<br><small>@ActionButtons.DeleteText</small>
+				</button>
+
+				<button @onclick="@(e => DisplayActionHandler(item.Id))" title="Id: @item.Id"
+						type="button" class="@ActionButtons.DisplayButtonColor btn-sm">
+					<i class="@ActionButtons.DisplayIcon"></i>
+					<br><small>@ActionButtons.DisplayText</small>
+				</button>
+
+				@if (!String.IsNullOrEmpty(item.YouTubeId))
+				{
+					<span class="float-end">
+						<button href="https://www.youtube.com/watch?v=@item.YouTubeId"
+							class="@ActionButtons.DeleteButtonColor btn-sm"
+							type="button" target="_blank" title="@item.YouTubeId">
+							<i class="fab fa-youtube"></i>
+							<br><small>@item.YouTubeId</small>
+						</button>
+					</span>
+				}
+			</div>
+
+		</div>
+	}
+
+}
+else
+{
+	<span class="float-end">
+
+	<button @onclick="@(() => AddActionHandler())"
+					class="@ActionButtons.AddButtonColor btn-sm"
+					type="button" title="@ActionButtons.AddText">
+		<i class="@ActionButtons.AddIcon"></i>
+		<br><small>@ActionButtons.AddText</small>
+	</button>
+
+	<button @onclick="@(() => PopulateActionHandler())"
+					class="@ActionButtons.PopulateButtonColor btn-sm"
+					type="button" title="@ActionButtons.PopulateText">
+		<i class="@ActionButtons.PopulateIcon"></i>
+		<br><small>@ActionButtons.PopulateText</small>
+	</button>
+
+</span>
+
+	<TableTemplate Items="SpecialEventsState!.Value.SpecialEventList"
+							 HeaderCSS="table table-primary table-hover">
+		<TableHeader>
+			<th class="text-info">Event Date</th>
+			<th class="text-info">Type</th>
+			<th class="text-info">Title</th>
+			<th class="text-info">Days <i class='fas fa-angle-left'></i> or <i class='fas fa-angle-right'></i></th>
+			<th class="text-info">YouTube Id</th>
+			<th class="text-danger text-center">Actions</th>
+		</TableHeader>
+
+		<RowTemplate>
+			<td>@context.EventDate.ToShortDateString()</td>
+			<td>@context.SpecialEventTypeDescr </td>
+			<td>@context.Title</td>
+			<td>
+				@((MarkupString)context.DaysAheadMU)
+			</td>
+			<td>@context.YouTubeId</td>
+			<td class="text-center">
+				<div class="btn-group">
+
+					<button @onclick="@(() => EditActionHandler(context.Id))" title="Id: @context.Id"
+								type="button" class="@ActionButtons.EditButtonColor btn-sm gx-3">
+						<i class="@ActionButtons.EditIcon"></i> @ActionButtons.EditText
+					</button>
+
+					<button @onclick="@(() => DeleteConfirmationHandler(context.Id, context.Title!))" title="Id: @context.Id"
+								type="button" class="@ActionButtons.DeleteButtonColor btn-sm gx-3">
+						<i class="@ActionButtons.DeleteIcon"></i> @ActionButtons.DeleteText
+					</button>
+
+					<button @onclick="@(e => DisplayActionHandler(context.Id))" title="Id: @context.Id"
+								type="button" class="@ActionButtons.DisplayButtonColor btn-sm gx-3">
+						<i class="@ActionButtons.DisplayIcon"></i> @ActionButtons.DisplayText
+					</button>
+
+				</div>
+			</td>
+
+		</RowTemplate>
+
+	</TableTemplate>
+
+}

@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace BlzSrvFlxSrl.Features.SpecialEvents.Data;
 
-public interface ISpecialEventsRepository
+public interface IRepository
 {
 	string BaseSqlDump { get; }
 
@@ -23,9 +23,9 @@ public interface ISpecialEventsRepository
 	Task<int> UpdateDescription(int id, string description);
 }
 
-public class SpecialEventsRepository : BaseRepositoryAsync, ISpecialEventsRepository
+public class Repository : BaseRepositoryAsync, IRepository
 {
-	public SpecialEventsRepository(IConfiguration config, ILogger<SpecialEventsRepository> logger) : base(config, logger)
+	public Repository(IConfiguration config, ILogger<Repository> logger) : base(config, logger)
 	{
 	}
 
@@ -65,7 +65,7 @@ public class SpecialEventsRepository : BaseRepositoryAsync, ISpecialEventsReposi
 
 		return await WithConnectionAsync(async connection =>
 		{
-			base.log.LogDebug($"Inside {nameof(SpecialEventsRepository)}!{nameof(CreateSpecialEvent)}" +
+			base.log.LogDebug($"Inside {nameof(Repository)}!{nameof(CreateSpecialEvent)}" +
 				$", {nameof(formVM.Title)}; about to execute SPROC: {base.Sql}");
 			var affectedrows = await connection.ExecuteAsync(
 				sql: Sql, param: base.Parms, commandType: System.Data.CommandType.StoredProcedure);
@@ -132,7 +132,7 @@ public class SpecialEventsRepository : BaseRepositoryAsync, ISpecialEventsReposi
 		return await WithConnectionAsync(async connection =>
 		{
 			base.log.LogDebug(string.Format("Inside {0}"
-				, nameof(SpecialEventsRepository) + "!" + nameof(UpdateSpecialEvent)));
+				, nameof(Repository) + "!" + nameof(UpdateSpecialEvent)));
 
 			var affectedrows = await connection.ExecuteAsync(sql: base.Sql, param: base.Parms, commandType: System.Data.CommandType.StoredProcedure);
 			returnMsg = $"Special Event updated for {formVM.Title}; Id={formVM.Id}";
@@ -149,7 +149,7 @@ public class SpecialEventsRepository : BaseRepositoryAsync, ISpecialEventsReposi
 		return await WithConnectionAsync(async connection =>
 		{
 			base.log.LogDebug(string.Format("Inside {0}; deleting id: {1}"
-				, nameof(SpecialEventsRepository) + "!" + nameof(UpdateSpecialEvent), id));
+				, nameof(Repository) + "!" + nameof(UpdateSpecialEvent), id));
 			var affectedrows = await connection.ExecuteAsync(sql: base.Sql, param: base.Parms);
 			return affectedrows;
 		});
