@@ -1,5 +1,22 @@
 ﻿@using Page = BlzSrvFlxSrl.Links.Account
 
-<a href="@Page.Login" class="btn btn-xs btn-outline-info float-end text-black-50">
-	<u>@Page.TitleLogin</u> <i class="@Page.IconLogin"></i>
-</a>
+<span class="float-end">
+
+	<a href="@Page.Login" class="btn btn-xs btn-outline-info text-black-50">
+		<u>@Page.TitleLogin</u> <i class="@Page.IconLogin"></i>
+	</a>
+
+	<button type="button" class="btn btn-outline-primary position-relative" title="You've Got Mail'">
+		<i class="far fa-comment-alt"></i>
+		<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+			@messages
+			<span class="visually-hidden">unread messages</span>
+		</span>
+	</button>
+
+</span>
+
+@code {
+	string messages = "9+";
+}
+

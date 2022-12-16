@@ -65,7 +65,7 @@ public class FeatureImplementation : Feature<State>
 			DateBegin = DateTime.Parse("3/1/2021"),
 			DateEnd = DateTime.Parse("1/21/2023"),
 			AddEditDisplay = null,
-			VisibleComponet = Enums.VisibleComponet.Table,
+			VisibleComponet = Enums.VisibleComponet.MasterList,
 			CurrentId = 0,
 			SuccessMessage = string.Empty,
 			WarningMessage = string.Empty,
@@ -85,7 +85,7 @@ public static class Reducers
 	{
 		return state with
 		{
-			VisibleComponet = Enums.VisibleComponet.Table,
+			VisibleComponet = Enums.VisibleComponet.MasterList,
 			WarningMessage = string.Empty,
 			ErrorMessage = string.Empty,
 			SpecialEventList = action.SpecialEvents
@@ -100,7 +100,7 @@ public static class Reducers
 		//  You got this warning (no records found) then set it to .None
 		//  Therefore, this would be the only place where VisibleComponet = None
 		return state with {
-			VisibleComponet = Enums.VisibleComponet.Table,
+			VisibleComponet = Enums.VisibleComponet.MasterList,
 			WarningMessage = action.WarningMessage };
 	}
 
@@ -134,7 +134,7 @@ public static class Reducers
 			State state, GetFailure_Action action)
 	{
 		return state with {
-			VisibleComponet = Enums.VisibleComponet.Table,
+			VisibleComponet = Enums.VisibleComponet.MasterList,
 			ErrorMessage = action.ErrorMessage
 			};
 	}
@@ -152,7 +152,7 @@ public static class Reducers
 			State state, SubmitSuccess_Action action)
 	{
 		return state with {
-			VisibleComponet = Enums.VisibleComponet.Table,
+			VisibleComponet = Enums.VisibleComponet.MasterList,
 			SuccessMessage = "" 
 		};
 	}
@@ -163,7 +163,7 @@ public static class Reducers
 	{
 		return state with {
 			ErrorMessage = action.ErrorMessage,
-			VisibleComponet = Enums.VisibleComponet.Table };
+			VisibleComponet = Enums.VisibleComponet.MasterList };
 	}
 
 	[ReducerMethod]
@@ -209,7 +209,7 @@ public static class Reducers
 	public static State OnCancel(State state)
 	{
 		return state with {
-			VisibleComponet = Enums.VisibleComponet.Table
+			VisibleComponet = Enums.VisibleComponet.MasterList
 		};
 	}
 
@@ -219,7 +219,7 @@ public static class Reducers
 	{
 		return state with {
 			CurrentId = action.Id,
-			VisibleComponet = Enums.VisibleComponet.Table,
+			VisibleComponet = Enums.VisibleComponet.MasterList,
 		};
 	}
 }

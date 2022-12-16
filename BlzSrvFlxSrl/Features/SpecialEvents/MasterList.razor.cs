@@ -19,8 +19,17 @@ public partial class MasterList
 		await Task.Delay(0);
 		int id = args.Id;
 
-		string crudName = args.Crud == null ? "Display" : args.Crud.Name;
-		
+		string crudName;
+		if (args.Crud == null)
+		{
+			Logger!.LogWarning(string.Format("inside: {0}; args.Crud: == null", nameof(MasterList) + "!" + nameof(OnCallBackEvent)));
+			crudName = "Display";
+		}
+		else
+		{
+			crudName = args.Crud.Name;
+		}
+
 		switch (crudName)
 		{
 			case "Add":
