@@ -2,9 +2,7 @@
 using Dapper;
 using BlzSrvFlxSrl.Data;
 using static BlzSrvFlxSrl.Data.SqlServer;
-using BlzSrvFlxSrl.Features.SpecialEvents.Enums;
 using BlzSrvFlxSrl.Features.SpecialEvents.Models;
-using System.Diagnostics;
 
 namespace BlzSrvFlxSrl.Features.SpecialEvents.Data;
 
@@ -238,19 +236,5 @@ ORDER BY EventDate
 			return rows.ToList();
 		});
 	}
-
-	private string GetYearId(RelativeYearEnum relativeYear)
-	{
-		return relativeYear switch
-		{
-			RelativeYearEnum.Previous => "c.PreviousYear",
-			RelativeYearEnum.Current => "c.CurrentYear",
-			RelativeYearEnum.Next => "c.NextYear",
-			RelativeYearEnum.None => "0",
-			_ => "c.CurrentYear",
-		};
-
-	}
-
 
 }

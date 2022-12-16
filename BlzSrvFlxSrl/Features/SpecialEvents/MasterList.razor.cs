@@ -9,9 +9,44 @@ public partial class MasterList
 	[Inject] public ILogger<MasterList>? Logger { get; set; }
 	[Inject] private IState<State>? SpecialEventsState { get; set; }
 	[Inject] public IDispatcher? Dispatcher { get; set; }
-	[Parameter] public bool IsXsOrSm { get; set; }
+
+	[Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
 
 	[CascadingParameter] IModalService Modal { get; set; } = default!;
+
+	private async Task OnCallBackEvent(CallBackEventArgs args)
+	{		
+		await Task.Delay(0);
+		int id = args.Id;
+
+		string crudName = args.Crud == null ? "Display" : args.Crud.Name;
+		
+		switch (crudName)
+		{
+			case "Add":
+				AddActionHandler();
+				break;
+
+			case "Edit":
+				EditActionHandler(id);
+				break;
+
+			case "Display":
+				DisplayActionHandler(id);
+				break;
+
+			case "Delete":
+				DeleteConfirmationHandler(id, "title");
+				break;
+
+			case "Repopulate":
+				PopulateActionHandler();
+				break;
+
+			default:
+				break;
+		}
+	}
 
 	void AddActionHandler()
 	{
@@ -53,6 +88,5 @@ public partial class MasterList
 				SpecialEventsState!.Value.DateBegin, SpecialEventsState.Value.DateEnd));
 		}
 	}
-
 
 }

@@ -225,16 +225,16 @@ public static class Reducers
 }
 
 // 5. Effects 
-public class SpecialEventsEffects
+public class Effects
 {
 	#region Constructor and DI
 	private readonly ILogger Logger;
 	private readonly IRepository db;
 
-	public SpecialEventsEffects(ILogger<SpecialEventsEffects> logger, IRepository specialEventsRepository)
+	public Effects(ILogger<Effects> logger, IRepository repository)
 	{
 		Logger = logger;
-		db = specialEventsRepository;
+		db = repository;
 	}
 	#endregion
 
@@ -261,9 +261,9 @@ public class SpecialEventsEffects
 	*/
 
 	[EffectMethod]
-	public async Task GetListSpecialEvents(GetListWithDates_Action action, IDispatcher dispatcher)
+	public async Task GetList(GetListWithDates_Action action, IDispatcher dispatcher)
 	{
-		string inside = nameof(SpecialEventsEffects) + "!" + nameof(GetListSpecialEvents) + "!" + nameof(GetListWithDates_Action);
+		string inside = nameof(Effects) + "!" + nameof(GetList) + "!" + nameof(GetListWithDates_Action);
 
 		Logger.LogDebug(string.Format("Inside {0}; Date Range:{1} to {2}", inside, action.DateBegin, action.DateEnd));
 		try
@@ -291,12 +291,12 @@ public class SpecialEventsEffects
 
 	// Called by Form.HandleValidSubmit; Step 1
 	[EffectMethod]
-	public async Task SubmitSpecialEvents(Submit_Action action, IDispatcher dispatcher)
+	public async Task Submit(Submit_Action action, IDispatcher dispatcher)
 	{
 		// What's the best way to deal with this
 		if (action.AddEditDisplay is null) throw new ArgumentException("Parameter cannot be null", nameof(action.AddEditDisplay));
 
-		string inside = $"{nameof(SpecialEventsEffects)}!{nameof(SubmitSpecialEvents)}; Action: {action.AddEditDisplay.Name}";
+		string inside = $"{nameof(Effects)}!{nameof(Submit)}; Action: {action.AddEditDisplay.Name}";
 
 		if (action.AddEditDisplay == Enums.AddEditDisplay.Add)
 		{
@@ -373,9 +373,9 @@ public class SpecialEventsEffects
 	- GetFailure_Action if db call fails.
 */
 	[EffectMethod]
-	public async Task GetSpecialEvents(Get_Action action, IDispatcher dispatcher)
+	public async Task GetItem(Get_Action action, IDispatcher dispatcher)
 	{
-		string inside = $"{nameof(SpecialEventsEffects)}!{nameof(GetSpecialEvents)};  Action: {nameof(action.AddEditDisplay.Name)}; Id: {action.Id}";
+		string inside = $"{nameof(Effects)}!{nameof(GetItem)};  Action: {nameof(action.AddEditDisplay.Name)}; Id: {action.Id}";
 
 		Logger.LogDebug(string.Format("Inside {0}", inside));
 		try
@@ -428,9 +428,9 @@ public class SpecialEventsEffects
 	}
 
 	[EffectMethod]
-	public async Task DeleteSpecialEvents(Delete_Action action, IDispatcher dispatcher)
+	public async Task Delete(Delete_Action action, IDispatcher dispatcher)
 	{
-		string inside = $"{nameof(SpecialEventsEffects)}!{nameof(DeleteSpecialEvents)}; Id: {action.Id}";
+		string inside = $"{nameof(Effects)}!{nameof(Delete)}; Id: {action.Id}";
 		Logger.LogDebug(string.Format("Inside {0}; Id: {1}", inside, action.Id));
 		try
 		{

@@ -148,16 +148,16 @@
 		<div class="col-sm-6">
 			<div class="mb-3">
 
-				<button type="submit" class="@ActionButtons.SaveButtonColor">
-					<i class="@ActionButtons.SaveIcon"></i> @SpecialEventsState.Value.AddEditDisplay.FormSubmitButton
+				<button type="submit" class="@SaveCancelConstants.SaveButtonColor">
+					<i class="@SaveCancelConstants.SaveIcon"></i> @SpecialEventsState.Value.AddEditDisplay.FormSubmitButton
 				</button>
 
 				@*
 				Cancel button has to be a div (ie not a button) thereby not triggering validation which is what I want
 				[Blazor Modal Form Validation: You've to click the cancel button twice to close the modal when you delete a form field](https://stackoverflow.com/a/67737357/41106)
 				*@
-				<div @onclick="@(e => CancelActionHandler())" class="@ActionButtons.CancelButtonColor">
-					<i class="@ActionButtons.CancelIcon"></i> @ActionButtons.CancelText
+				<div @onclick="@(e => CancelActionHandler())" class="@SaveCancelConstants.CancelButtonColor">
+					<i class="@SaveCancelConstants.CancelIcon"></i> @SaveCancelConstants.CancelText
 				</div>
 
 			</div>

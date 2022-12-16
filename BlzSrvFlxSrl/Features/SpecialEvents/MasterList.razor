@@ -1,25 +1,15 @@
 ﻿@using BlzSrvFlxSrl.Features.SpecialEvents.Models
 @using BlzSrvFlxSrl.Shared
+@using System.Threading.Tasks
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 @if (IsXsOrSm)
 {
 	<div class="mb-3">
-
-	<button @onclick="@(() => AddActionHandler())"
-					type="button" class="@ActionButtons.AddButtonColor btn-sm">
-		<i class="@ActionButtons.AddIcon"></i>
-		<br><small>@ActionButtons.AddText</small>
-	</button>
-
-	<button @onclick="@(() => PopulateActionHandler())"
-					type="button" class="@ActionButtons.PopulateButtonColor btn-sm">
-		<i class="@ActionButtons.PopulateIcon"></i>
-		<br><small>@ActionButtons.PopulateText</small>
-	</button>
-
-</div>
+		<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Add" Id="0" />
+		<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Repopulate" Id="0" />
+	</div>
 
 	@foreach (var item in SpecialEventsState!.Value.SpecialEventList!)
 	{
@@ -43,31 +33,15 @@
 
 
 			<div class="card-footer">
-
-				<button @onclick="@(() => EditActionHandler(item.Id))" title="Id: @item.Id"
-						type="button" class="@ActionButtons.EditButtonColor btn-sm">
-					<i class="@ActionButtons.EditIcon"></i>
-					<br><small>&nbsp;@ActionButtons.EditText&nbsp;</small>
-				</button>
-
-				<button @onclick="@(() => DeleteConfirmationHandler(item.Id, item.Title!))" title="Id: @item.Id"
-						type="button" class="@ActionButtons.DeleteButtonColor btn-sm">
-					<i class="@ActionButtons.DeleteIcon"></i>
-
-					<br><small>@ActionButtons.DeleteText</small>
-				</button>
-
-				<button @onclick="@(e => DisplayActionHandler(item.Id))" title="Id: @item.Id"
-						type="button" class="@ActionButtons.DisplayButtonColor btn-sm">
-					<i class="@ActionButtons.DisplayIcon"></i>
-					<br><small>@ActionButtons.DisplayText</small>
-				</button>
+				<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Edit" Id="@item.Id" />
+				<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Delete" Id="@item.Id" />
+				<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Display" Id="@item.Id" />
 
 				@if (!String.IsNullOrEmpty(item.YouTubeId))
 				{
 					<span class="float-end">
 						<button href="https://www.youtube.com/watch?v=@item.YouTubeId"
-							class="@ActionButtons.DeleteButtonColor btn-sm"
+							class="btn btn-outline-danger btn-sm"
 							type="button" target="_blank" title="@item.YouTubeId">
 							<i class="fab fa-youtube"></i>
 							<br><small>@item.YouTubeId</small>
@@ -83,22 +57,9 @@
 else
 {
 	<span class="float-end">
-
-	<button @onclick="@(() => AddActionHandler())"
-					class="@ActionButtons.AddButtonColor btn-sm"
-					type="button" title="@ActionButtons.AddText">
-		<i class="@ActionButtons.AddIcon"></i>
-		<br><small>@ActionButtons.AddText</small>
-	</button>
-
-	<button @onclick="@(() => PopulateActionHandler())"
-					class="@ActionButtons.PopulateButtonColor btn-sm"
-					type="button" title="@ActionButtons.PopulateText">
-		<i class="@ActionButtons.PopulateIcon"></i>
-		<br><small>@ActionButtons.PopulateText</small>
-	</button>
-
-</span>
+		<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Add" Id="0" />
+		<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Repopulate" Id="0" />
+	</span>
 
 	<TableTemplate Items="SpecialEventsState!.Value.SpecialEventList"
 							 HeaderCSS="table table-primary table-hover">
@@ -121,22 +82,9 @@ else
 			<td>@context.YouTubeId</td>
 			<td class="text-center">
 				<div class="btn-group">
-
-					<button @onclick="@(() => EditActionHandler(context.Id))" title="Id: @context.Id"
-								type="button" class="@ActionButtons.EditButtonColor btn-sm gx-3">
-						<i class="@ActionButtons.EditIcon"></i> @ActionButtons.EditText
-					</button>
-
-					<button @onclick="@(() => DeleteConfirmationHandler(context.Id, context.Title!))" title="Id: @context.Id"
-								type="button" class="@ActionButtons.DeleteButtonColor btn-sm gx-3">
-						<i class="@ActionButtons.DeleteIcon"></i> @ActionButtons.DeleteText
-					</button>
-
-					<button @onclick="@(e => DisplayActionHandler(context.Id))" title="Id: @context.Id"
-								type="button" class="@ActionButtons.DisplayButtonColor btn-sm gx-3">
-						<i class="@ActionButtons.DisplayIcon"></i> @ActionButtons.DisplayText
-					</button>
-
+					<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Edit" Id="@context.Id" />
+					<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Delete" Id="@context.Id" />
+					<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Display" Id="@context.Id" />
 				</div>
 			</td>
 
