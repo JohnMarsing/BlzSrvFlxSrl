@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Reflection;
+using Microsoft.Extensions.Options;
 using Serilog;
 using Blazored.Toast;
 using BlzSrvFlxSrl.Settings;
-using System.Reflection;
-using Microsoft.Extensions.Options;
+
+using Blazored.LocalStorage;
 
 namespace BlzSrvFlxSrl;
 
@@ -36,6 +38,7 @@ public class Startup
 		services.AddSession();
 		services.AddBlazoredToast();
 		services.AddBlazoredModal();
+		services.AddBlazoredLocalStorage();
 		services.AddCustomAuthentication(Configuration);
 		services.Configure<AppSettings>(options => Configuration.GetSection("AppSettings").Bind(options));
 
@@ -46,7 +49,6 @@ public class Startup
 			o.UseReduxDevTools();
 #endif
 		});
-
 
 	}
 

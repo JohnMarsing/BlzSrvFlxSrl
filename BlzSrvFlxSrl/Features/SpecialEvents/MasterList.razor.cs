@@ -16,7 +16,7 @@ public partial class MasterList
 
 	private async Task OnCallBackEvent(CallBackEventArgs args)
 	{		
-		await Task.Delay(0);
+		//await Task.Delay(0);
 		int id = args.Id;
 
 		string crudName;
@@ -45,7 +45,7 @@ public partial class MasterList
 				break;
 
 			case "Delete":
-				DeleteConfirmationHandler(id, "title");
+				await DeleteConfirmationHandler(id, "title");
 				break;
 
 			case "Repopulate":

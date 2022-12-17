@@ -5,7 +5,7 @@ namespace BlzSrvFlxSrl.Shared.Header;
 
 public partial class BookChapterAnchorList
 {
-	[Inject] private IState<BibleSearchState>? BibleSearchState { get; set; }
+	[Inject] private IState<State>? BibleSearchState { get; set; }
 
 	protected string? AnchorBookChapterUrl(int chapter)
 	{

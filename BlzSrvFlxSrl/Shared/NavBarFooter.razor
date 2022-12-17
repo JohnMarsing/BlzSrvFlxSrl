@@ -7,6 +7,9 @@
 	<img src=@Blobs.UrlRoot("bannerline.png") class="img-fluid" />
 </div>
 *@
-<p class="text-center">
-	@DateTime.Now.Year @Settings.Constants.Site.BaseUrl | &copy; @Home.Title . All rights reserved.
-</p>
+<div class="pb-1 mt-4 mb-1 border-top">
+	<p class="text-muted text-center">
+		<small>@DateTime.Now.Year @Settings.Constants.Site.BaseUrl | &copy; @Home.Title . All rights reserved.</small>
+	</p>
+</div>
+

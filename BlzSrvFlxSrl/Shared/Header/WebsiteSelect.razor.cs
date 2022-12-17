@@ -5,7 +5,7 @@ namespace BlzSrvFlxSrl.Shared.Header;
 
 public partial class WebsiteSelect
 {
-	[Inject] private IState<BibleSearchState>? BibleSearchState { get; set; }
+	[Inject] private IState<State>? BibleSearchState { get; set; }
 	[Inject] public IDispatcher? Dispatcher { get; set; }
 
 	private string? selectedWebsite;
@@ -26,7 +26,7 @@ public partial class WebsiteSelect
 		selectedWebsite = e.Value?.ToString() ?? "";
 		if (!String.IsNullOrEmpty(selectedWebsite))
 		{
-			Dispatcher!.Dispatch(new BibleSearch_SetWebsite_Action(BibleWebsite.FromName(selectedWebsite)));
+			Dispatcher!.Dispatch(new SetWebsite_Action(BibleWebsite.FromName(selectedWebsite)));
 		}
 		// else, I don't know why this would ever happen?
 	}

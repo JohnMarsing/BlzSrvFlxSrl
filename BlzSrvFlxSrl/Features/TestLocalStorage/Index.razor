@@ -1,0 +1,56 @@
+﻿@page "/TestLocalStorage"
+@inject ILocalStorageService localStorage
+
+@using Page = BlzSrvFlxSrl.Links.TestLocalStorage
+
+<PageTitle>@Page.Title</PageTitle>
+<div class="pb-2 mt-4 mb-2 border-bottom">
+	<h1><i class="@Page.Icon"></i> @Page.Title</h1>
+</div>
+
+<div class="row my-5">
+	<div class="col-md-4">
+		<h5>Add Item to local storage</h5>
+		<div class="input-group">
+			<input class="form-control" type="text" placeholder="Enter a value" @bind="Name" />
+			<div class="input-group-append">
+				<button class="btn btn-primary" @onclick="SaveName">Save</button>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-4">
+		<h5>Remove item from local storage</h5>
+		<button class="btn btn-primary" @onclick="RemoveName">Remove Item</button>
+	</div>
+
+	<div class="col-md-4">
+		<h5>Clear local storage</h5>
+		<button class="btn btn-primary" @onclick="ClearLocalStorage">Clear All</button>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-4">
+		<h5>Value Read from local storage</h5>
+		@NameFromLocalStorage
+	</div>
+
+	<div class="col-md-4">
+		<h5>Items in local storage</h5>
+		@ItemsInLocalStorage
+	</div>
+	<div class="col-md-4">
+		<h5>Item exist in local storage</h5>@(ItemExist)
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		<h5>All keys in local storage:</h5>
+		@foreach (var key in Keys)
+		{
+			<span>@key &nbsp;</span>
+		}
+	</div>
+</div>

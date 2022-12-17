@@ -47,6 +47,13 @@ public static class SpecialEvents
 	public const string Icon = "far fa-clock";
 }
 
+public static class TestLocalStorage
+{
+	public const string Index = "/TestLocalStorage/";
+	public const string Title = "Test Local Storage"; 
+	public const string Icon = "fas fa-box-open";
+}
+
 
 public static class UpcomingEvents
 {

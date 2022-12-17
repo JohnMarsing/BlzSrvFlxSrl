@@ -5,7 +5,7 @@ namespace BlzSrvFlxSrl.Shared.Header;
 
 public partial class BibleSearch
 {
-	[Inject] private IState<BibleSearchState>? BibleSearchState { get; set; }
+	[Inject] private IState<State>? BibleSearchState { get; set; }
 	[Inject] public IDispatcher? Dispatcher { get; set; }
 
 	private async Task<IEnumerable<BibleBook>> SearchBibleBooks(string searchText)
@@ -17,7 +17,7 @@ public partial class BibleSearch
 
 	private void SelectedResultChanged(BibleBook bibleBook)
 	{
-		Dispatcher!.Dispatch(new BibleSearch_SetBibleBook_Action(bibleBook!)); 
+		Dispatcher!.Dispatch(new SetBibleBook_Action(bibleBook!)); 
 
 		if (bibleBook is null)  
 		{
