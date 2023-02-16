@@ -38,7 +38,10 @@ public class Startup
 		services.AddSession();
 		services.AddBlazoredToast();
 		services.AddBlazoredModal();
+
+		services.AddScoped<Features.Profile.Service>();
 		services.AddBlazoredLocalStorage();
+
 		services.AddCustomAuthentication(Configuration);
 		services.Configure<AppSettings>(options => Configuration.GetSection("AppSettings").Bind(options));
 

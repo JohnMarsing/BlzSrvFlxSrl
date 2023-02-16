@@ -22,7 +22,6 @@ public record SubmitWithDates_Action(FormVM FormVM, Enums.AddEditDisplay? AddEdi
 public record SubmitSuccess_Action(string SuccessMessage);
 public record SubmitFailure_Action(string ErrorMessage);
 
-public record SetDateRange_Action(DateTimeOffset DateBegin, DateTimeOffset DateEnd);
 public record ShowForm_Action(bool IsVisible);
 
 public record Add_Action();
@@ -165,14 +164,6 @@ public static class Reducers
 			ErrorMessage = action.ErrorMessage,
 			VisibleComponet = Enums.VisibleComponet.MasterList };
 	}
-
-	[ReducerMethod]
-	public static State OnSetDateRange(
-		State state, SetDateRange_Action action)
-	{
-		return state with { DateBegin = action.DateBegin, DateEnd = action.DateEnd };
-	}
-
 
 	[ReducerMethod]
 	public static State OnAdd(

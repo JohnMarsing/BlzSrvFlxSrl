@@ -1,37 +1,37 @@
 ﻿using Microsoft.AspNetCore.Components;
-using BlzSrvFlxSrl.Shared.Header;
+using System;
+using DateRangeComponent = BlzSrvFlxSrl.Features.SpecialEvents.DateRangeComponent;
+
 
 namespace BlzSrvFlxSrl.Shared;
 
 public partial class StateLoader
 {
-  [Inject] private IState<State>? BibleSearchState { get; set; }
+  [Inject] private IState<DateRangeComponent.State>? DateRangeComponentState { get; set; }
   [Inject] public IDispatcher? Dispatcher { get; set; }
+	[Inject] public ILogger<StateLoader>? Logger { get; set; }
 
-  protected override void OnInitialized()
-  {
-    base.OnInitialized();
-
-
-    //SubscribeToAction<BibleSearch_PersistState_Action>(
-    //  action => PersistBibleSearchState());
-
-  }
+	//protected override void OnInitialized()
+ // {
+	//	Logger!.LogDebug(string.Format("Inside {0}", nameof(StateLoader) + "!" + nameof(OnInitializedAsync)));
+	//	base.OnInitialized();
+ //   SubscribeToAction<DateRangeComponent.PersistDateRange_Action>(action => PersistState_StateLoader());
+ // }
 
   protected override void OnAfterRender(bool firstRender)
   {
+    Logger!.LogDebug(string.Format("Inside {0}; firstRender:{1}", nameof(StateLoader) + "!" + nameof(OnAfterRender), firstRender));
     base.OnAfterRender(firstRender);
 
     if (firstRender)
     {
       //Dispatcher.Dispatch(new CounterLoadStateAction());
-      //Dispatcher.Dispatch(new WeatherLoadStateAction());
+      Dispatcher!.Dispatch(new DateRangeComponent.LoadDateRange_Action());
     }
   }
 
-  private void PersistBibleSearchState()
+  private void PersistState_StateLoader()
   {
-    //Dispatcher!.Dispatch(new BibleSearch_PersistState_Action(
-    //  BibleSearchState!.Value));
+    Dispatcher!.Dispatch(new DateRangeComponent.PersistDateRange_Action(DateRangeComponentState!.Value));
   }
 }

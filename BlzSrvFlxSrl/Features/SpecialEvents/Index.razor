@@ -3,21 +3,17 @@
 @using BlzSrvFlxSrl.SmartEnums
 @using LoginLink = BlzSrvFlxSrl.Links.Account
 @using static BlzSrvFlxSrl.Services.Auth0;
+@using DRC = BlzSrvFlxSrl.Features.SpecialEvents.DateRangeComponent;
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <PageTitle>@Page.Title</PageTitle>
 
-<div class="container-fluid bg-warning">
-	<div class="row pt-2 pb-1">
-		<div class="col-12">
-			<DateRangePicker 
-				OnRangeSelect="OnRangeSelect" 
-				@bind-StartDate="@DateBegin"
-				@bind-EndDate="@DateEnd" />
-		</div>
-	</div>
-</div>
+@*<DRC.Index />*@
+
+<BlzSrvFlxSrl.Features.SpecialEvents.DateRangeComponent.Component />
+
+
 
 <div class="pb-1 mt-4 mb-2">
 	<h1><i class="@Page.Icon"></i> @Page.Title</h1>

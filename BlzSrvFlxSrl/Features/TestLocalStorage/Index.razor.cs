@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 
 namespace BlzSrvFlxSrl.Features.TestLocalStorage;
@@ -10,8 +11,9 @@ public partial class Index
 	[Inject] private IState<State>? SpecialEventsState { get; set; }
 	[Inject] public IDispatcher? Dispatcher { get; set; }
 	*/
-	
+
 	[Inject] public ILogger<Index>? Logger { get; set; }
+	[Inject] public ILocalStorageService? localStorage { get; set; }
 
 	string? NameFromLocalStorage { get; set; }
 	int ItemsInLocalStorage { get; set; }
@@ -25,7 +27,7 @@ public partial class Index
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		Logger!.LogDebug(string.Format("Inside {0}!{1}; firstRender:{2}", inside, nameof(OnAfterRenderAsync), firstRender));
-		Keys = await localStorage.KeysAsync();
+		Keys = await localStorage!.KeysAsync();
 
 		if (firstRender)
 		{
@@ -43,7 +45,7 @@ public partial class Index
 
 	async Task SaveName()
 	{
-		await localStorage.SetItemAsync("name", Name);
+		await localStorage!.SetItemAsync("name", Name);
 		await GetNameFromLocalStorage();
 		await GetLocalStorageLength();
 
@@ -54,7 +56,7 @@ public partial class Index
 
 	async Task GetNameFromLocalStorage()
 	{
-		NameFromLocalStorage = await localStorage.GetItemAsync<string>("name");
+		NameFromLocalStorage = await localStorage!.GetItemAsync<string>("name");
 
 		if (string.IsNullOrEmpty(NameFromLocalStorage))
 		{
@@ -64,7 +66,7 @@ public partial class Index
 
 	async Task RemoveName()
 	{
-		await localStorage.RemoveItemAsync("name");
+		await localStorage!.RemoveItemAsync("name");
 		await GetNameFromLocalStorage();
 		await GetLocalStorageLength();
 	}
@@ -73,7 +75,7 @@ public partial class Index
 	{
 		Logger!.LogDebug(string.Format("...Inside {0}; calling {1} ", nameof(ClearLocalStorage), nameof(localStorage.ClearAsync)));
 
-		await localStorage.ClearAsync();
+		await localStorage!.ClearAsync();
 
 		Logger!.LogDebug(string.Format("...calling {0} ", nameof(GetNameFromLocalStorage)));
 		await GetNameFromLocalStorage();
@@ -85,14 +87,14 @@ public partial class Index
 	async Task GetLocalStorageLength()
 	{
 		Logger!.LogDebug(string.Format("...Inside {0}; calling {1} ", nameof(GetLocalStorageLength), nameof(localStorage.LengthAsync)));
-		Console.WriteLine(await localStorage.LengthAsync());
+		Console.WriteLine(await localStorage!.LengthAsync());
 		ItemsInLocalStorage = await localStorage.LengthAsync();
 		ItemExist = await localStorage.ContainKeyAsync("name");
 	}
 
 	async Task TestTimespan()
 	{
-		var timespan = await localStorage.GetItemAsync<TimeSpan>("timespan");
+		var timespan = await localStorage!.GetItemAsync<TimeSpan>("timespan");
 		if (timespan == TimeSpan.Zero)
 		{
 			await localStorage.SetItemAsync("timespan", new TimeSpan(0, 15, 0));

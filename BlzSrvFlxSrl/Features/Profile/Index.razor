@@ -1,0 +1,23 @@
+﻿@page "/Profile"
+
+@implements IDisposable
+
+@using Page = BlzSrvFlxSrl.Links.Profile
+
+<PageTitle>@Page.Title</PageTitle>
+<div class="pb-2 mt-4 mb-2 border-bottom">
+	<h1><i class="@Page.Icon"></i> @Page.Title</h1>
+</div>
+
+
+<div class="flex flex-col h-screen @(_preferences.DarkMode ? "dark" : "")">
+
+	<div class="bg-gray-600 p-4 flex justify-between">
+		<h1 class="text-white">Blazor WASM Demo App</h1>
+		<ThemeToggle TestTryCatch="false" />
+		<br /><br />
+
+		<ThemeToggle TestTryCatch="true" />
+	</div>
+
+</div>

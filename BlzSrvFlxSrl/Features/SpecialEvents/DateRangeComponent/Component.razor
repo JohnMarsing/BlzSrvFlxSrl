@@ -1,0 +1,26 @@
+﻿<div class="container-fluid bg-warning">
+	<div class="row pt-2 pb-1">
+		<div class="col-12">
+
+			@if (@DateBegin is not null)
+			{
+			<DateRangePicker OnRangeSelect="OnRangeSelect"
+											 @bind-StartDate="@DateBegin"
+											 @bind-EndDate="@DateEnd" />
+
+			}
+			else
+			{
+				<p>DateBegin is null</p>
+				<button @onclick="@(e => LogDates())" >
+					LogDates
+				</button>
+
+				<button @onclick="@(e => PersistDates())">
+					PersistDates
+				</button>
+
+			}
+		</div>
+	</div>
+</div>

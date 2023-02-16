@@ -40,6 +40,15 @@ public static class Home
 	public const string Error = "/Error";
 }
 
+
+public static class Profile
+{
+	public const string Index = "/Profile/";
+	public const string Title = "Profile"; 
+	public const string Icon = "far fa-address-card"; 
+}
+
+
 public static class SpecialEvents
 {
 	public const string Index = "/SpecialEvents/";
@@ -51,6 +60,13 @@ public static class TestLocalStorage
 {
 	public const string Index = "/TestLocalStorage/";
 	public const string Title = "Test Local Storage"; 
+	public const string Icon = "fas fa-box-open";
+}
+
+public static class TestLocalStorageDateRange
+{
+	public const string Index = "/TestLocalStorageDateRange/";
+	public const string Title = "Test Local Storage Date Range";
 	public const string Icon = "fas fa-box-open";
 }
 

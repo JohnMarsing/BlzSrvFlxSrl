@@ -1,0 +1,27 @@
+﻿@inject Service Service
+
+@if (TestTryCatch)
+{
+	switch (_status)
+	{
+		case Status.Loading:
+			<p class="text-info"><em>Loading.. .</em></p>
+			break;
+
+		case Status.Error:
+			<h3 class="text-danger">@_errorMessage</h3>
+			break;
+
+		case Status.Loaded:
+			<button class="btn btn-outline-danger" @onclick="ToggleAsync">Theme Toggle Async</button>
+			break;
+	}
+	
+}
+else
+{
+	<button class="btn btn-outline-info" @onclick="Toggle">Theme Toggle</button>
+}
+
+
+

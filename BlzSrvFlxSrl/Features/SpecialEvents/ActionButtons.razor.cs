@@ -14,7 +14,7 @@ public partial class ActionButtons
 	{
 		CallBackEventArgs args = new CallBackEventArgs
 		{
-			Crud=ParmCrud,
+			Crud=ParmCrud!,
 			Id=Id
 		};
 		await OnCallBackEvent.InvokeAsync(args);

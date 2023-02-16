@@ -12,7 +12,7 @@ public partial class ToasterSpecialEvents
 		SubscribeToAction<GetListWarning_Action>(GetListWarning_Toast);
 		SubscribeToAction<GetListFailure_Action>(GetListFailure_Toast);
 
-		SubscribeToAction<SetDateRange_Action>(SetDateRange_Toast);
+		//SubscribeToAction<SetDateRange_Action>(SetDateRange_Toast);
 		SubscribeToAction<GetSuccess_Action>(GetSuccess_Toast);
 		SubscribeToAction<GetWarning_Action>(GetWarning_Toast);
 		SubscribeToAction<GetFailure_Action>(GetFailure_Toast);
@@ -38,10 +38,14 @@ public partial class ToasterSpecialEvents
 	{
 		Toast!.ShowError($"{action.ErrorMessage}");
 	}
+
+	/*
 	private void SetDateRange_Toast(SetDateRange_Action action)
 	{
 		Toast!.ShowInfo($"Selected Date Range: {action.DateBegin.ToString("yyyy-MM-dd")} to {action.DateEnd.ToString("yyyy-MM-dd")}");
 	}
+	*/
+
 	private void GetSuccess_Toast(GetSuccess_Action action)
 	{
 		Toast!.ShowInfo($"Got {action.Model!.Title!}");

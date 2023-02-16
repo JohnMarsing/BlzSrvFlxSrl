@@ -58,11 +58,3 @@ public abstract class AddEditDisplay : SmartEnum<AddEditDisplay>
 
 	#endregion
 }
-/*
-public static class ActionButtons
-	public const string AddIcon = "fas fa-plus";
-	public const string AddButtonColor = "btn btn-success";
-	public const string AddText = "Add";
-	public const string AddModalText = "Save";
-
-*/
