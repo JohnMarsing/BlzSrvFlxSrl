@@ -19,35 +19,27 @@
 				<p>Type: @item.SpecialEventTypeDescr</p>
 			</div>
 			<div class="card-body">
-
 				<div class="float-start">
 					Event Date<br><b>@item.EventDate.ToShortDateString()</b>
 				</div>
 				<div class="float-end">
-					Days <i class='fas fa-angle-left'></i> or <i class='fas fa-angle-right'></i>
+					Days <i class='fas fa-angle-left'></i> 
+					or <i class='fas fa-angle-right'></i>
 					<br>@((MarkupString)item.DaysAheadXmSmMU)
 				</div>
 			</div>
 
 			<h4 class="text-center mb-3">@item.SubTitle</h4>
 
-
 			<div class="card-footer">
-				<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Edit" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
-				<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Delete" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
-				<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Display" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
+				<ActionButtons OnCallBackEvent="@OnCallBackEvent" 
+					ParmCrud="Enums.Crud.Edit" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
+				<ActionButtons OnCallBackEvent="@OnCallBackEvent" 
+					ParmCrud="Enums.Crud.Delete" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
+				<ActionButtons OnCallBackEvent="@OnCallBackEvent" 
+					ParmCrud="Enums.Crud.Display" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
 
-				@if (!String.IsNullOrEmpty(item.YouTubeId))
-				{
-					<span class="float-end">
-						<button href="https://www.youtube.com/watch?v=@item.YouTubeId"
-							class="btn btn-outline-danger btn-sm"
-							type="button" target="_blank" title="@item.YouTubeId">
-							<i class="fab fa-youtube"></i>
-							<br><small>@item.YouTubeId</small>
-						</button>
-					</span>
-				}
+				<YouTubeButton YouTubeId="@item.YouTubeId" IsXsOrSm="@IsXsOrSm" />
 			</div>
 
 		</div>
@@ -75,19 +67,9 @@ else
 		<RowTemplate>
 			<td>@context.Title</td>
 			<td>@context.EventDate.ToShortDateString()</td>
-			<td>
-				@((MarkupString)context.DaysAheadMU)
-			</td>
+			<td>	@((MarkupString)context.DaysAheadMU) </td>
 			<td>@context.SpecialEventTypeDescr </td>
-			<td>
-				@if (!String.IsNullOrEmpty(@context.YouTubeId))
-				{
-					<a href="https://www.youtube.com/watch?v=@context.YouTubeId" target="_blank" title="@context.YouTubeId">
-						<span class="btn btn-danger btn-sm"><i class="fab fa-youtube"></i></span>
-					</a>
-				}
-				
-			</td>
+			<td><YouTubeButton YouTubeId="@context.YouTubeId" IsXsOrSm="@IsXsOrSm" /></td>
 			<td class="text-center">
 				<div class="btn-group">
 					<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Edit" IsXsOrSm="@IsXsOrSm" Id="@context.Id" />

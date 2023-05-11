@@ -129,10 +129,10 @@ public class Repository : BaseRepositoryAsync, IRepository
 
 		return await WithConnectionAsync(async connection =>
 		{
-			base.log.LogDebug(string.Format("Inside {0}"
-				, nameof(Repository) + "!" + nameof(UpdateSpecialEvent)));
+			base.log.LogDebug(string.Format("Inside {0}", nameof(Repository) + "!" + nameof(UpdateSpecialEvent)));
 
 			var affectedrows = await connection.ExecuteAsync(sql: base.Sql, param: base.Parms, commandType: System.Data.CommandType.StoredProcedure);
+			
 			returnMsg = $"Special Event updated for {formVM.Title}; Id={formVM.Id}";
 			base.log.LogDebug(string.Format("...returnMsg: {0}", returnMsg));
 			return (affectedrows, returnMsg);
@@ -160,8 +160,8 @@ public class Repository : BaseRepositoryAsync, IRepository
 
 		base.Sql = $@"
 --DECLARE @Id int=
-SELECT Id, Title
-, ISNULL(Description, '') AS Description -- MarkDig does not like nulls
+SELECT Id, Title 
+, ISNULL(Description, '') AS Description
 FROM KeyDate.UpcomingEvent
 WHERE Id = @Id
 ";

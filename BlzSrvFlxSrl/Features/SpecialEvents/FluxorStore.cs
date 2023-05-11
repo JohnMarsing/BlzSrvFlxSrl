@@ -62,7 +62,7 @@ public class FeatureImplementation : Feature<State>
 		{
 			//  ToDo: can't used these random default dates
 			DateBegin = DateTime.Parse("3/1/2021"),
-			DateEnd = DateTime.Parse("1/21/2023"),
+			DateEnd = DateTime.Parse("6/21/2023"),
 			AddEditDisplay = null,
 			VisibleComponet = Enums.VisibleComponet.MasterList,
 			CurrentId = 0,
