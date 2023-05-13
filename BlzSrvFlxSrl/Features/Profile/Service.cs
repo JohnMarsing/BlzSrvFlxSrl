@@ -6,7 +6,7 @@ public class Service
 {
 	private readonly ILocalStorageService _localStorageService;
 
-	public event Action<Preferences> OnChange;
+	public event Action<Preferences>? OnChange;
 
 	//public Service(ILocalStorageService localStorageService) => _localStorageService = localStorageService;
 	

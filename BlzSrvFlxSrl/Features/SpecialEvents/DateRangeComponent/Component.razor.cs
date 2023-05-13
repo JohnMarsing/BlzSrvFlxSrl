@@ -20,12 +20,12 @@ public partial class Component
 
 //		ComponentVM? vm = new ComponentVM();
 //		vm= DateRangeComponentState!.Value.Model;
-//		Dispatcher?.Dispatch(new GetListWithDates_Action(vm.DateBegin, vm.DateEnd));
+//		Dispatcher!.Dispatch(new GetListWithDates_Action(vm.DateBegin, vm.DateEnd));
 
 ///*
 //		DateBegin = DateRangeComponentState!.Value!.Model!.DateBegin;
 //		DateEnd = DateRangeComponentState!.Value.Model.DateEnd;
-//		Dispatcher?.Dispatch(new GetListWithDates_Action(DateBegin, DateEnd));
+//		Dispatcher!.Dispatch(new GetListWithDates_Action(DateBegin, DateEnd));
 //*/
 //		base.OnInitialized();
 //	}
@@ -45,7 +45,7 @@ public partial class Component
 
 
 		Dispatcher!.Dispatch(new SetDateRange_Action(range.Start, range.End)); //   vm
-		Dispatcher?.Dispatch(new GetListWithDates_Action(
+		Dispatcher!.Dispatch(new Get_List_Action(
 			DateRangeComponentState!.Value.Model!.DateBegin, DateRangeComponentState.Value.Model!.DateEnd));
 	}
 

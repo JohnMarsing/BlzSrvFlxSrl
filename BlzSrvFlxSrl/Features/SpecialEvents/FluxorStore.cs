@@ -5,33 +5,45 @@ using BlzSrvFlxSrl.Features.SpecialEvents.Models;
 
 namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
+
 // 1. Action
-public record GetListWithDates_Action(DateTimeOffset? DateBegin, DateTimeOffset? DateEnd);
 
-public record GetListSuccess_Action(List<SpecialEvent> SpecialEvents); //, string SuccessMessage, int RowCnt
-public record GetListFailure_Action(string ErrorMessage);
-public record GetListWarning_Action(string WarningMessage); // Empty List
+// 1.2 Actions related to a list of Items (Id)
+public record Get_List_Action(DateTimeOffset? DateBegin, DateTimeOffset? DateEnd);
+/*
+[EffectMethod] GetList
+MasterList!OnInitialized if (SpecialEventsState!.Value.SpecialEventList is null) i.e.first time
+MasterList!PopulateActionHandler
+MasterList!DeleteConfirmationHandler
+Form!HandleValidSubmit after Submit_Action
+*/
 
-public record Get_Action(int Id, Enums.AddEditDisplay? AddEditDisplay);
-public record GetSuccess_Action(FormVM? Model, Enums.AddEditDisplay? AddEditDisplay);
-public record GetWarning_Action(string WarningMessage, bool Warning);
-public record GetFailure_Action(string ErrorMessage, bool Warning);
+public record Get_List_Success_Action(List<SpecialEvent> SpecialEvents);  // [EffectMethod] GetList after db!.GetEventsByDateRange and if specialEvents is NOT null
+public record Get_List_Warning_Action(string WarningMessage);							// [EffectMethod] GetList after db!.GetEventsByDateRange and if specialEvents IS null
+public record Get_List_Failure_Action(string ErrorMessage);								// [EffectMethod] GetList catch (Exception)
 
-public record Submit_Action(FormVM FormVM, Enums.AddEditDisplay? AddEditDisplay);
-public record SubmitWithDates_Action(FormVM FormVM, Enums.AddEditDisplay? AddEditDisplay, DateTimeOffset? DateBegin, DateTimeOffset? DateEnd);
-public record SubmitSuccess_Action(string SuccessMessage);
-public record SubmitFailure_Action(string ErrorMessage);
+// 1.2 Actions related to a single Item
+public record Get_Item_Action(int Id, Enums.AddEditDisplay? AddEditDisplay);								// [EffectMethod] GetItem(Get_Action action,); MasterList!EditActionHandler(int id) or MasterList!DisplayActionHandler(int id) 
+public record Get_Item_Success_Action(FormVM? Model, Enums.AddEditDisplay? AddEditDisplay); // [EffectMethod] GetItem(Get_Action action,); after db!.GetEventById and if specialEvent is NOT null
+public record Get_Item_Warning_Action(string WarningMessage);                 // [EffectMethod] GetItem(Get_Action action,); after db!.GetEventById and if specialEvent IS null
+public record Get_Item_Failure_Action(string ErrorMessage);                   // [EffectMethod] GetItem catch (Exception)
 
-public record ShowForm_Action(bool IsVisible);
+// 1.3 Actions related to the Form
+public record Submiting_Request_Action(FormVM FormVM, Enums.AddEditDisplay? AddEditDisplay);  // Form!HandleValidSubmit
+public record Submited_Response_Success_Action(string SuccessMessage); // [EffectMethod] Submit: Happy path if action.AddEditDisplay == Add or Edit
+public record Submited_Response_Failure_Action(string ErrorMessage);   // [EffectMethod] Submit: Sad path (catch Exception)  if action.AddEditDisplay == Add or Edit
 
-public record Add_Action();
-public record Edit_Action(int Id);
+// 1.4 Actions related to the MasterList (spefically the ActionButtons!EventCallback)
+public record Add_Action();           // Dispatched by MasterList!AddActionHandler
+public record Edit_Action(int Id);    // [EffectMethod] GetItem if the happy path occured and AddEditDisplay == AddEditDisplay.Edi
 
-public record Display_Action(int Id);
-
+public record Display_Action(int Id); // [EffectMethod] GetItem if the happy path occured and AddEditDisplay != AddEditDisplay.Edi
 public record Delete_Action(int Id);
-public record DeleteSuccess_Action(string SuccessMessage);  
-public record DeleteFailure_Action(string ErrorMessage);
+// [EffectMethod] Delete
+// [EffectMethod] MasterList!DeleteConfirmationHandler and IsModalConfirmed is true
+
+public record DeleteSuccess_Action(string SuccessMessage);   // [EffectMethod] Delete Happy path
+public record DeleteFailure_Action(string ErrorMessage);    // [EffectMethod] Delete sad path
 
 public record Cancel_Action(); 
 
@@ -43,11 +55,10 @@ public record State
 	public DateTimeOffset? DateEnd { get; init; }
 	public Enums.VisibleComponet? VisibleComponet { get; init; }
 	public Enums.AddEditDisplay? AddEditDisplay { get; init; }
-	public int CurrentId { get; init; }
 	public string? SuccessMessage { get; init; }
 	public string? WarningMessage { get; init; }
 	public string? ErrorMessage { get; init; }
-	public FormVM? Model { get; init; }
+	public FormVM? FormVM { get; init; }
 	public List<SpecialEvent>? SpecialEventList { get; init; }
 }
 
@@ -65,12 +76,10 @@ public class FeatureImplementation : Feature<State>
 			DateEnd = DateTime.Parse("6/21/2023"),
 			AddEditDisplay = null,
 			VisibleComponet = Enums.VisibleComponet.MasterList,
-			CurrentId = 0,
 			SuccessMessage = string.Empty,
 			WarningMessage = string.Empty,
 			ErrorMessage = string.Empty,
-			Model = new FormVM(),
-			SpecialEventList = new List<SpecialEvent>()
+			FormVM = new FormVM()
 		};
 	}
 }
@@ -79,8 +88,8 @@ public class FeatureImplementation : Feature<State>
 public static class Reducers
 {
 	[ReducerMethod]
-	public static State OnGetListSuccess(
-		State state, GetListSuccess_Action action)
+	public static State On_Get_List_Success(
+		State state, Get_List_Success_Action action)
 	{
 		return state with
 		{
@@ -92,8 +101,8 @@ public static class Reducers
 	}
 
 	[ReducerMethod]
-	public static State OnGetListWarning(
-		State state, GetListWarning_Action action)
+	public static State On_Get_List_Warning(
+		State state, Get_List_Warning_Action action)
 	{
 		// Here might be a case where VisibleComponet has a .Table and 
 		//  You got this warning (no records found) then set it to .None
@@ -104,33 +113,32 @@ public static class Reducers
 	}
 
 	[ReducerMethod]
-	public static State OnGetListFailure(
-		State state, GetListFailure_Action action)
+	public static State On_Get_List_Failure(
+		State state, Get_List_Failure_Action action)
 	{
 		return state with { ErrorMessage = action.ErrorMessage };
 	}
 
-
 	[ReducerMethod]
-	public static State OnGet(State state, Get_Action action)
+	public static State On_Get_Item(State state, Get_Item_Action action)
 	{
 		return state with { AddEditDisplay = action.AddEditDisplay };
 	}
 
 	[ReducerMethod]
-	public static State OnGetSuccess(
-		State state, GetSuccess_Action action)
+	public static State On_Get_Item_Success(
+		State state, Get_Item_Success_Action action)
 	{
 		return state with
 		{
 			VisibleComponet = action.AddEditDisplay!.VisibleComponet,
-			Model = action.Model
+			FormVM = action.Model
 		};
 	}
 
 	[ReducerMethod]
-	public static State OnGetFailure(
-			State state, GetFailure_Action action)
+	public static State On_Get_Item_Failure(
+			State state, Get_Item_Failure_Action action)
 	{
 		return state with {
 			VisibleComponet = Enums.VisibleComponet.MasterList,
@@ -140,15 +148,13 @@ public static class Reducers
 
 	// Called by Form.HandleValidSubmit; Step 1
 	[ReducerMethod]
-	public static State OnSubmit(
-		State state, Submit_Action action)
+	public static State On_Submiting_Request(
+		State state, Submiting_Request_Action action)
 	{
 		return state with { AddEditDisplay = action.AddEditDisplay };
 	}
 
-	[ReducerMethod]
-	public static State OnSubmitSuccess(
-			State state, SubmitSuccess_Action action)
+	public static State On_Submited_Response_Success(State state)
 	{
 		return state with {
 			VisibleComponet = Enums.VisibleComponet.MasterList,
@@ -157,31 +163,33 @@ public static class Reducers
 	}
 
 	[ReducerMethod]
-	public static State OnSubmitFailure(
-			State state, SubmitFailure_Action action)
+	public static State On_Submited_Response_Failure(
+			State state, Submited_Response_Failure_Action action)
 	{
 		return state with {
 			ErrorMessage = action.ErrorMessage,
 			VisibleComponet = Enums.VisibleComponet.MasterList };
 	}
 
-	[ReducerMethod]
+	
+	// OnAdd: hide the MasterList and show Form in add mode
+		[ReducerMethod]
 	public static State OnAdd(
 		State state, Add_Action action)
 	{
 		return state with {
-			CurrentId = 0, 
 			VisibleComponet = Enums.VisibleComponet.AddEditForm,
 			AddEditDisplay = Enums.AddEditDisplay.Add,
-			Model = new FormVM() };
+			FormVM = new FormVM() };
 	}
 
+	// OnAdd: hide the MasterList and show Form in add mode
 	[ReducerMethod]
 	public static State OnEdit(
 		State state, Edit_Action action)
 	{
 		return state with {
-			CurrentId = action.Id, 
+			//CurrentId = action.Id, 
 			VisibleComponet = Enums.VisibleComponet.AddEditForm,
 			AddEditDisplay = Enums.AddEditDisplay.Edit,
 		};
@@ -191,7 +199,7 @@ public static class Reducers
 	public static State OnDisplay(
 		State state, Display_Action action)
 	{
-		return state with { CurrentId = action.Id,
+		return state with { 
 			VisibleComponet = Enums.VisibleComponet.DisplayCard	};
 	}
 
@@ -209,7 +217,6 @@ public static class Reducers
 		State state, Delete_Action action)
 	{
 		return state with {
-			CurrentId = action.Id,
 			VisibleComponet = Enums.VisibleComponet.MasterList,
 		};
 	}
@@ -252,9 +259,9 @@ public class Effects
 	*/
 
 	[EffectMethod]
-	public async Task GetList(GetListWithDates_Action action, IDispatcher dispatcher)
+	public async Task GetList(Get_List_Action action, IDispatcher dispatcher)
 	{
-		string inside = nameof(Effects) + "!" + nameof(GetList) + "!" + nameof(GetListWithDates_Action);
+		string inside = nameof(Effects) + "!" + nameof(GetList) + "!" + nameof(Get_List_Action);
 
 		Logger.LogDebug(string.Format("Inside {0}; Date Range:{1} to {2}", inside, action.DateBegin, action.DateEnd));
 		try
@@ -264,25 +271,25 @@ public class Effects
 
 			if (specialEvents is not null)
 			{
-				dispatcher.Dispatch(new GetListSuccess_Action(specialEvents));
+				dispatcher.Dispatch(new Get_List_Success_Action(specialEvents));
 			}
 			else
 			{
 				Logger.LogWarning(string.Format("...{0}; {1} is null", inside, nameof(specialEvents)));
-				dispatcher.Dispatch(new GetListWarning_Action("No Special Events Found"));
+				dispatcher.Dispatch(new Get_List_Warning_Action("No Special Events Found"));
 			}
 
 		}
 		catch (Exception ex)
 		{
 			Logger.LogError(ex, string.Format("...Inside catch of {0}", inside));
-			dispatcher.Dispatch(new GetListFailure_Action("An invalid operation occurred, contact your administrator."));
+			dispatcher.Dispatch(new Get_List_Failure_Action("An invalid operation occurred, contact your administrator."));
 		}
 	}
 
 	// Called by Form.HandleValidSubmit; Step 1
 	[EffectMethod]
-	public async Task Submit(Submit_Action action, IDispatcher dispatcher)
+	public async Task Submit(Submiting_Request_Action action, IDispatcher dispatcher)
 	{
 		// What's the best way to deal with this
 		if (action.AddEditDisplay is null) throw new ArgumentException("Parameter cannot be null", nameof(action.AddEditDisplay));
@@ -316,13 +323,13 @@ public class Effects
 				}
 				*/
 
-				dispatcher.Dispatch(new SubmitSuccess_Action("Special Event Added id: WHAT IS IT...HAVEN'T GOT A CLUE"));
+				dispatcher.Dispatch(new Submited_Response_Success_Action("Special Event Added id: WHAT IS IT...HAVEN'T GOT A CLUE"));
 
 			}
 			catch (Exception ex)
 			{
 				Logger.LogError(ex, string.Format("...Inside catch of {0}", inside));
-				dispatcher.Dispatch(new SubmitFailure_Action($"An invalid operation occurred, contact your administrator. Action: {action.AddEditDisplay.Name}"));
+				dispatcher.Dispatch(new Submited_Response_Failure_Action($"An invalid operation occurred, contact your administrator. Action: {action.AddEditDisplay.Name}"));
 			}
 		}
 		else
@@ -331,13 +338,13 @@ public class Effects
 			try
 			{
 				var sprocTuple = await db.UpdateSpecialEvent(action.FormVM);
-				dispatcher.Dispatch(new SubmitSuccess_Action(
+				dispatcher.Dispatch(new Submited_Response_Success_Action(
 					$"Special Event Updated for id: [{action.FormVM.Id}], Affected Rows: {sprocTuple.Affectedrows}"));
 			}
 			catch (Exception ex)
 			{
 				Logger.LogError(ex, string.Format("...Inside catch of {0}", inside ));
-				dispatcher.Dispatch(new SubmitFailure_Action(
+				dispatcher.Dispatch(new Submited_Response_Failure_Action(
 					$"An invalid operation occurred, contact your administrator. Action: {action.AddEditDisplay.Name}"));
 			}
 		}
@@ -364,7 +371,7 @@ public class Effects
 	- GetFailure_Action if db call fails.
 */
 	[EffectMethod]
-	public async Task GetItem(Get_Action action, IDispatcher dispatcher)
+	public async Task GetItem(Get_Item_Action action, IDispatcher dispatcher)
 	{
 		string inside = $"{nameof(Effects)}!{nameof(GetItem)};  Action: {nameof(action.AddEditDisplay.Name)}; Id: {action.Id}";
 
@@ -377,7 +384,7 @@ public class Effects
 			if (specialEvent is null)
 			{
 				Logger.LogWarning(string.Format("...{0}; {1} is null", inside, nameof(specialEvent)));
-				dispatcher.Dispatch(new GetFailure_Action($"Special Event Not Found; Id: {action.Id}", Warning: true));
+				dispatcher.Dispatch(new Get_Item_Warning_Action($"Special Event Not Found; Id: {action.Id}"));
 			}
 			else
 			{
@@ -399,7 +406,7 @@ public class Effects
 				};
 
 				// ToDo: 008 The old version assumed that there was a Command.Display
-				dispatcher.Dispatch(new GetSuccess_Action(formVM, action.AddEditDisplay)); 
+				dispatcher.Dispatch(new Get_Item_Success_Action(formVM, action.AddEditDisplay)); 
 
 				if (action.AddEditDisplay == Enums.AddEditDisplay.Edit)
 				{
@@ -414,7 +421,7 @@ public class Effects
 		catch (Exception ex)
 		{
 			Logger.LogError(ex, string.Format("...Inside catch of {0}", inside));
-			dispatcher.Dispatch(new GetFailure_Action("An invalid operation occurred, contact your administrator", Warning: false));
+			dispatcher.Dispatch(new Get_Item_Failure_Action("An invalid operation occurred, contact your administrator"));
 		}
 	}
 

@@ -18,17 +18,13 @@
 
 @if (SpecialEventsState!.Value.VisibleComponet == Enums.VisibleComponet.MasterList)
 {
-	<LoadingComponent IsLoading="SpecialEventsState!.Value.SpecialEventList == null">
+	<div class="@MediaQuery.XsOrSm.DivClass">
+		<MasterList IsXsOrSm="true" />
+	</div>
 
-		<div class="@MediaQuery.XsOrSm.DivClass">
-			<MasterList IsXsOrSm="true" />
-		</div>
-
-		<div class="@MediaQuery.MdOrLgOrXl.DivClass">
-			<MasterList IsXsOrSm="false" />
-		</div>
-		
-	</LoadingComponent>
+	<div class="@MediaQuery.MdOrLgOrXl.DivClass">
+		<MasterList IsXsOrSm="false" />
+	</div>
 }
 else
 {
@@ -42,7 +38,6 @@ else
 	}
 }
 
-
 <AuthorizeView Roles="@Roles.AdminOrAnnouncements">
 	<Authorized>
 		<p>ToDo: Insert Components</p>
@@ -52,17 +47,17 @@ else
 
 	<NotAuthorized>
 
-		<div class="card border-warning my-5">
-			<div class="card-header">Not Authorized</div>
+	<div class="card border-warning my-5">
+	<div class="card-header">Not Authorized</div>
 
-			<div class="card-body">
-				<h5 class="">To view <b>@Page.Title</b> you need to be logged in.</h5>
-				<button @onclick="@(() => RedirectToLoginClick(Page.Index))"
-								type="button" class="btn-primary btn-sm">
-					Login <i class='fas fa-sign-in-alt'></i>
-				</button>
-			</div>
-		</div>
+	<div class="card-body">
+	<h5 class="">To view <b>@Page.Title</b> you need to be logged in.</h5>
+	<button @onclick="@(() => RedirectToLoginClick(Page.Index))"
+	type="button" class="btn-primary btn-sm">
+	Login <i class='fas fa-sign-in-alt'></i>
+	</button>
+	</div>
+	</div>
 
 	</NotAuthorized>
 	*@

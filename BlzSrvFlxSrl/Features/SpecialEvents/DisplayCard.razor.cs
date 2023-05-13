@@ -9,7 +9,7 @@ public partial class DisplayCard
 	[Inject] private IState<State>? SpecialEventsState { get; set; }
 	[Inject] public IDispatcher? Dispatcher { get; set; }
 	[Inject] public IToastService? Toast { get; set; }
-	FormVM? FormVM => SpecialEventsState!.Value.Model;
+	FormVM? FormVM => SpecialEventsState!.Value.FormVM;
 
 	public bool ContentIsShowing = false;
 	private string Color => ContentIsShowing ? "btn-success" : "btn-warning";
@@ -43,7 +43,7 @@ public partial class DisplayCard
 
 	void CancelActionHandler()
 	{
-		Dispatcher?.Dispatch(new Cancel_Action());
+		Dispatcher!.Dispatch(new Cancel_Action());
 	}
 }
 

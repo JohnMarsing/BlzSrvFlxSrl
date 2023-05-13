@@ -7,50 +7,48 @@
 @if (IsXsOrSm)
 {
 	<div class="mb-3">
-		<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Add" IsXsOrSm="@IsXsOrSm" Id="0" />
-		<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Repopulate" IsXsOrSm="@IsXsOrSm" Id="0" />
+		<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Add" IsXsOrSm="@IsXsOrSm" Id="0" />
+		<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Repopulate" IsXsOrSm="@IsXsOrSm" Id="0" />
 	</div>
 
-	@foreach (var item in SpecialEventsState!.Value.SpecialEventList!)
-	{
-		<div class="card text-dark bg-light mb-5">
-			<div class="card-header text-center">
-				<h4>@item.Title</h4>
-				<p>Type: @item.SpecialEventTypeDescr</p>
-			</div>
-			<div class="card-body">
-				<div class="float-start">
-					Event Date<br><b>@item.EventDate.ToShortDateString()</b>
+	<LoadingComponent IsLoading="SpecialEventsState!.Value.SpecialEventList == null">
+
+		@foreach (var item in SpecialEventsState!.Value.SpecialEventList!)
+		{
+			<div class="card text-dark bg-light mb-5">
+				<div class="card-header text-center">
+					<h4>@item.Title</h4>
+					<p>Type: @item.SpecialEventTypeDescr</p>
 				</div>
-				<div class="float-end">
-					Days <i class='fas fa-angle-left'></i> 
-					or <i class='fas fa-angle-right'></i>
-					<br>@((MarkupString)item.DaysAheadXmSmMU)
+				<div class="card-body">
+					<div class="float-start">
+						Event Date<br><b>@item.EventDate.ToShortDateString()</b>
+					</div>
+					<div class="float-end">
+						Days <i class='fas fa-angle-left'></i>
+						or <i class='fas fa-angle-right'></i>
+						<br>@((MarkupString)item.DaysAheadXmSmMU)
+					</div>
 				</div>
+
+				<h4 class="text-center mb-3">@item.SubTitle</h4>
+
+				<div class="card-footer">
+					<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Edit" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
+					<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Delete" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
+					<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Display" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
+					<YouTubeButton YouTubeId="@item.YouTubeId" IsXsOrSm="@IsXsOrSm" />
+				</div>
+
 			</div>
-
-			<h4 class="text-center mb-3">@item.SubTitle</h4>
-
-			<div class="card-footer">
-				<ActionButtons OnCallBackEvent="@OnCallBackEvent" 
-					ParmCrud="Enums.Crud.Edit" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
-				<ActionButtons OnCallBackEvent="@OnCallBackEvent" 
-					ParmCrud="Enums.Crud.Delete" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
-				<ActionButtons OnCallBackEvent="@OnCallBackEvent" 
-					ParmCrud="Enums.Crud.Display" IsXsOrSm="@IsXsOrSm" Id="@item.Id" />
-
-				<YouTubeButton YouTubeId="@item.YouTubeId" IsXsOrSm="@IsXsOrSm" />
-			</div>
-
-		</div>
-	}
-
+		}
+	</LoadingComponent>
 }
 else
 {
 	<span class="float-end">
-		<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Add" IsXsOrSm="@IsXsOrSm" Id="0" />
-		<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Repopulate" IsXsOrSm="@IsXsOrSm" Id="0" />
+		<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Add" IsXsOrSm="@IsXsOrSm" Id="0" />
+		<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Repopulate" IsXsOrSm="@IsXsOrSm" Id="0" />
 	</span>
 
 	<TableTemplate Items="SpecialEventsState!.Value.SpecialEventList"
@@ -72,9 +70,9 @@ else
 			<td><YouTubeButton YouTubeId="@context.YouTubeId" IsXsOrSm="@IsXsOrSm" /></td>
 			<td class="text-center">
 				<div class="btn-group">
-					<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Edit" IsXsOrSm="@IsXsOrSm" Id="@context.Id" />
-					<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Delete" IsXsOrSm="@IsXsOrSm" Id="@context.Id" />
-					<ActionButtons OnCallBackEvent="@OnCallBackEvent" ParmCrud="Enums.Crud.Display" IsXsOrSm="@IsXsOrSm" Id="@context.Id" />
+					<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Edit" IsXsOrSm="@IsXsOrSm" Id="@context.Id" />
+					<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Delete" IsXsOrSm="@IsXsOrSm" Id="@context.Id" />
+					<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Display" IsXsOrSm="@IsXsOrSm" Id="@context.Id" />
 				</div>
 			</td>
 

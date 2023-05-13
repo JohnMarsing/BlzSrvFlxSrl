@@ -14,15 +14,26 @@ public partial class MasterList
 
 	[CascadingParameter] IModalService Modal { get; set; } = default!;
 
-	private async Task OnCallBackEvent(CallBackEventArgs args)
-	{		
-		//await Task.Delay(0);
+	protected override void OnInitialized()
+	{
+		Logger!.LogDebug(string.Format("Inside {0}", nameof(MasterList) + "!" + nameof(OnInitialized)));
+		if (SpecialEventsState!.Value.SpecialEventList is null)
+		{
+			Dispatcher!.Dispatch(new Get_List_Action(
+				SpecialEventsState!.Value.DateBegin, SpecialEventsState.Value.DateEnd));
+		}
+		base.OnInitialized();
+	}
+
+
+	private async Task ReturnedCrud(CrudAndIdArgs args) // CallBackEventArgs: Enum.Crud, int Id
+	{
 		int id = args.Id;
 
 		string crudName;
 		if (args.Crud == null)
 		{
-			Logger!.LogWarning(string.Format("inside: {0}; args.Crud: == null", nameof(MasterList) + "!" + nameof(OnCallBackEvent)));
+			Logger!.LogWarning(string.Format("inside: {0}; args.Crud: == null", nameof(MasterList) + "!" + nameof(ReturnedCrud)));
 			crudName = "Display";
 		}
 		else
@@ -30,26 +41,33 @@ public partial class MasterList
 			crudName = args.Crud.Name;
 		}
 
+		Logger!.LogDebug(string.Format("inside: {0}; crudName: {1}", nameof(MasterList), crudName));  //; id:{1} ... , id));
 		switch (crudName)
 		{
 			case "Add":
-				AddActionHandler();
+				Dispatcher!.Dispatch(new Add_Action());
 				break;
 
 			case "Edit":
-				EditActionHandler(id);
+				Dispatcher!.Dispatch(new Get_Item_Action(id, Enums.AddEditDisplay.Edit));
 				break;
 
 			case "Display":
-				DisplayActionHandler(id);
+				Dispatcher!.Dispatch(new Get_Item_Action(id, Enums.AddEditDisplay.Display));
 				break;
 
 			case "Delete":
-				await DeleteConfirmationHandler(id, "title");
+				if (await IsModalConfirmed(id) == true)
+				{
+					Dispatcher!.Dispatch(new Delete_Action(id));
+					Dispatcher!.Dispatch(new Get_List_Action(
+						SpecialEventsState!.Value.DateBegin, SpecialEventsState.Value.DateEnd));
+				}
+
 				break;
 
 			case "Repopulate":
-				PopulateActionHandler();
+				Dispatcher!.Dispatch(new Get_List_Action(SpecialEventsState!.Value.DateBegin, SpecialEventsState.Value.DateEnd));
 				break;
 
 			default:
@@ -57,45 +75,15 @@ public partial class MasterList
 		}
 	}
 
-	void AddActionHandler()
-	{
-		Logger!.LogDebug(string.Format("inside: {0}", nameof(MasterList) + "!" + nameof(AddActionHandler)));
-		Dispatcher?.Dispatch(new Add_Action());
-	}
 
-	void PopulateActionHandler()
+	private async Task<bool> IsModalConfirmed(int id)
 	{
-		Logger!.LogDebug(string.Format("...{0}; Date Range: {1} to {2}"
-			, nameof(MasterList) + "!" + nameof(PopulateActionHandler), SpecialEventsState!.Value.DateBegin, SpecialEventsState!.Value.DateEnd));
-		Dispatcher?.Dispatch(new GetListWithDates_Action(
-			SpecialEventsState!.Value.DateBegin, SpecialEventsState.Value.DateEnd));
-	}
-
-	void EditActionHandler(int id)
-	{
-		Logger!.LogDebug(string.Format("inside: {0}; id:{1}", nameof(MasterList) + "!" + nameof(EditActionHandler), id));
-		Dispatcher?.Dispatch(new Get_Action(id, Enums.AddEditDisplay.Edit));
-	}
-
-	void DisplayActionHandler(int id)
-	{
-		Logger!.LogDebug(string.Format("inside: {0}; id:{1}", nameof(MasterList) + "!" + nameof(DisplayActionHandler), id));
-		Dispatcher?.Dispatch(new Get_Action(id, Enums.AddEditDisplay.Display));
-	}
-
-	private async Task DeleteConfirmationHandler(int id, string title)
-	{
-		Logger!.LogDebug(string.Format("...{0}; id:{1}, title: {2}", nameof(MasterList) + "!" + nameof(DeleteConfirmationHandler), id, title));
-		var parameters = new ModalParameters { { nameof(ConfirmDeleteModal.Message)
-				, $"Special Event {title}" } };
+		var parameters = new ModalParameters { { nameof(ConfirmDeleteModal.Message), $"Special Event Id: {id}" } };
 		var modal = Modal.Show<ConfirmDeleteModal>("Confirmation Required", parameters);
 		var result = await modal.Result;
-		if (result.Confirmed)
-		{
-			Dispatcher?.Dispatch(new Delete_Action(id));
-			Dispatcher?.Dispatch(new GetListWithDates_Action(
-				SpecialEventsState!.Value.DateBegin, SpecialEventsState.Value.DateEnd));
-		}
+		return result.Confirmed;
+
 	}
+
 
 }

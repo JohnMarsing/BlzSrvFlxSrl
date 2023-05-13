@@ -22,7 +22,7 @@ public partial class Index
 			//Svc.OnChange += ServiceOnOnChange();
 			//Svc!.OnChange += ServiceOnOnChange();
 			//_preferences = await Profile.Service.GetPreferences();
-			_preferences = await Svc.GetPreferences();
+			_preferences = await Svc!.GetPreferences();
 			StateHasChanged();
 		}
 	}

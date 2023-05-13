@@ -10,19 +10,20 @@ public partial class Form
 
 	private Enums.AddEditDisplay _addEditDisplay => SpecialEventsState!.Value.AddEditDisplay!;
 
-	private FormVM? VM => SpecialEventsState!.Value.Model;
+	private FormVM? VM => SpecialEventsState!.Value.FormVM;
+
 	protected void HandleValidSubmit()
 	{
 		Logger!.LogDebug(string.Format("Inside {0}", nameof(Form) + "!" + nameof(HandleValidSubmit)));
-		Dispatcher!.Dispatch(new Submit_Action(SpecialEventsState!.Value.Model!, _addEditDisplay));
-		Dispatcher?.Dispatch(new GetListWithDates_Action(
+		Dispatcher!.Dispatch(new Submiting_Request_Action(SpecialEventsState!.Value.FormVM!, _addEditDisplay));
+		Dispatcher!.Dispatch(new Get_List_Action(
 			SpecialEventsState!.Value.DateBegin, SpecialEventsState.Value.DateEnd));
 	}
 
 	void CancelActionHandler()
 	{
 		Logger!.LogDebug(string.Format("Inside {0}", nameof(Form) + "!" + nameof(CancelActionHandler)));
-		Dispatcher?.Dispatch(new Cancel_Action());
+		Dispatcher!.Dispatch(new Cancel_Action());
 	}
 
 } 

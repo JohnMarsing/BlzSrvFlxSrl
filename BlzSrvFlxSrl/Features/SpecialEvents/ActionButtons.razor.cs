@@ -5,19 +5,19 @@ namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
 public partial class ActionButtons
 {
-	[Parameter] public Crud? ParmCrud { get; set; } 
-	[Parameter] public int Id { get; set; }
-	[Parameter]	public EventCallback<CallBackEventArgs> OnCallBackEvent { get; set; }
+	[Parameter, EditorRequired] public Crud? ParmCrud { get; set; } 
+	[Parameter, EditorRequired] public int Id { get; set; } // Use 0 for Add and Repopulate
 	[Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
+	[Parameter]	public EventCallback<CrudAndIdArgs> OnCrudActionSelected{ get; set; }
 
 	private async Task OnButtonClicked()
 	{
-		CallBackEventArgs args = new CallBackEventArgs
+		CrudAndIdArgs args = new CrudAndIdArgs
 		{
 			Crud=ParmCrud!,
 			Id=Id
 		};
-		await OnCallBackEvent.InvokeAsync(args);
+		await OnCrudActionSelected.InvokeAsync(args);
 	}
 
 	private MarkupString GetBr() 
@@ -26,7 +26,7 @@ public partial class ActionButtons
 	}
 }
 
-public struct CallBackEventArgs
+public struct CrudAndIdArgs
 {
 	public Crud Crud { get; set; }
 	public int Id { get; set; }
