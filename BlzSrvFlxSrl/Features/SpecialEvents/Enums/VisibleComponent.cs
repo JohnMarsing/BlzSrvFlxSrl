@@ -2,7 +2,7 @@
 
 namespace BlzSrvFlxSrl.Features.SpecialEvents.Enums;
 
-public abstract class VisibleComponet : SmartEnum<VisibleComponet>
+public abstract class VisibleComponent : SmartEnum<VisibleComponent>
 {
 	#region Id's
 	private static class Id
@@ -14,12 +14,12 @@ public abstract class VisibleComponet : SmartEnum<VisibleComponet>
 	#endregion
 
 	#region  Declared Public Instances
-	public static readonly VisibleComponet MasterList = new MasterListSE();
-	public static readonly VisibleComponet AddEditForm = new AddEditFormSE();
-	public static readonly VisibleComponet DisplayCard = new DisplayCardSE();
+	public static readonly VisibleComponent MasterList = new MasterListSE();
+	public static readonly VisibleComponent AddEditForm = new AddEditFormSE();
+	public static readonly VisibleComponent DisplayCard = new DisplayCardSE();
 	#endregion
 
-	private VisibleComponet(string name, int value) : base(name, value)  // Constructor
+	private VisibleComponent(string name, int value) : base(name, value)  // Constructor
 	{
 	}
 
@@ -30,17 +30,17 @@ public abstract class VisibleComponet : SmartEnum<VisibleComponet>
 
 	#region Private Instantiation
 
-	private sealed class MasterListSE : VisibleComponet
+	private sealed class MasterListSE : VisibleComponent
 	{
 		public MasterListSE() : base($"{nameof(Id.MasterList)}", Id.MasterList) { }
 	}
 
-	private sealed class AddEditFormSE : VisibleComponet
+	private sealed class AddEditFormSE : VisibleComponent
 	{
 		public AddEditFormSE() : base($"{nameof(Id.AddEditForm)}", Id.AddEditForm) { }
 	}
 
-	private sealed class DisplayCardSE : VisibleComponet
+	private sealed class DisplayCardSE : VisibleComponent
 	{
 		public DisplayCardSE() : base($"{nameof(Id.DisplayCard)}", Id.DisplayCard) { }
 	}

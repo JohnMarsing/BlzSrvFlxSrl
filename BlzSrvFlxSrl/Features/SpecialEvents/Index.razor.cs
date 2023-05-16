@@ -5,7 +5,7 @@ namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
 public partial class Index
 {
-	[Inject] private IState<State>? SpecialEventsState { get; set; }
+	[Inject] private IState<State>? State { get; set; }
 	[Inject] public IDispatcher? Dispatcher { get; set; }
 	[Inject] public ILogger<Index>? Logger { get; set; }
 	[Inject] NavigationManager? NavigationManager { get; set; }

@@ -2,7 +2,7 @@
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<div class="card  border-primary my-5">
+<div class="card  border-primary my-1">
 
 	<div class="card-header">
 
@@ -74,8 +74,8 @@
 	</div>
 
 	<div class="card-footer text-muted">
-		<button @onclick="@(e => CancelActionHandler())" class="@SaveCancelConstants.CancelButtonColor">
-			<i class="@SaveCancelConstants.CancelIcon"></i> @SaveCancelConstants.CancelText
+		<button @onclick="@(e => CancelActionHandler())" class="@Constants.CancelButton.Color">
+			<i class="@Constants.CancelButton.Icon"></i> @Constants.CancelButton.Text
 		</button>
 	</div>
 

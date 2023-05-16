@@ -1,4 +1,6 @@
-﻿using BlzSrvFlxSrl.Features.SpecialEvents.Enums;
+﻿// Ignore Spelling: Diff Descr
+
+using BlzSrvFlxSrl.Features.SpecialEvents.Enums;
 using Markdig;
 using Microsoft.AspNetCore.Components;
 using System;

@@ -4,13 +4,9 @@
 
 <EditForm Model="VM"
 					OnValidSubmit="HandleValidSubmit"
-					class="card card-body bg-light mt-5">
+					class="card card-body bg-light mt-1">
 	<DataAnnotationsValidator />
 	<ValidationSummary />
-
-	<fieldset class="py-1 my-0">
-		<legend class="text-success text-center"> @SpecialEventsState!.Value.AddEditDisplay!.FormTitle</legend>
-	</fieldset>
 
 	<fieldset class="mt-3">
 		<legend class="text-primary">Dates</legend>
@@ -148,16 +144,16 @@
 		<div class="col-sm-6">
 			<div class="mb-3">
 
-				<button type="submit" class="@SaveCancelConstants.SaveButtonColor">
-					<i class="@SaveCancelConstants.SaveIcon"></i> @SpecialEventsState.Value.AddEditDisplay.FormSubmitButton
+				<button type="submit" class="@Constants.SaveButton.Color">
+					<i class="@Constants.SaveButton.Icon"></i> @State!.Value.FormMode!.SubmitText
 				</button>
 
 				@*
 				Cancel button has to be a div (ie not a button) thereby not triggering validation which is what I want
-				[Blazor Modal Form Validation: You've to click the cancel button twice to close the modal when you delete a form field](https://stackoverflow.com/a/67737357/41106)
+				[Blazor Modal Form Validation: You have to click the cancel button twice to close the modal when you delete a form field](https://stackoverflow.com/a/67737357/41106)
 				*@
-				<div @onclick="@(e => CancelActionHandler())" class="@SaveCancelConstants.CancelButtonColor">
-					<i class="@SaveCancelConstants.CancelIcon"></i> @SaveCancelConstants.CancelText
+				<div @onclick="@(e => CancelActionHandler())" class="@Constants.CancelButton.Color">
+					<i class="@Constants.CancelButton.Icon"></i> @Constants.CancelButton.Text
 				</div>
 
 			</div>

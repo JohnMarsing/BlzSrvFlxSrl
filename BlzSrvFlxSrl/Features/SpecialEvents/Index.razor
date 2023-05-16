@@ -1,5 +1,5 @@
 ﻿@page "/SpecialEvents"
-@using Page = BlzSrvFlxSrl.Links.SpecialEvents
+
 @using BlzSrvFlxSrl.SmartEnums
 @using LoginLink = BlzSrvFlxSrl.Links.Account
 @using static BlzSrvFlxSrl.Services.Auth0;
@@ -7,16 +7,17 @@
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-<PageTitle>@Page.Title</PageTitle>
+<p class="text-primary"></p>
 
-@*<DRC.Index />*@
-@*<BlzSrvFlxSrl.Features.SpecialEvents.DateRangeComponent.Component />*@
+	<div class="@MediaQuery.XsOrSm.DivClass">
+		<PageHeader IsXsOrSm="true"  />
+	</div>
 
-<div class="pb-1 mt-4 mb-2">
-	<h1><i class="@Page.Icon"></i> @Page.Title</h1>
-</div>
+	<div class="@MediaQuery.MdOrLgOrXl.DivClass">
+		<PageHeader IsXsOrSm="false" />
+	</div>
 
-@if (SpecialEventsState!.Value.VisibleComponet == Enums.VisibleComponet.MasterList)
+@if (State!.Value.VisibleComponent == Enums.VisibleComponent.MasterList)
 {
 	<div class="@MediaQuery.XsOrSm.DivClass">
 		<MasterList IsXsOrSm="true" />
@@ -28,7 +29,9 @@
 }
 else
 {
-	@if (SpecialEventsState!.Value.VisibleComponet == Enums.VisibleComponet.AddEditForm)
+	<ShowMasterIndex />
+
+	@if (State!.Value.VisibleComponent == Enums.VisibleComponent.AddEditForm)
 	{
 		<Form />
 	}

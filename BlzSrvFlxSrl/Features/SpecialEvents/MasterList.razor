@@ -6,14 +6,14 @@
 
 @if (IsXsOrSm)
 {
-	<div class="mb-3">
+	<div class="mb-1">
 		<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Add" IsXsOrSm="@IsXsOrSm" Id="0" />
 		<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Repopulate" IsXsOrSm="@IsXsOrSm" Id="0" />
 	</div>
 
-	<LoadingComponent IsLoading="SpecialEventsState!.Value.SpecialEventList == null">
+	<LoadingComponent IsLoading="State!.Value.SpecialEventList == null">
 
-		@foreach (var item in SpecialEventsState!.Value.SpecialEventList!)
+		@foreach (var item in State!.Value.SpecialEventList!)
 		{
 			<div class="card text-dark bg-light mb-5">
 				<div class="card-header text-center">
@@ -46,12 +46,12 @@
 }
 else
 {
-	<span class="float-end">
+	<span class="float-end mb-1">
 		<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Add" IsXsOrSm="@IsXsOrSm" Id="0" />
 		<ActionButtons OnCrudActionSelected="@ReturnedCrud" ParmCrud="Enums.Crud.Repopulate" IsXsOrSm="@IsXsOrSm" Id="0" />
 	</span>
 
-	<TableTemplate Items="SpecialEventsState!.Value.SpecialEventList"
+	<TableTemplate Items="State!.Value.SpecialEventList"
 							 HeaderCSS="table table-primary table-hover">
 		<TableHeader>
 			<th>Title</th>

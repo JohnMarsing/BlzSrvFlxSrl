@@ -1,13 +1,15 @@
 ﻿using Microsoft.AspNetCore.Components;
 using BlzSrvFlxSrl.Shared;
 using Blazored.Modal.Services;
+using Fluxor;
+using System;
 
 namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
 public partial class MasterList
 {
 	[Inject] public ILogger<MasterList>? Logger { get; set; }
-	[Inject] private IState<State>? SpecialEventsState { get; set; }
+	[Inject] private IState<State>? State { get; set; }
 	[Inject] public IDispatcher? Dispatcher { get; set; }
 
 	[Parameter, EditorRequired] public bool IsXsOrSm { get; set; }
@@ -17,60 +19,46 @@ public partial class MasterList
 	protected override void OnInitialized()
 	{
 		Logger!.LogDebug(string.Format("Inside {0}", nameof(MasterList) + "!" + nameof(OnInitialized)));
-		if (SpecialEventsState!.Value.SpecialEventList is null)
+		if (State!.Value.SpecialEventList is null)
 		{
-			Dispatcher!.Dispatch(new Get_List_Action(
-				SpecialEventsState!.Value.DateBegin, SpecialEventsState.Value.DateEnd));
+			Dispatcher!.Dispatch(new Get_List_Action(State!.Value.DateBegin, State.Value.DateEnd));
 		}
 		base.OnInitialized();
 	}
 
-
-	private async Task ReturnedCrud(CrudAndIdArgs args) // CallBackEventArgs: Enum.Crud, int Id
+	private async Task ReturnedCrud(CrudAndIdArgs args)
 	{
-		int id = args.Id;
+		Logger!.LogDebug(string.Format("inside: {0}; args.Crud.Name: {1}; icon: {2}; id: {3}"
+			, nameof(MasterList), args.Crud.Name, args.Crud.Icon, args.Id));
 
-		string crudName;
-		if (args.Crud == null)
+		switch (args.Crud.Name)
 		{
-			Logger!.LogWarning(string.Format("inside: {0}; args.Crud: == null", nameof(MasterList) + "!" + nameof(ReturnedCrud)));
-			crudName = "Display";
-		}
-		else
-		{
-			crudName = args.Crud.Name;
-		}
-
-		Logger!.LogDebug(string.Format("inside: {0}; crudName: {1}", nameof(MasterList), crudName));  //; id:{1} ... , id));
-		switch (crudName)
-		{
-			case "Add":
+			case nameof(Enums.Crud.Add):
 				Dispatcher!.Dispatch(new Add_Action());
+				Dispatcher!.Dispatch(new Set_PageHeader_For_Detail_Action(args.Crud.Name, args.Crud!.Icon, args.Crud!.Color, args.Id));
 				break;
 
-			case "Edit":
-				Dispatcher!.Dispatch(new Get_Item_Action(id, Enums.AddEditDisplay.Edit));
+			case nameof(Enums.Crud.Edit):
+				Dispatcher!.Dispatch(new Set_PageHeader_For_Detail_Action(args.Crud.Name, args.Crud!.Icon, args.Crud!.Color, args.Id));
+				Dispatcher!.Dispatch(new Get_Item_Action(args.Id, Enums.FormMode.Edit));
 				break;
 
-			case "Display":
-				Dispatcher!.Dispatch(new Get_Item_Action(id, Enums.AddEditDisplay.Display));
+			case nameof(Enums.Crud.Display):
+				Dispatcher!.Dispatch(new Get_Item_Action(args.Id, Enums.FormMode.Display));
+				Dispatcher!.Dispatch(new Set_PageHeader_For_Detail_Action(args.Crud.Name, args.Crud!.Icon, args.Crud!.Color, args.Id));
 				break;
 
-			case "Delete":
-				if (await IsModalConfirmed(id) == true)
+			case nameof(Enums.Crud.Delete):
+				if (await IsModalConfirmed(args.Id) == true)
 				{
-					Dispatcher!.Dispatch(new Delete_Action(id));
+					Dispatcher!.Dispatch(new Delete_Action(args.Id));
 					Dispatcher!.Dispatch(new Get_List_Action(
-						SpecialEventsState!.Value.DateBegin, SpecialEventsState.Value.DateEnd));
+						State!.Value.DateBegin, State.Value.DateEnd));
 				}
-
 				break;
 
 			case "Repopulate":
-				Dispatcher!.Dispatch(new Get_List_Action(SpecialEventsState!.Value.DateBegin, SpecialEventsState.Value.DateEnd));
-				break;
-
-			default:
+				Dispatcher!.Dispatch(new Get_List_Action(State!.Value.DateBegin, State.Value.DateEnd));
 				break;
 		}
 	}

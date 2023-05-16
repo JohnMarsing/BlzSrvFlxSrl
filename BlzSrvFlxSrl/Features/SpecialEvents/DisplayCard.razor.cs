@@ -6,15 +6,11 @@ namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
 public partial class DisplayCard
 {
-	[Inject] private IState<State>? SpecialEventsState { get; set; }
+	[Inject] private IState<State>? State { get; set; }
 	[Inject] public IDispatcher? Dispatcher { get; set; }
 	[Inject] public IToastService? Toast { get; set; }
-	FormVM? FormVM => SpecialEventsState!.Value.FormVM;
 
-	public bool ContentIsShowing = false;
-	private string Color => ContentIsShowing ? "btn-success" : "btn-warning";
-	private string Title => ContentIsShowing ? "Hide Video" : "Show Video";
-	private string Icon => ContentIsShowing ? "fas fa-chevron-up" : "fas fa-chevron-down";
+	FormVM? FormVM => State!.Value.FormVM;
 
 	/* 
 	 if Description has no special md (e.g. Tables) then you don't need the pipeline
@@ -31,7 +27,6 @@ public partial class DisplayCard
 		{
 			return Markdig.Markdown.ToHtml(FormVM!.Description, pipeline);
 		}
-
 	}
 
 
@@ -43,7 +38,7 @@ public partial class DisplayCard
 
 	void CancelActionHandler()
 	{
-		Dispatcher!.Dispatch(new Cancel_Action());
+		Dispatcher!.Dispatch(new Set_PageHeader_For_Index_Action(Constants.GetPageHeaderForIndexVM()));
 	}
 }
 

@@ -32,6 +32,7 @@ public abstract class Crud : SmartEnum<Crud>
 	#region Extra Fields
 	public abstract string Text { get; }
 	public abstract string Icon { get; }
+	public abstract string Color { get; }
 	public abstract string ButtonColor { get; }
 	#endregion
 
@@ -43,6 +44,7 @@ public abstract class Crud : SmartEnum<Crud>
 		public AddSE() : base($"{nameof(Id.Add)}", Id.Add) { }
 		public override string Text => "Add";
 		public override string Icon => "fas fa-plus";
+		public override string Color => "text-success";
 		public override string ButtonColor => "btn btn-outline-success";
 	}
 
@@ -51,6 +53,7 @@ public abstract class Crud : SmartEnum<Crud>
 		public EditSE() : base($"{nameof(Id.Edit)}", Id.Edit) { }
 		public override string Text => "Edit";
 		public override string Icon => "fas fa-pencil-alt";
+		public override string Color => "text-primary";
 		public override string ButtonColor => "btn btn-outline-primary";
 	}
 
@@ -59,6 +62,7 @@ public abstract class Crud : SmartEnum<Crud>
 		public DisplaySE() : base($"{nameof(Id.Display)}", Id.Display) { }
 		public override string Text => "Display";
 		public override string Icon => "fa fa-binoculars";
+		public override string Color => "text-info";
 		public override string ButtonColor => "btn btn-outline-info";
 	}
 
@@ -67,6 +71,7 @@ public abstract class Crud : SmartEnum<Crud>
 		public DeleteSE() : base($"{nameof(Id.Delete)}", Id.Delete) { }
 		public override string Text => "Delete";
 		public override string Icon => "fa fa-times";
+		public override string Color => "text-danger";
 		public override string ButtonColor => "btn btn-outline-danger";
 	}
 
@@ -75,6 +80,7 @@ public abstract class Crud : SmartEnum<Crud>
 		public RepopulateSE() : base($"{nameof(Id.Repopulate)}", Id.Repopulate) { }
 		public override string Text => "Re-populate";
 		public override string Icon => "fas fa-retweet";
+		public override string Color => "text-warning";
 		public override string ButtonColor => "btn btn-outline-warning";
 	}
 
