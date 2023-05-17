@@ -1,5 +1,6 @@
 ﻿using BlzSrvFlxSrl.Features.SpecialEvents.Enums;
 using Microsoft.AspNetCore.Components;
+using Blazored.FluentValidation;
 
 namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
@@ -10,6 +11,7 @@ public partial class Form
 	[Inject] public IDispatcher? Dispatcher { get; set; }
 
 	private FormVM? VM => State!.Value.FormVM;
+	private FluentValidationValidator? _fluentValidationValidator;
 
 	protected void HandleValidSubmit()
 	{

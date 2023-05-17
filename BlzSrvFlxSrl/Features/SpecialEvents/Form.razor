@@ -1,11 +1,12 @@
 ﻿@using BlzSrvFlxSrl.Features.SpecialEvents.Enums
+@using Blazored.FluentValidation;
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
 <EditForm Model="VM"
 					OnValidSubmit="HandleValidSubmit"
 					class="card card-body bg-light mt-1">
-	<DataAnnotationsValidator />
+	<FluentValidationValidator @ref="_fluentValidationValidator" DisableAssemblyScanning="@true" />
 	<ValidationSummary />
 
 	<fieldset class="mt-3">

@@ -13,12 +13,15 @@ using BlzSrvFlxSrl.Links;
 
 namespace BlzSrvFlxSrl;
 
+// .AddTransient<IValidator<Pages.Sukkot.RegistrationEntry.ViewModel>, Pages.Sukkot.RegistrationEntry.ViewModelValidator>()
+
 public static class ServiceCollectionExtensions
 {
 	public static IServiceCollection AddDataStores(this IServiceCollection services)
 	{
 		services
 			.AddTransient<Features.SpecialEvents.Data.IRepository, Features.SpecialEvents.Data.Repository>()
+			.AddTransient<IValidator<Features.SpecialEvents.FormVM>, Features.SpecialEvents.FormVMValidator>()
 			.AddTransient<ISecurityClaimsService, SecurityClaimsService>();
 		return services;
 	}
@@ -85,7 +88,7 @@ public static class ServiceCollectionExtensions
 									var request = context.Request;
 									postLogoutUri = request.Scheme + "://" + request.Host + request.PathBase + postLogoutUri;
 								}
-								logoutUri += $"&returnTo={ Uri.EscapeDataString(postLogoutUri)}";
+								logoutUri += $"&returnTo={Uri.EscapeDataString(postLogoutUri)}";
 							}
 
 							context.Response.Redirect(logoutUri);
