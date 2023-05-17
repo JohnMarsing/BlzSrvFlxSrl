@@ -31,12 +31,8 @@
 		{
 			<p class="">@FormVM.ImageUrl</p>
 			@*
-		<CascadingValue Value="@false">
-		<ImageDisplayOption>
-		<img src='@Blobs.UrlOther(@ImageUrl)' alt="@Title" class="img-fluid rounded mt-4" />
-		</ImageDisplayOption>
-		</CascadingValue>
-		*@
+				<img src='@Blobs.UrlShabbatService(Section!.GraphicUrl)' alt="@Section.Title" class="img-fluid rounded mt-4" />
+			*@
 		}
 	</div>
 

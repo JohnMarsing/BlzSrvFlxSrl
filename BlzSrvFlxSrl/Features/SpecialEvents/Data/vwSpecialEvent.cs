@@ -5,9 +5,9 @@ using Markdig;
 using Microsoft.AspNetCore.Components;
 using System;
 
-namespace BlzSrvFlxSrl.Features.SpecialEvents.Models;
+namespace BlzSrvFlxSrl.Features.SpecialEvents.Data;
 
-public class SpecialEvent
+public class vwSpecialEvent
 {
 	public int Id { get; set; }
 	public DateTime EventDate { get; set; }
@@ -15,7 +15,7 @@ public class SpecialEvent
 	public int SpecialEventTypeId { get; set; }
 	public string SpecialEventTypeDescr
 	{
-		get { return SpecialEventType.FromValue(SpecialEventTypeId).Descr; 	}
+		get { return SpecialEventType.FromValue(SpecialEventTypeId).Descr; }
 	}
 
 	public int DaysDiff { get; set; }
@@ -97,5 +97,5 @@ public class SpecialEvent
 		return EventDate.ToString("MMMM");
 	}
 
-	
+
 }

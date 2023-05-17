@@ -10,8 +10,8 @@ public interface IRepository
 {
 	string BaseSqlDump { get; }
 
-	Task<List<SpecialEvent>> GetEventsByDateRange(DateTimeOffset? dateBegin, DateTimeOffset? dateEnd);
-	Task<SpecialEvent?> GetEventById(int id);
+	Task<List<vwSpecialEvent>> GetEventsByDateRange(DateTimeOffset? dateBegin, DateTimeOffset? dateEnd);
+	Task<vwSpecialEvent?> GetEventById(int id);
 	Task<(int NewId, int SprocReturnValue, string ReturnMsg)> CreateSpecialEvent(FormVM formVM);
 	Task<(int Affectedrows, string ReturnMsg)> UpdateSpecialEvent(SpecialEvents.FormVM formVM);
 	Task<int> RemoveSpecialEvent(int id);
@@ -184,7 +184,7 @@ WHERE Id = @Id
 		});
 	}
 
-	public async Task<SpecialEvent?> GetEventById(int id)
+	public async Task<vwSpecialEvent?> GetEventById(int id)
 	{
 		base.Parms = new DynamicParameters(new { Id = id });
 
@@ -202,13 +202,13 @@ WHERE Id=@Id
 ";
 		return await WithConnectionAsync(async connection =>
 		{
-			var row = await connection.QueryAsync<SpecialEvent>(base.Sql, base.Parms);
+			var row = await connection.QueryAsync<vwSpecialEvent>(base.Sql, base.Parms);
 			return row.SingleOrDefault();
 		});
 	}
 
 	//https://stackoverflow.com/questions/4331189/datetime-vs-datetimeoffset
-	public async Task<List<SpecialEvent>> GetEventsByDateRange(DateTimeOffset? dateBegin, DateTimeOffset? dateEnd)
+	public async Task<List<vwSpecialEvent>> GetEventsByDateRange(DateTimeOffset? dateBegin, DateTimeOffset? dateEnd)
 	{
 		base.Parms = new DynamicParameters(new
 		{
@@ -232,7 +232,7 @@ ORDER BY EventDate
 ";
 		return await WithConnectionAsync(async connection =>
 		{
-			var rows = await connection.QueryAsync<SpecialEvent>(sql: base.Sql, param: base.Parms);
+			var rows = await connection.QueryAsync<vwSpecialEvent>(sql: base.Sql, param: base.Parms);
 			return rows.ToList();
 		});
 	}

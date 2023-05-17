@@ -1,53 +1,35 @@
-﻿// Ignore Spelling: sproc
-
-using static BlzSrvFlxSrl.Data.SqlServer;
-using BlzSrvFlxSrl.Features.SpecialEvents.Data;
-using Microsoft.AspNetCore.Http;
-using BlzSrvFlxSrl.Features.SpecialEvents.Models;
-using System.Drawing;
-
-namespace BlzSrvFlxSrl.Features.SpecialEvents;
-
+﻿namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
 // 1. Action
 
-// 1.2 Actions related to a list of Items (Id)
+// 1.1 GetList() actions
 public record Get_List_Action(DateTimeOffset? DateBegin, DateTimeOffset? DateEnd);
-/*
-[EffectMethod] GetList
-MasterList!OnInitialized if (SpecialEventsState!.Value.SpecialEventList is null) i.e.first time
-MasterList!PopulateActionHandler
-MasterList!DeleteConfirmationHandler
-Form!HandleValidSubmit after Submit_Action
-*/
+public record Get_List_Success_Action(List<Data.vwSpecialEvent> SpecialEvents);
+public record Get_List_Warning_Action(string WarningMessage);
+public record Get_List_Failure_Action(string ErrorMessage);
 
-public record Get_List_Success_Action(List<SpecialEvent> SpecialEvents);  // [EffectMethod] GetList after db!.GetEventsByDateRange and if specialEvents is NOT null
-public record Get_List_Warning_Action(string WarningMessage);             // [EffectMethod] GetList after db!.GetEventsByDateRange and if specialEvents IS null
-public record Get_List_Failure_Action(string ErrorMessage);               // [EffectMethod] GetList catch (Exception)
+// 1.2 GetItem() actions
+public record Get_Item_Action(int Id, Enums.FormMode? FormMode);
+public record Get_Item_Success_Action(FormVM? FormVM);
+public record Get_Item_Warning_Action(string WarningMessage);
+public record Get_Item_Failure_Action(string ErrorMessage);
+public record Edit_Action(int Id);
+public record Display_Action(int Id);
 
-// 1.2 Actions related to a single Item
-public record Get_Item_Action(int Id, Enums.FormMode? FormMode);                // [EffectMethod] GetItem(Get_Action action,); MasterList!EditActionHandler(int id) or MasterList!DisplayActionHandler(int id) 
-public record Get_Item_Success_Action(FormVM? FormVM); // [EffectMethod] GetItem(Get_Action action,); after db!.GetEventById and if specialEvent is NOT null
-public record Get_Item_Warning_Action(string WarningMessage);                 // [EffectMethod] GetItem(Get_Action action,); after db!.GetEventById and if specialEvent IS null
-public record Get_Item_Failure_Action(string ErrorMessage);                   // [EffectMethod] GetItem catch (Exception)
+// 1.3 Actions related to Form Submission
+public record Submitting_Request_Action(FormVM FormVM, Enums.FormMode? FormMode);
+public record Submitted_Response_Success_Action(string SuccessMessage);
+public record Submitted_Response_Failure_Action(string ErrorMessage);
 
-// 1.3 Actions related to the Form
-public record Submitting_Request_Action(FormVM FormVM, Enums.FormMode? FormMode);  // Form!HandleValidSubmit
-public record Submitted_Response_Success_Action(string SuccessMessage); // [EffectMethod] Submit: Happy path if action.FormMode == Add or Edit
-public record Submitted_Response_Failure_Action(string ErrorMessage);   // [EffectMethod] Submit: Sad path (catch Exception)  if action.FormMode == Add or Edit
+// 1.4 Actions related to MasterList
+public record Add_Action();
 
-// 1.4 Actions related to the MasterList (specifically the ActionButtons!EventCallback)
-public record Add_Action();           // Dispatched by MasterList!AddActionHandler
-public record Edit_Action(int Id);    // [EffectMethod] GetItem if the happy path occurred and FormMode == FormMode.Edi
-
-public record Display_Action(int Id); // [EffectMethod] GetItem if the happy path occurred and FormMode != FormMode.Edi
+// 1.5 Delete() actions
 public record Delete_Action(int Id);
-// [EffectMethod] Delete
-// [EffectMethod] MasterList!DeleteConfirmationHandler and IsModalConfirmed is true
+public record DeleteSuccess_Action(string SuccessMessage);
+public record DeleteFailure_Action(string ErrorMessage);
 
-public record DeleteSuccess_Action(string SuccessMessage);   // [EffectMethod] Delete Happy path
-public record DeleteFailure_Action(string ErrorMessage);    // [EffectMethod] Delete sad path
-
+// 1.6 Delete() actions
 public record Set_PageHeader_For_Index_Action(PageHeaderVM PageHeaderVM);
 public record Set_PageHeader_For_Detail_Action(string Title, string Icon, string Color, int Id);
 
@@ -63,7 +45,7 @@ public record State
 	public string? WarningMessage { get; init; }
 	public string? ErrorMessage { get; init; }
 	public FormVM? FormVM { get; init; }
-	public List<SpecialEvent>? SpecialEventList { get; init; }
+	public List<Data.vwSpecialEvent>? SpecialEventList { get; init; }
 	public PageHeaderVM? PageHeaderVM { get; init; }
 }
 
@@ -76,9 +58,8 @@ public class FeatureImplementation : Feature<State>
 	{
 		return new State
 		{
-			//  ToDo: can't used these random default dates
-			DateBegin = DateTime.Parse("3/1/2021"),
-			DateEnd = DateTime.Parse("6/21/2023"),
+			DateBegin = DateTime.Parse(Constants.DateRange.Start),
+			DateEnd = DateTime.Parse(Constants.DateRange.End),
 			FormMode = null,
 			VisibleComponent = Enums.VisibleComponent.MasterList,
 			SuccessMessage = string.Empty,
@@ -260,36 +241,14 @@ public class Effects
 {
 	#region Constructor and DI
 	private readonly ILogger Logger;
-	private readonly IRepository db;
+	private readonly Data.IRepository db;
 
-	public Effects(ILogger<Effects> logger, IRepository repository)
+	public Effects(ILogger<Effects> logger, Data.IRepository repository)
 	{
 		Logger = logger;
 		db = repository;
 	}
 	#endregion
-
-	/*
-	Dispatched by...
-
-	- IndexForm
-		- OnInitialized; 
-		- OnRangeSelect; Step 2 (after SetDateRange_Action)
-
-	- Form.HandleValidSubmit; Step 2 (after Submit_Action)
-
-	- Table
-		- PopulateActionHandler (ActionButtons.PopulateButton)
-		- DeleteConfirmationHandler; Step 2 after Delete_Action
-
-	External call...
-	- db!.GetEventsByDateRange(action.DateBegin, action.DateEnd)
-
-	Dispatched to...
-	- GetListSuccess_Action if specialEvents is not null
-	- GetListWarning_Action if specialEvents is null
-	- GetListFailure_Action if db call fails.
-	*/
 
 	[EffectMethod]
 	public async Task GetList(Get_List_Action action, IDispatcher dispatcher)
@@ -299,7 +258,7 @@ public class Effects
 		Logger.LogDebug(string.Format("Inside {0}; Date Range:{1} to {2}", inside, action.DateBegin, action.DateEnd));
 		try
 		{
-			List<Models.SpecialEvent> specialEvents = new();
+			List<Data.vwSpecialEvent> specialEvents = new();
 			specialEvents = await db!.GetEventsByDateRange(action.DateBegin, action.DateEnd);
 
 			if (specialEvents is not null)
@@ -319,11 +278,9 @@ public class Effects
 		}
 	}
 
-	// Called by Form.HandleValidSubmit; Step 1
 	[EffectMethod]
 	public async Task Submit(Submitting_Request_Action action, IDispatcher dispatcher)
 	{
-		// What's the best way to deal with this
 		if (action.FormMode is null) throw new ArgumentException("Parameter cannot be null", nameof(action.FormMode));
 
 		string inside = $"{nameof(Effects)}!{nameof(Submit)}; Action: {action.FormMode.Name}";
@@ -335,27 +292,7 @@ public class Effects
 			{
 				var sprocTuple = await db.CreateSpecialEvent(action.FormVM);
 
-				/*
-				SEE NOTES ON SpecialEventsRepository
-				
-				if (sprocTuple.NewId != 0)
-				{
-					dispatcher.Dispatch(new SpecialEvents_SubmitSuccess_Action($"Special Event Added id: [{sprocTuple.NewId}]"));
-				}
-				else
-				{
-					if (sprocTuple.SprocReturnValue == ReturnValueViolationInUniqueIndex)
-					{
-						dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action(sprocTuple.ReturnMsg + ", [ViolationIn Unique Index]"));
-					}
-					else
-					{
-						dispatcher.Dispatch(new SpecialEvents_SubmitFailure_Action(sprocTuple.ReturnMsg));
-					}
-				}
-				*/
-
-				dispatcher.Dispatch(new Submitted_Response_Success_Action("Special Event Added id: WHAT IS IT...HAVEN'T GOT A CLUE"));
+				dispatcher.Dispatch(new Submitted_Response_Success_Action("Special Event Added id: ???"));  //SEE NOTES ON SpecialEventsRepository
 
 			}
 			catch (Exception ex)
@@ -384,24 +321,7 @@ public class Effects
 	}
 
 
-	/*
-	Dispatched by...
-	- Table
-		- EditActionHandler (ActionButtons.PopulateButton)
-		- DisplayActionHandler; Step 2 after Delete_Action
 
-	External call...
-	- db!.GetEventById(action.Id)
-
-	Dispatched to...
-	- GetSuccess_Action if specialEvents is not null
-		- Edit_Action(action.Id)    if FormMode == Enums.FormMode.Edit
-		- Display_Action(action.Id) if FormMode == Enums.FormMode.Display
-
-	- GetWarning_Action if specialEvents is null
-
-	- GetFailure_Action if db call fails.
-*/
 	[EffectMethod]
 	public async Task GetItem(Get_Item_Action action, IDispatcher dispatcher)
 	{
@@ -410,8 +330,8 @@ public class Effects
 		Logger.LogDebug(string.Format("Inside {0}", inside));
 		try
 		{
-			Models.SpecialEvent? specialEvent = new();
-			specialEvent = await db!.GetEventById(action.Id); // test with 0 
+			Data.vwSpecialEvent? specialEvent = new();
+			specialEvent = await db!.GetEventById(action.Id); 
 
 			if (specialEvent is null)
 			{
