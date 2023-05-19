@@ -1,12 +1,18 @@
 ﻿using Microsoft.AspNetCore.Components;
-using LoginLink = BlzSrvFlxSrl.Links.Account;
 
 namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
 public partial class Index
 {
 	[Inject] private IState<State>? State { get; set; }
-	[Inject] public IDispatcher? Dispatcher { get; set; }
+}
+
+
+/*
+ToDo: add the Login logic
+
+using LoginLink = BlzSrvFlxSrl.Links.Account;
+
 	[Inject] public ILogger<Index>? Logger { get; set; }
 	[Inject] NavigationManager? NavigationManager { get; set; }
 
@@ -14,4 +20,5 @@ public partial class Index
 	{
 		NavigationManager!.NavigateTo($"{LoginLink.Login}?returnUrl={returnUrl}", true);
 	}
-}
+
+*/

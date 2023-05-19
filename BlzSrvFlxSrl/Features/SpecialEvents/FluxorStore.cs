@@ -1,7 +1,6 @@
 ﻿namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
-// 1. Action
-
+#region 1. Action
 // 1.1 GetList() actions
 public record Get_List_Action(DateTimeOffset? DateBegin, DateTimeOffset? DateEnd);
 public record Get_List_Success_Action(List<Data.vwSpecialEvent> SpecialEvents);
@@ -32,13 +31,15 @@ public record DeleteFailure_Action(string ErrorMessage);
 // 1.6 Delete() actions
 public record Set_PageHeader_For_Index_Action(PageHeaderVM PageHeaderVM);
 public record Set_PageHeader_For_Detail_Action(string Title, string Icon, string Color, int Id);
-
+#endregion
 
 // 2. State
 public record State
 {
+	// See wiki about notes
 	public DateTimeOffset? DateBegin { get; init; }
 	public DateTimeOffset? DateEnd { get; init; }
+
 	public Enums.VisibleComponent? VisibleComponent { get; init; }
 	public Enums.FormMode? FormMode { get; init; }
 	public string? SuccessMessage { get; init; }
@@ -233,7 +234,6 @@ public static class Reducers
 	}
 
 }
-
 
 
 // 5. Effects 

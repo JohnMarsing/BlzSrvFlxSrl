@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace BlzSrvFlxSrl.Features.SpecialEvents.DateRangeComponent;
+namespace BlzSrvFlxSrl.Shared.DateRangeComponent;
 
 public class ComponentVM
 {

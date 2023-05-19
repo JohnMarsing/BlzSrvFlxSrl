@@ -2,7 +2,7 @@
 using System;
 using System.Reflection;
 
-namespace BlzSrvFlxSrl.Features.SpecialEvents.DateRangeComponent;
+namespace BlzSrvFlxSrl.Shared.DateRangeComponent;
 
 
 // 1. Action

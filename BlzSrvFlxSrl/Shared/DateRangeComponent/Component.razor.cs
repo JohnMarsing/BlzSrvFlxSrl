@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using BlazorDateRangePicker;
 
-namespace BlzSrvFlxSrl.Features.SpecialEvents.DateRangeComponent;
+namespace BlzSrvFlxSrl.Shared.DateRangeComponent;
 
 public partial class Component
 {
@@ -41,13 +41,14 @@ public partial class Component
 		
 		Dispatcher!.Dispatch(new SetDateRange_Action(vm));
 
-		*/
 
-
+		//DateTimeOffset? BegDate, DateTimeOffset? EndDate)
 		Dispatcher!.Dispatch(new SetDateRange_Action(range.Start, range.End)); //   vm
 		Dispatcher!.Dispatch(new Get_List_Action(
 			DateRangeComponentState!.Value.Model!.DateBegin, DateRangeComponentState.Value.Model!.DateEnd));
+		*/
 	}
+
 
 	//string datesMsg = "null";
 	void LogDates()

@@ -2,7 +2,6 @@
 using Dapper;
 using BlzSrvFlxSrl.Data;
 using static BlzSrvFlxSrl.Data.SqlServer;
-using BlzSrvFlxSrl.Features.SpecialEvents.Models;
 
 namespace BlzSrvFlxSrl.Features.SpecialEvents.Data;
 

@@ -4,7 +4,11 @@ public static class Constants
 {
 	public static PageHeaderVM GetPageHeaderForIndexVM()
 	{
-		return new PageHeaderVM { Title = "Index", Icon = "fas fa-list", Color = "text-primary", Id = 0 };
+		return new PageHeaderVM { 
+			Title = "Index", 
+			Icon = "fas fa-list", 
+			Color = "text-primary", Id = 0 
+		};
 	}
 
 	public static class SaveButton
