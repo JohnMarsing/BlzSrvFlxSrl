@@ -28,7 +28,7 @@ public record Delete_Action(int Id);
 public record DeleteSuccess_Action(string SuccessMessage);
 public record DeleteFailure_Action(string ErrorMessage);
 
-// 1.6 Delete() actions
+// 1.6 Display actions
 public record Set_PageHeader_For_Index_Action(PageHeaderVM PageHeaderVM);
 public record Set_PageHeader_For_Detail_Action(string Title, string Icon, string Color, int Id);
 #endregion
