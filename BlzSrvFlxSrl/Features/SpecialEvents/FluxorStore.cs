@@ -26,7 +26,7 @@ public record Add_Action();
 // 1.5 Delete() actions
 public record Delete_Action(int Id);
 
-// 1.6 PageHeader() actions
+// 1.6 Delete() actions
 public record Set_PageHeader_For_Index_Action(PageHeaderVM PageHeaderVM);
 public record Set_PageHeader_For_Detail_Action(string Title, string Icon, string Color, int Id);
 
