@@ -1,50 +1,46 @@
-﻿namespace BlzSrvFlxSrl.Features.SpecialEvents;
+﻿using BlzSrvFlxSrl.Features.SpecialEvents.Enums;
+
+namespace BlzSrvFlxSrl.Features.SpecialEvents;
 
 #region 1. Action
+
+public record Set_VisibleComponent_Action(VisibleComponent VisibleComponent);
+
 // 1.1 GetList() actions
-public record Get_List_Action(DateTimeOffset? DateBegin, DateTimeOffset? DateEnd);
-public record Get_List_Success_Action(List<Data.vwSpecialEvent> SpecialEvents);
-public record Get_List_Warning_Action(string WarningMessage);
-public record Get_List_Failure_Action(string ErrorMessage);
+public record Get_List_Action();
+public record Set_Data_MasterList_Action(List<Data.vwSpecialEvent> vwSpecialEvent);
 
 // 1.2 GetItem() actions
 public record Get_Item_Action(int Id, Enums.FormMode? FormMode);
-public record Get_Item_Success_Action(FormVM? FormVM);
-public record Get_Item_Warning_Action(string WarningMessage);
-public record Get_Item_Failure_Action(string ErrorMessage);
+public record Set_FormVM_Action(FormVM? FormVM);
+
 public record Edit_Action(int Id);
 public record Display_Action(int Id);
 
 // 1.3 Actions related to Form Submission
 public record Submitting_Request_Action(FormVM FormVM, Enums.FormMode? FormMode);
-public record Submitted_Response_Success_Action(string SuccessMessage);
-public record Submitted_Response_Failure_Action(string ErrorMessage);
 
 // 1.4 Actions related to MasterList
 public record Add_Action();
 
 // 1.5 Delete() actions
 public record Delete_Action(int Id);
-public record DeleteSuccess_Action(string SuccessMessage);
-public record DeleteFailure_Action(string ErrorMessage);
 
-// 1.6 Delete() actions
+// 1.6 PageHeader() actions
 public record Set_PageHeader_For_Index_Action(PageHeaderVM PageHeaderVM);
 public record Set_PageHeader_For_Detail_Action(string Title, string Icon, string Color, int Id);
+
+
+// 1.7 Toaster stuff
+public record Response_Message_Action(ResponseMessage MessageType, string Message);
+
 #endregion
 
 // 2. State
 public record State
 {
-	// See wiki about notes
-	public DateTimeOffset? DateBegin { get; init; }
-	public DateTimeOffset? DateEnd { get; init; }
-
 	public Enums.VisibleComponent? VisibleComponent { get; init; }
 	public Enums.FormMode? FormMode { get; init; }
-	public string? SuccessMessage { get; init; }
-	public string? WarningMessage { get; init; }
-	public string? ErrorMessage { get; init; }
 	public FormVM? FormVM { get; init; }
 	public List<Data.vwSpecialEvent>? SpecialEventList { get; init; }
 	public PageHeaderVM? PageHeaderVM { get; init; }
@@ -59,13 +55,8 @@ public class FeatureImplementation : Feature<State>
 	{
 		return new State
 		{
-			DateBegin = DateTime.Parse(Constants.DateRange.Start),
-			DateEnd = DateTime.Parse(Constants.DateRange.End),
 			FormMode = null,
 			VisibleComponent = Enums.VisibleComponent.MasterList,
-			SuccessMessage = string.Empty,
-			WarningMessage = string.Empty,
-			ErrorMessage = string.Empty,
 			PageHeaderVM = Constants.GetPageHeaderForIndexVM(),
 			FormVM = new FormVM()
 		};
@@ -77,100 +68,49 @@ public static class Reducers
 {
 
 	[ReducerMethod]
-	public static State On_Get_List_Success(
-		State state, Get_List_Success_Action action)
+	public static State On_Set_VisibleComponent(State state, Set_VisibleComponent_Action action)
 	{
-		return state with
-		{
-			VisibleComponent = Enums.VisibleComponent.MasterList,
-			WarningMessage = string.Empty,
-			ErrorMessage = string.Empty,
-			SpecialEventList = action.SpecialEvents
-		};
+		return state with {	VisibleComponent = action.VisibleComponent	};
 	}
+
 
 	[ReducerMethod]
-	public static State On_Get_List_Warning(
-		State state, Get_List_Warning_Action action)
+	public static State On_Set_Data_MasterList(State state, Set_Data_MasterList_Action action)
 	{
-		// Here might be a case where VisibleComponent has a .Table and 
-		//  You got this warning (no records found) then set it to .None
-		//  Therefore, this would be the only place where VisibleComponent = None
-		return state with
-		{
-			VisibleComponent = Enums.VisibleComponent.MasterList,
-			WarningMessage = action.WarningMessage
-		};
+		return state with	{	SpecialEventList = action.vwSpecialEvent};
 	}
 
-	[ReducerMethod]
-	public static State On_Get_List_Failure(
-		State state, Get_List_Failure_Action action)
-	{
-		return state with { ErrorMessage = action.ErrorMessage };
-	}
-
+	//ToDo: Get_Item_Action should be split into Get_EditItem_Action and Get_DisplayItem_Action 
 	[ReducerMethod]
 	public static State On_Get_Item(State state, Get_Item_Action action)
 	{
 		return state with { FormMode = action.FormMode };
 	}
 
+	/*
+	[ReducerMethod]
+	public static State On_Set_DisplayVM(State state, Set_DisplayVM_Action action)
+	{
+		return state with	{	DisplayVM = action.DisplayVM	};
+	}
+	*/
 
 	[ReducerMethod]
-	public static State On_Get_Item_Success(
-		State state, Get_Item_Success_Action action)  
+	public static State On_Set_FormVM(State state, Set_FormVM_Action action)
 	{
-		return state with
-		{
-			FormVM = action.FormVM
-		};
+		return state with {	FormVM = action.FormVM };
 	}
 
-	[ReducerMethod]
-	public static State On_Get_Item_Failure(
-			State state, Get_Item_Failure_Action action)
-	{
-		return state with
-		{
-			VisibleComponent = Enums.VisibleComponent.MasterList,
-			ErrorMessage = action.ErrorMessage
-		};
-	}
 
 	// Called by Form.HandleValidSubmit; Step 1
 	[ReducerMethod]
-	public static State On_Submitting_Request(
-		State state, Submitting_Request_Action action)
+	public static State On_Submitting_Request(State state, Submitting_Request_Action action)
 	{
 		return state with { FormMode = action.FormMode };
 	}
 
-	// ToDo: Unlike `On_Submitted_Response_Failure`, there's no `[ReducerMethod]` ergo there's no `action` parameter
-	public static State On_Submitted_Response_Success(State state)
-	{
-		return state with
-		{
-			VisibleComponent = Enums.VisibleComponent.MasterList,
-			SuccessMessage = ""  // ToDo: this is different than `Submitted_Response_Failure_Action`
-		};
-	}
-
 	[ReducerMethod]
-	public static State On_Submitted_Response_Failure(
-			State state, Submitted_Response_Failure_Action action)
-	{
-		return state with
-		{
-			ErrorMessage = action.ErrorMessage,
-			VisibleComponent = Enums.VisibleComponent.MasterList
-		};
-	}
-
-
-	[ReducerMethod]
-	public static State OnAdd(
-		State state, Add_Action action)
+	public static State OnAdd(State state, Add_Action action)
 	{
 		return state with
 		{
@@ -181,8 +121,7 @@ public static class Reducers
 	}
 
 	[ReducerMethod]
-	public static State OnEdit(
-		State state, Edit_Action action)
+	public static State OnEdit(State state, Edit_Action action)
 	{
 		return state with
 		{
@@ -192,8 +131,7 @@ public static class Reducers
 	}
 
 	[ReducerMethod]
-	public static State OnDisplay(
-		State state, Display_Action action)
+	public static State OnDisplay(State state, Display_Action action)
 	{
 		return state with
 		{
@@ -202,8 +140,7 @@ public static class Reducers
 	}
 
 	[ReducerMethod]
-	public static State OnDelete(
-		State state, Delete_Action action)
+	public static State OnDelete(State state, Delete_Action action)
 	{
 		return state with
 		{
@@ -212,8 +149,7 @@ public static class Reducers
 	}
 
 	[ReducerMethod]
-	public static State On_Set_PageHeader_For_Index(
-	State state, Set_PageHeader_For_Index_Action action)
+	public static State On_Set_PageHeader_For_Index(State state, Set_PageHeader_For_Index_Action action)
 	{
 		return state with
 		{
@@ -224,8 +160,7 @@ public static class Reducers
 
 
 	[ReducerMethod]
-	public static State On_Set_PageHeader_For_Detail(
-		State state, Set_PageHeader_For_Detail_Action action)
+	public static State On_Set_PageHeader_For_Detail(State state, Set_PageHeader_For_Detail_Action action)
 	{
 		return state with
 		{
@@ -254,28 +189,39 @@ public class Effects
 	public async Task GetList(Get_List_Action action, IDispatcher dispatcher)
 	{
 		string inside = nameof(Effects) + "!" + nameof(GetList) + "!" + nameof(Get_List_Action);
-
-		Logger.LogDebug(string.Format("Inside {0}; Date Range:{1} to {2}", inside, action.DateBegin, action.DateEnd));
+		Logger.LogDebug(string.Format("Inside {0}; Date Range:{1} to {2}", inside, Constants.DateRange.Start, Constants.DateRange.End));
 		try
 		{
 			List<Data.vwSpecialEvent> specialEvents = new();
-			specialEvents = await db!.GetEventsByDateRange(action.DateBegin, action.DateEnd);
+			specialEvents = await db!.GetEventsByDateRange(DateTime.Parse(Constants.DateRange.Start), DateTime.Parse(Constants.DateRange.End));
 
 			if (specialEvents is not null)
 			{
-				dispatcher.Dispatch(new Get_List_Success_Action(specialEvents));
+				Logger.LogDebug(string.Format("...calling {0}, Count: {1}", nameof(Set_Data_MasterList_Action), specialEvents.Count()));
+				dispatcher.Dispatch(new Set_Data_MasterList_Action(specialEvents));
+				//dispatcher.Dispatch(new Response_Message_Action(ResponseMessage.Success, "Special Events Found")); // To Verbose
 			}
 			else
 			{
 				Logger.LogWarning(string.Format("...{0}; {1} is null", inside, nameof(specialEvents)));
-				dispatcher.Dispatch(new Get_List_Warning_Action("No Special Events Found"));
+				dispatcher.Dispatch(new Response_Message_Action(ResponseMessage.Warning, "No Special Events Found"));
 			}
 		}
 		catch (Exception ex)
 		{
 			Logger.LogError(ex, string.Format("...Inside catch of {0}", inside));
-			dispatcher.Dispatch(new Get_List_Failure_Action("An invalid operation occurred, contact your administrator."));
+			dispatcher.Dispatch(new Response_Message_Action(ResponseMessage.Failure, Constants.Effects.ResponseMessageFailure));
 		}
+		/*
+		Question: 
+			regardless if vwSpecialEvent ends up having data, no data, or an exception occurred, 
+			should I always do a dispatch Set_Data_MasterList_Action(specialEvents) ??
+
+		finally 
+		{
+			dispatcher.Dispatch(new Set_Data_MasterList_Action(specialEvents));
+		}
+		*/
 	}
 
 	[EffectMethod]
@@ -291,14 +237,13 @@ public class Effects
 			try
 			{
 				var sprocTuple = await db.CreateSpecialEvent(action.FormVM);
-
-				dispatcher.Dispatch(new Submitted_Response_Success_Action("Special Event Added id: ???"));  //SEE NOTES ON SpecialEventsRepository
-
+				dispatcher.Dispatch(new Response_Message_Action(ResponseMessage.Success, sprocTuple.Item3));
 			}
 			catch (Exception ex)
 			{
 				Logger.LogError(ex, string.Format("...Inside catch of {0}", inside));
-				dispatcher.Dispatch(new Submitted_Response_Failure_Action($"An invalid operation occurred, contact your administrator. Action: {action.FormMode.Name}"));
+				dispatcher.Dispatch(new Response_Message_Action(ResponseMessage.Failure
+									, $"{Constants.Effects.ResponseMessageFailure}. Action: {action.FormMode.Name}"));
 			}
 		}
 		else
@@ -307,20 +252,21 @@ public class Effects
 			try
 			{
 				var sprocTuple = await db.UpdateSpecialEvent(action.FormVM);
-				dispatcher.Dispatch(new Submitted_Response_Success_Action(
-					$"Special Event Updated for id: [{action.FormVM.Id}], Affected Rows: {sprocTuple.Affectedrows}"));
+				dispatcher.Dispatch(new Response_Message_Action(ResponseMessage.Success
+					, $"Special Event Updated for id: [{action.FormVM.Id}], Affected Rows: {sprocTuple.Item1}")); //sprocTuple.RowsAffected
 			}
 			catch (Exception ex)
 			{
 				Logger.LogError(ex, string.Format("...Inside catch of {0}", inside));
-				dispatcher.Dispatch(new Submitted_Response_Failure_Action(
-					$"An invalid operation occurred, contact your administrator. Action: {action.FormMode.Name}"));
+				dispatcher.Dispatch(new Response_Message_Action(ResponseMessage.Failure
+					, $"{Constants.Effects.ResponseMessageFailure}. Action: {action.FormMode.Name}"));
 			}
 		}
 
 	}
 
 
+	//ToDo: Get_Item_Action should be split into Get_EditItem_Action and Get_DisplayItem_Action
 
 	[EffectMethod]
 	public async Task GetItem(Get_Item_Action action, IDispatcher dispatcher)
@@ -331,12 +277,13 @@ public class Effects
 		try
 		{
 			Data.vwSpecialEvent? specialEvent = new();
-			specialEvent = await db!.GetEventById(action.Id); 
+			specialEvent = await db!.GetEventById(action.Id);
 
 			if (specialEvent is null)
 			{
 				Logger.LogWarning(string.Format("...{0}; {1} is null", inside, nameof(specialEvent)));
-				dispatcher.Dispatch(new Get_Item_Warning_Action($"Special Event Not Found; Id: {action.Id}"));
+				dispatcher.Dispatch(new Response_Message_Action(ResponseMessage.Warning, $"Special Event Not Found; Id: {action.Id}"));
+				// dispatcher.Dispatch(new Set_FormVM_Action(null)); ToDo: should I make FormVM null?
 			}
 			else
 			{
@@ -357,7 +304,8 @@ public class Effects
 					Description = specialEvent.Description
 				};
 
-				dispatcher.Dispatch(new Get_Item_Success_Action(formVM));
+				dispatcher.Dispatch(new Set_FormVM_Action(formVM));
+				dispatcher.Dispatch(new Response_Message_Action(ResponseMessage.Info, $"Got {formVM!.Title!}"));
 
 				if (action.FormMode == Enums.FormMode.Edit)
 				{
@@ -372,7 +320,9 @@ public class Effects
 		catch (Exception ex)
 		{
 			Logger.LogError(ex, string.Format("...Inside catch of {0}", inside));
-			dispatcher.Dispatch(new Get_Item_Failure_Action("An invalid operation occurred, contact your administrator"));
+			dispatcher.Dispatch(new Set_VisibleComponent_Action(VisibleComponent.MasterList));
+			dispatcher.Dispatch(new Response_Message_Action(ResponseMessage.Failure, Constants.Effects.ResponseMessageFailure));
+
 		}
 	}
 
@@ -384,12 +334,12 @@ public class Effects
 		try
 		{
 			var affectedRows = await db.RemoveSpecialEvent(action.Id);
-			dispatcher.Dispatch(new DeleteSuccess_Action($"Special Event {action.Id} has been deleted"));
+			dispatcher.Dispatch(new Response_Message_Action(ResponseMessage.Success, $"Special Event {action.Id} has been deleted"));
 		}
 		catch (Exception ex)
 		{
 			Logger.LogError(ex, string.Format("...Inside catch of {0}", inside));
-			dispatcher.Dispatch(new DeleteFailure_Action($"An invalid operation occurred, contact your administrator"));
+			dispatcher.Dispatch(new Response_Message_Action(ResponseMessage.Failure, Constants.Effects.ResponseMessageFailure));
 		}
 	}
 

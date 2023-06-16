@@ -21,7 +21,7 @@ public partial class MasterList
 		Logger!.LogDebug(string.Format("Inside {0}", nameof(MasterList) + "!" + nameof(OnInitialized)));
 		if (State!.Value.SpecialEventList is null)
 		{
-			Dispatcher!.Dispatch(new Get_List_Action(State!.Value.DateBegin, State.Value.DateEnd));
+			Dispatcher!.Dispatch(new Get_List_Action());
 		}
 		base.OnInitialized();
 	}
@@ -52,13 +52,14 @@ public partial class MasterList
 				if (await IsModalConfirmed(args.Id) == true)
 				{
 					Dispatcher!.Dispatch(new Delete_Action(args.Id));
-					Dispatcher!.Dispatch(new Get_List_Action(
-						State!.Value.DateBegin, State.Value.DateEnd));
+					Dispatcher!.Dispatch(new Get_List_Action());
 				}
 				break;
 
 			case "Repopulate":
-				Dispatcher!.Dispatch(new Get_List_Action(State!.Value.DateBegin, State.Value.DateEnd));
+				//Dispatcher!.Dispatch(new Response_Message_Action(ResponseMessage.Info, $"Calling {nameof(Get_List_Action)}"));
+				Dispatcher!.Dispatch(new Get_List_Action());
+				//Dispatcher!.Dispatch(new Response_Message_Action(ResponseMessage.Info, $"Called {nameof(Get_List_Action)}"));
 				break;
 		}
 	}

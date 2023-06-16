@@ -8,41 +8,29 @@ public partial class ToasterSpecialEvents
 	[Inject] public IToastService? Toast { get; set; }
 	protected override void OnInitialized()
 	{
-		//SubscribeToAction<Get_List_Success_Action>(Get_List_Success_Toast); // Too much chatter
-		SubscribeToAction<Get_List_Warning_Action>(Get_List_Warning_Toast);
-		SubscribeToAction<Get_List_Failure_Action>(Get_List_Failure_Toast);
-
-		SubscribeToAction<Get_Item_Success_Action>(Get_Item_Success_Toast);
-		SubscribeToAction<Get_Item_Warning_Action>(Get_Item_Warning_Toast);
-		SubscribeToAction<Get_Item_Failure_Action>(Get_Item_Failure_Toast);
-
-		SubscribeToAction<Submitted_Response_Success_Action>(Submitted_Response_Success_Toast);
-		SubscribeToAction<Submitted_Response_Failure_Action>(Submitted_Response_Failure_Toast);
-
-		SubscribeToAction<DeleteSuccess_Action>(DeleteSuccess_Toast);
-		SubscribeToAction<DeleteFailure_Action>(DeleteFailure_Toast);
-
-		//SubscribeToAction<PageHeader_Action>(PageHeader_Toast);
-		//SubscribeToAction<SetDateRange_Action>(SetDateRange_Toast);
+		SubscribeToAction<Response_Message_Action>(Response_Message_Toast);
 		base.OnInitialized();
 	}
 
-	//private void Get_List_Success_Toast(Get_List_Success_Action action) => Toast!.ShowInfo($"Got list of {action.SpecialEvents.Count} records");
+	private void Response_Message_Toast(Response_Message_Action action)
+	{
+		switch (action.MessageType)
+		{
+			case Enums.ResponseMessage.Success:
+				Toast!.ShowSuccess(action.Message);
+				break;
 
-	private void Get_List_Warning_Toast(Get_List_Warning_Action action) => Toast!.ShowWarning($"No records found");
-	private void Get_List_Failure_Toast(Get_List_Failure_Action action) => Toast!.ShowError($"{action.ErrorMessage}");
+			case Enums.ResponseMessage.Warning:
+				Toast!.ShowWarning(action.Message);
+				break;
 
-	private void Get_Item_Success_Toast(Get_Item_Success_Action action) => Toast!.ShowInfo($"Got {action.FormVM!.Title!}");
-	private void Get_Item_Warning_Toast(Get_Item_Warning_Action action) => Toast!.ShowWarning($"{action.WarningMessage}");
-	private void Get_Item_Failure_Toast(Get_Item_Failure_Action action) => Toast!.ShowError($"{action.ErrorMessage}");
+			case Enums.ResponseMessage.Failure:
+				Toast!.ShowError(action.Message);
+				break;
 
-	private void Submitted_Response_Success_Toast(Submitted_Response_Success_Action action) => Toast!.ShowSuccess($"{action.SuccessMessage}");
-	private void Submitted_Response_Failure_Toast(Submitted_Response_Failure_Action action) => Toast!.ShowError($"Form submit error; ErrorMessage: {action.ErrorMessage}");
-	private void DeleteSuccess_Toast(DeleteSuccess_Action action) => Toast!.ShowSuccess(action.SuccessMessage);
-	private void DeleteFailure_Toast(DeleteFailure_Action action) => Toast!.ShowError($"Failed to delete Special Events; {action.ErrorMessage}");
-
-	//private void PageHeader_Toast(PageHeader_Action action) => Toast!.ShowInfo($"PageHeader Title: {action.Title}");
-	//private void SetDateRange_Toast(SetDateRange_Action action) => Toast!.ShowInfo($"Selected Date Range: {action.DateBegin.ToString("yyyy-MM-dd")} to {action.DateEnd.ToString("yyyy-MM-dd")}");
-
-
+			case Enums.ResponseMessage.Info:
+				Toast!.ShowInfo(action.Message);
+				break;
+		}
+	}
 }

@@ -16,7 +16,7 @@ public partial class Form
 	{
 		Logger!.LogDebug(string.Format("Inside {0}", nameof(Form) + "!" + nameof(HandleValidSubmit)));
 		Dispatcher!.Dispatch(new Submitting_Request_Action(State!.Value.FormVM!, State!.Value.FormMode!));  
-		Dispatcher!.Dispatch(new Get_List_Action(State!.Value.DateBegin, State.Value.DateEnd));
+		Dispatcher!.Dispatch(new Get_List_Action());
 		Dispatcher!.Dispatch(new Set_PageHeader_For_Index_Action(Constants.GetPageHeaderForIndexVM()));
 	}
 
